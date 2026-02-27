@@ -1,21 +1,3 @@
-# pathology-cell-tissue-datasets
-
-Pathology datasets for cell and tissue segmentation and classification tasks.
-
-**可直接在网页查看与筛选**：[https://jw-yuan.github.io/pathology-cell-tissue-datasets/](https://jw-yuan.github.io/pathology-cell-tissue-datasets/)
-
----
-
-## 简介
-
-本仓库整理了一批公开的组织病理学数据集，用于细胞与组织层面的分割、分类、检测、配准等任务。每条数据在网页上可按**器官类型**、**结构类型**（Cell / Tissue）、**任务类型**（Detection、Segmentation、Classification、Registration、Other）、**染色类型**、**年份**筛选，并支持名称搜索；点击名称可进入详情页查看说明与链接。
-
----
-
-## 数据集列表
-
-以下为当前收录的数据集（表格列与 `datasets/_datasets.json` 中的 key 一致）；更多信息与数据/论文链接请在上方网站中查看。
-
 | id | name | year | organs | staining | size | data | task | type | other | links | description |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0001 | PUMA | 2024 | Melanoma | H&E | 206 ROIs (primary: 103, metastatic: 103), 97,429 nuclei (10 classes: tumor 58.93%, lymphocyte 22.21%, histiocyte 7.36%, stroma 3.96%, epithelium 2.27%, apoptotic 1.90%, vascular endothelium 1.75%, melanophage 0.71%, plasma cell 0.53%, neutrophil 0.38%) | images + nuclei and tissue annotations + context image | seg | patch(1024x1024) context(5120x5120) | 40x - Nanozoomer XR C12000–21/–22 | [data](<https://zenodo.org/records/15050523>) [paper](<https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giaf011/8024182>) [download](<https://zenodo.org/records/15050523>) | Melanoma histopathology dataset. for seg tasks. |
@@ -64,4 +46,3 @@ Pathology datasets for cell and tissue segmentation and classification tasks.
 | 0046 | TIGER | 2022 | Breast | H&E | WSIROIS: 195 wsi, WSIBULK: 93, WSITILS: 82 | images + rois + label (7) | detection, seg, tils-scoring | wsi | (from TCGA, RUMC, JB) from BCSS和Nucls | [data](<https://tiger.grand-challenge.org/>) [paper](<https://arxiv.org/abs/2206.11943>) [github](<https://github.com/DIAGNijmegen/pathology-tiger-algorithm-example>) | Breast histopathology dataset. for detection, seg, tils-scoring tasks. |
 | 0047 | TNBC | 2019 | Breast | H&E | 50 images, 4022 cells (11 patients) | images + nuclei seg + label | seg, classi | patch (512x512) | 40x - Philips Ultra Fast Scanner (Curie Inst.) | [data](<https://drive.google.com/drive/folders/1taB8boGyycjV4X1a2vCIAV9fwMxFSS41>) [paper](<https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8438559>) | Breast histopathology dataset. for seg, classi tasks. |
 | 0048 | TUPAC16 - aux | 2019 | Breast - mitoses | H&E | 73 | images + locations | seg | patch | 40x (from TCGA) Leica SCN400 | [data](<https://tupac.grand-challenge.org/>) [download](<https://tupac.grand-challenge.org/Dataset/>) | Breast - mitoses histopathology dataset. for seg tasks. |
-

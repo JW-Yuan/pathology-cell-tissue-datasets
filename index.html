@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组织病理学数据集 | Pathology Cell & Tissue Datasets</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/datasets.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Pathology Datasets</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">数据集</a></li>
+                <li><a href="https://github.com/JW-Yuan/pathology-cell-tissue-datasets" target="_blank" class="nav-link">GitHub</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 数据集列表 -->
+    <section class="section datasets-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-database"></i>
+                组织病理学数据集
+            </h2>
+            <p class="section-desc">细胞与组织分割、分类等任务相关的公开数据集，支持按器官、染色、任务类型、年份筛选。</p>
+
+            <!-- 筛选器 -->
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="filter-organs"><i class="fas fa-filter"></i> 器官类型</label>
+                    <select id="filter-organs" class="filter-select">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-structure"><i class="fas fa-filter"></i> 结构类型</label>
+                    <div class="task-filter-dropdown">
+                        <button type="button" id="filter-structure-toggle" class="task-filter-toggle">
+                            <span id="filter-structure-selected">全部</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="filter-structure-container" class="task-filter-dropdown-content"></div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-task"><i class="fas fa-filter"></i> 任务类型</label>
+                    <div class="task-filter-dropdown">
+                        <button type="button" id="filter-task-toggle" class="task-filter-toggle">
+                            <span id="filter-task-selected">全部</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="filter-task-container" class="task-filter-dropdown-content"></div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-staining"><i class="fas fa-filter"></i> 染色类型</label>
+                    <select id="filter-staining" class="filter-select">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-year"><i class="fas fa-filter"></i> 年份</label>
+                    <select id="filter-year" class="filter-select">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="search-name"><i class="fas fa-search"></i> 搜索名称</label>
+                    <input type="text" id="search-name" class="filter-input" placeholder="输入数据集名称...">
+                </div>
+                <button id="reset-filters" class="reset-btn"><i class="fas fa-redo"></i> 重置</button>
+            </div>
+
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner"></i>
+                <p class="loading-text">正在加载数据集...</p>
+            </div>
+            <div id="error" class="error-message" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p class="error-text">加载数据集失败，请稍后重试</p>
+            </div>
+
+            <div id="datasets-table-container" style="display: none;">
+                <div class="table-info">
+                    <span id="dataset-count">共 <strong>0</strong> 个数据集</span>
+                    <div class="table-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>点击数据集名称可查看详细信息</span>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="datasets-table" class="datasets-table">
+                        <thead>
+                            <tr>
+                                <th>数据集名称 (年份)</th>
+                                <th>文献/数据链接</th>
+                                <th>其他信息</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datasets-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> Pathology Cell & Tissue Datasets</p>
+            <p>数据与 <a href="https://github.com/JW-Yuan/JW-Yuan.github.io" target="_blank">JW-Yuan.github.io</a> 数据集栏目同步</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/datasets.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

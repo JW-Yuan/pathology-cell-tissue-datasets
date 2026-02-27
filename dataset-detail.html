@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据集详情 | Pathology Datasets</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dataset-detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Pathology Datasets</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">数据集</a></li>
+                <li><a href="https://github.com/JW-Yuan/pathology-cell-tissue-datasets" target="_blank" class="nav-link">GitHub</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section dataset-detail-section">
+        <div class="container">
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner"></i>
+                <p class="loading-text">正在加载数据集详情...</p>
+            </div>
+            <div id="error" class="error-message" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p class="error-text">加载数据集详情失败，请稍后重试</p>
+            </div>
+
+            <div id="detail-content" style="display: none;">
+                <div class="back-button">
+                    <a href="index.html" class="btn-back">
+                        <i class="fas fa-arrow-left"></i> 返回数据集列表
+                    </a>
+                </div>
+                <div class="dataset-header">
+                    <h1 class="dataset-title" id="dataset-title">
+                        <i class="fas fa-database"></i>
+                        <span id="dataset-name"></span>
+                        <span id="dataset-year" class="dataset-year-badge"></span>
+                    </h1>
+                    <div class="dataset-meta-header" id="dataset-meta-header"></div>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title"><i class="fas fa-info-circle"></i> 基本信息</h2>
+                    <div class="card-content" id="basic-info"></div>
+                </div>
+                <div class="info-card" id="markdown-content-card">
+                    <div class="markdown-content" id="markdown-content"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> Pathology Cell & Tissue Datasets</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/dataset-detail.js"></script>
+    <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
