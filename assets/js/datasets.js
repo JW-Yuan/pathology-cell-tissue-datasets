@@ -132,6 +132,11 @@ function fetchWithTimeout(url, timeoutMs) {
     );
 }
 
+function getDatasetSlug(dataset) {
+    if (!dataset || !dataset.name) return '';
+    return String(dataset.name).trim().replace(/\s+/g, '_');
+}
+
 async function loadDatasetsList() {
     var url = window.DATASETS_INDEX_PATH || 'datasets/_datasets.json';
     var response = await fetchWithTimeout(url);
@@ -143,13 +148,13 @@ async function loadDatasetsList() {
         throw new Error('_datasets.json 格式错误：应为数组');
     }
     return list.map(dataset => {
-        if (!dataset.id) return null;
         dataset.tasks = parseTasks(dataset.task);
         if (Array.isArray(dataset.task)) {
             dataset.task = dataset.task.join(' + ');
         }
+        dataset.slug = getDatasetSlug(dataset);
         return dataset;
-    }).filter(ds => ds !== null);
+    });
 }
 
 async function loadAllDatasets() {
@@ -389,9 +394,9 @@ function renderTable() {
 
     filteredDatasets.forEach(dataset => {
         const row = document.createElement('tr');
-        const id = dataset.id || dataset.name.toLowerCase().replace(/\s+/g, '-');
+        const slug = dataset.slug || getDatasetSlug(dataset);
         var taskDisplay = (dataset.tasksCanonical && dataset.tasksCanonical.length) ? dataset.tasksCanonical.join(' + ') : '';
-        var detailUrl = 'dataset-detail.html?id=' + encodeURIComponent(id);
+        var detailUrl = slug ? ('dataset-detail.html?name=' + encodeURIComponent(slug)) : 'dataset-detail.html';
 
         const nameCell = document.createElement('td');
         nameCell.className = 'dataset-name-cell';

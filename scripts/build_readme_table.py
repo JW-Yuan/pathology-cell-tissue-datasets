@@ -28,12 +28,11 @@ def task_cell(task):
         return ''
     return ', '.join(task) if isinstance(task, list) else str(task)
 
-headers = ['id', 'name', 'year', 'organs', 'staining', 'size', 'data', 'task', 'type', 'other', 'links', 'description']
+headers = ['name', 'year', 'organs', 'staining', 'size', 'data', 'task', 'type', 'other', 'links', 'description']
 sep = ' | '.join(['---'] * len(headers))
 table_lines = ['| ' + ' | '.join(headers) + ' |', '| ' + sep + ' |']
 for row in data:
     cells = [
-        escape(row.get('id')),
         escape(row.get('name')),
         escape(row.get('year')),
         escape(row.get('organs')),
@@ -52,7 +51,7 @@ table_block = '\n'.join(table_lines)
 readme_path = os.path.join(base, 'README.md')
 with open(readme_path, 'r', encoding='utf-8') as f:
     readme = f.read()
-start_marker = '| id | name | year | organs | staining | size | data | task | type | other | links | description |'
+start_marker = '| name | year | organs | staining | size | data | task | type | other | links | description |'
 idx = readme.find(start_marker)
 if idx >= 0:
     rest = readme[idx:]
@@ -65,7 +64,21 @@ if idx >= 0:
             break
     readme_new = readme[:idx] + table_block + '\n' + readme[idx + len('\n'.join(lines[:end_idx])):]
 else:
-    readme_new = readme
+    # 如果旧的表头还包含 id，则从那里开始整块替换
+    old_marker = '| id | name | year | organs | staining | size | data | task | type | other | links | description |'
+    old_idx = readme.find(old_marker)
+    if old_idx >= 0:
+        rest = readme[old_idx:]
+        lines = rest.split('\n')
+        end_idx = 0
+        for i, line in enumerate(lines):
+            if line.strip().startswith('|') and line.strip().endswith('|'):
+                end_idx = i + 1
+            else:
+                break
+        readme_new = readme[:old_idx] + table_block + '\n' + readme[old_idx + len('\n'.join(lines[:end_idx])):]
+    else:
+        readme_new = readme
 with open(readme_path, 'w', encoding='utf-8') as f:
     f.write(readme_new)
 print('README.md table updated with clickable links.')

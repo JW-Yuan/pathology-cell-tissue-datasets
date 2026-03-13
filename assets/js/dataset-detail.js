@@ -2,23 +2,30 @@
 const DATASETS_BASE_PATH = 'datasets/';
 const DATASETS_LIST_PATH = DATASETS_BASE_PATH + '_datasets.json';
 
-function getDatasetIdFromURL() {
-    return new URLSearchParams(window.location.search).get('id');
+function getDatasetSlugFromURL() {
+    return new URLSearchParams(window.location.search).get('name');
 }
 
-async function loadDatasetBasicInfo(datasetId) {
+function getDatasetSlug(dataset) {
+    if (!dataset || !dataset.name) return '';
+    return String(dataset.name).trim().replace(/\s+/g, '_');
+}
+
+async function loadDatasetBasicInfo(datasetSlug) {
     const response = await fetch(DATASETS_LIST_PATH);
     if (!response.ok) throw new Error('无法加载数据集列表');
     const list = await response.json();
     if (!Array.isArray(list)) throw new Error('_datasets.json 格式错误');
-    const dataset = list.find(ds => ds.id === datasetId);
-    if (!dataset) throw new Error('未找到数据集: ' + datasetId);
+    const dataset = list.find(function (ds) {
+        return getDatasetSlug(ds) === datasetSlug;
+    });
+    if (!dataset) throw new Error('未找到数据集: ' + datasetSlug);
     return dataset;
 }
 
-async function loadMarkdownFile(datasetId) {
+async function loadMarkdownFile(datasetSlug) {
     try {
-        const res = await fetch(DATASETS_BASE_PATH + datasetId + '.md');
+        const res = await fetch(DATASETS_BASE_PATH + datasetSlug + '.md');
         if (res.status === 404) return null;
         if (!res.ok) throw new Error('无法加载 Markdown');
         return await res.text();
@@ -27,11 +34,11 @@ async function loadMarkdownFile(datasetId) {
     }
 }
 
-function processMarkdownImages(markdown, datasetId) {
+function processMarkdownImages(markdown, datasetSlug) {
     const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
     return markdown.replace(imageRegex, function (match, alt, src) {
         if (/^https?:\/\//.test(src) || /^\/\//.test(src) || src.startsWith('/')) return match;
-        return '![' + alt + '](' + DATASETS_BASE_PATH + datasetId + '/img/' + src + ')';
+        return '![' + alt + '](' + DATASETS_BASE_PATH + datasetSlug + '/img/' + src + ')';
     });
 }
 
@@ -63,13 +70,13 @@ function renderBasicInfo(dataset) {
     }
 }
 
-function renderMarkdown(markdownText, datasetId) {
+function renderMarkdown(markdownText, datasetSlug) {
     const markdownDiv = document.getElementById('markdown-content');
     if (!markdownText || !markdownText.trim()) {
         markdownDiv.innerHTML = '<p class="no-content">暂无详细信息</p>';
         return;
     }
-    const processed = processMarkdownImages(markdownText, datasetId);
+    const processed = processMarkdownImages(markdownText, datasetSlug);
     if (typeof marked !== 'undefined') {
         marked.setOptions({ breaks: true, gfm: true, sanitize: false });
         markdownDiv.innerHTML = marked.parse(processed);
@@ -84,12 +91,12 @@ async function loadAndRenderDatasetDetail() {
     const loading = document.getElementById('loading');
     const error = document.getElementById('error');
     const content = document.getElementById('detail-content');
-    const datasetId = getDatasetIdFromURL();
+    const datasetSlug = getDatasetSlugFromURL();
 
-    if (!datasetId) {
+    if (!datasetSlug) {
         loading.style.display = 'none';
         error.style.display = 'block';
-        error.querySelector('.error-text').textContent = '未指定数据集 ID';
+        error.querySelector('.error-text').textContent = '未指定数据集名称';
         return;
     }
 
@@ -98,8 +105,8 @@ async function loadAndRenderDatasetDetail() {
             throw new Error('请使用本地服务器或 GitHub Pages 访问');
         }
 
-        const basicInfo = await loadDatasetBasicInfo(datasetId);
-        const markdownText = await loadMarkdownFile(datasetId);
+        const basicInfo = await loadDatasetBasicInfo(datasetSlug);
+        const markdownText = await loadMarkdownFile(datasetSlug);
 
         document.getElementById('dataset-name').textContent = basicInfo.name;
         document.getElementById('dataset-year').textContent = basicInfo.year ? '(' + basicInfo.year + ')' : '';
@@ -116,7 +123,7 @@ async function loadAndRenderDatasetDetail() {
         metaHeader.innerHTML = metaTags.join('');
 
         renderBasicInfo(basicInfo);
-        renderMarkdown(markdownText, datasetId);
+        renderMarkdown(markdownText, datasetSlug);
 
         document.title = basicInfo.name + ' - 数据集详情 | Pathology Datasets';
 
