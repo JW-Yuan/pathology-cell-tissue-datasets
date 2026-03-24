@@ -2,7 +2,15 @@
 
 ## 数据集描述
 
-Lizard 是一个大规模的组织病理学数据集，包含来自多个数据集的结肠组织病理学图像和细胞核标注。该数据集整合了 GlaS、CRAG、CoNSeP、DigestPath、PanNuke 以及 TCGA 等多个数据集的图像，提供了丰富的细胞核实例分割标注。
+Lizard 是一个面向**结肠**组织病理学的大规模数据集，提供**细胞核实例分割**与 **6 类细胞核分类**标注。
+
+### 数据来源（论文/官方说明）
+
+图像与标注来自**公开文献与资源**的汇总与再标注（论文中常列出的出处包括 **TCGA**、**PanNuke**、**GlaS**、**DigestPath**、**CoNSeP** 等；部分条目仅采用原图并重标或调整任务定义）。不同子集对应的 **20× / 40×**、是否沿用既有标注、以及病例与 patch 的对应关系，**以论文表格与 Warwick 发布页为准**。
+
+### 第三方 `.npy` 与官方数据
+
+网络上由**其它仓库预处理**得到的 `.npy` 多为**非官方**产物，**不等同**于 Warwick 发布的原始包。若需与论文或评测一致，请从 **Warwick 官方/Kaggle 镜像**重新下载，并以 **PNG 图像 + `.mat` 标注** 为准自行解析或转换；**不要**直接假定第三方 `.npy` 与官方 `inst_map` / `class` 一致。
 
 ## 数据集基本信息
 
@@ -11,10 +19,7 @@ Lizard 是一个大规模的组织病理学数据集，包含来自多个数据�
 - **数据集大小**：431,913 个细胞核实例，来自 238 个 .mat 文件
 - **图像分辨率**：500-1000 不等（patch 大小）
 - **放大倍数**：20x
-- **数据来源**：GlaS、CRAG、CoNSeP、DigestPath、PanNuke 以及 TCGA
-  - GlaS、CRAG 和 DigestPath：20x
-  - CoNSeP 和 PanNuke：仅使用图片，未使用标签
-  - TCGA：仅使用图片（Colon）
+- **数据来源**：见上文「数据来源」；**TCGA / PanNuke / GlaS / DigestPath / CoNSeP** 等原始资源各自有许可与引用要求，二次发布与组合方式**以 Lizard 论文与 Warwick 为准**。
 
 ## 文件结构
 
@@ -32,15 +37,15 @@ lizard/
 │ ├── Labels（子文件夹）
 │ │ └── 【若干.mat标注文件】（如xxx.mat、yyy.mat等）
 │ │ ▶ 核心：每个.mat文件名与Lizard_Images1/Lizard_Images1、Lizard_Images2/Lizard_Images2中的.png文件名**完全一致**
-│ │ └── 每个.mat文件的key结构：
-│ │ - **header**: bytes类型，值为b'MATLAB 5.0 MAT-file Platform: posix, Created on: Fri Jul 16 14:54:29 2021'
-│ │ - **version**: str类型，值为1.0
-│ │ - **globals**: list类型，值为[]
-│ │ - inst_map: numpy.ndarray类型，形状为(图像高, 图像宽)，每个像素值对应实例ID（0不视为有效实例ID）
-│ │ - id: numpy.ndarray类型，形状为(实例数量, 1)，每个元素为实例ID（从1开始递增）
-│ │ - class: numpy.ndarray类型，形状为(实例数量, 1)，每个元素为对应实例ID的类别ID
-│ │ - bbox: numpy.ndarray类型，形状为(实例数量, 4)，每个元素为对应实例ID的边界框（左上右下绝对值坐标）
-│ │ - centroid: numpy.ndarray类型，形状为(实例数量, 2)，每个元素为对应实例ID的中心坐标（xy绝对值坐标）
+│ │ └── 每个.mat文件的 key 结构（与 `scipy.io.loadmat` 读入后一致）：
+│ │ - **header**：`bytes`（MAT 文件头）
+│ │ - **version**：`str`（如 `1.0`）
+│ │ - **globals**：`list`（常为 `[]`）
+│ │ - **inst_map**：`numpy.ndarray`，`(H, W)`，像素值为**实例 ID**；**0 表示背景**（无效实例）
+│ │ - **id**：`numpy.ndarray`，`(N, 1)` 或扁平为 N 个实例；**第 i 个实例**的实例 ID（与 `inst_map` 中非零值对应，**通常从 1 起**，与数组下标 0…N-1 不同）
+│ │ - **class**：`numpy.ndarray`，`(N, 1)`，与 `id` **按行对齐**，每个实例一个 **1–6** 的类别编号（Python 中键名为 `'class'`）
+│ │ - **bbox**：`numpy.ndarray`，`(N, 4)`，边界框（常见为左上–右下等绝对坐标，具体顺序以官方脚本为准）
+│ │ - **centroid**：`numpy.ndarray`，`(N, 2)`，实例中心 **(x, y)** 绝对坐标
 │ ├── info.csv（文件）
 │ └── read_label.py（文件）
 │ └── README.md（文件）
@@ -57,11 +62,11 @@ lizard/
   - 每个像素值对应实例ID（0 不视为有效实例ID）
   - 相同ID的像素属于同一个细胞核实例
 
-- **id**：numpy.ndarray，形状为 `(实例数量, 1)`
-  - 每个元素为实例ID（从1开始递增）
+- **id**：numpy.ndarray，形状为 `(实例数量, 1)`（或 `N`）
+  - 与 `inst_map` 中**非零像素值**一致的实例编号；**数组下标**为 0…N-1，对应第 1…N 个实例。
 
 - **class**：numpy.ndarray，形状为 `(实例数量, 1)`
-  - 每个元素为对应实例ID的类别ID（1-6）
+  - 与 `id` **逐行对应**；每个元素为 **1–6** 的类别编号（Python 读取键为 `'class'`；注意 MATLAB 关键字在部分工具中的转义）。
 
 - **bbox**：numpy.ndarray，形状为 `(实例数量, 4)`
   - 每个元素为对应实例ID的边界框（左上右下绝对值坐标）
@@ -69,20 +74,34 @@ lizard/
 - **centroid**：numpy.ndarray，形状为 `(实例数量, 2)`
   - 每个元素为对应实例ID的中心坐标（xy绝对值坐标）
 
-### 类别ID映射
+### 类别 ID 与生物学含义（`class` ∈ {1,…,6}）
 
-mat文件中的 `class` 字段只会是 1-6 这六个整数，对应关系如下：
+`class` 仅取 **1–6**，表示六个**细胞核类别**（以下为常见英文与中文对照，便于检索）：
+
+| 语义（非 ID 顺序） | 英文 | 中文 |
+|-------------------|------|------|
+| 上皮 | Epithelial | 上皮细胞 / 上皮来源 |
+| 淋巴细胞 | Lymphocyte | 淋巴细胞 |
+| 浆细胞 | Plasma | 浆细胞（非「血浆」） |
+| 中性粒 | Neutrophil | 中性粒细胞 |
+| 嗜酸性粒 | Eosinophil | 嗜酸性粒细胞 |
+| 结缔组织 | Connective | 结缔组织相关细胞 |
+
+**与 mat 中整数 `class` 的对应关系**：官方 README / 论文补充材料中应对 **1→…、2→…** 有明确说明；若仅看到「六个类别」而未写清编号，**不可**自行按上表顺序假定 1=Epithelial。下面给出 **社区实现与 HoVer-Net 等管线中常见**的映射，**使用前请用官方发布的 `read_label.py` 或论文 Table 复核**：
 
 ```python
+# 常见约定（务必与官方脚本核对）
 cls_id_to_name = {
-    1: "neutrophil",      # 嗜中性粒细胞
-    2: "epithelial",      # 上皮细胞
+    1: "neutrophil",      # 中性粒细胞
+    2: "epithelial",      # 上皮
     3: "lymphocyte",      # 淋巴细胞
     4: "plasma",          # 浆细胞
     5: "eosinophil",      # 嗜酸性粒细胞
-    6: "connective"       # 结缔组织细胞
+    6: "connective"       # 结缔组织
 }
 ```
+
+若论文与代码不一致，**以数据集作者提供的代码为准**。
 
 ## 标注情况
 
@@ -200,7 +219,8 @@ cls_id_to_name = {
 
 ## 注意事项
 
-1. **数据使用许可**：请遵守数据集的使用许可协议
-2. **数据格式**：标注文件使用 MATLAB .mat 格式，需要使用 scipy.io 或 h5py 加载
-3. **类别不平衡**：不同类别细胞核数量差异较大，建议使用适当的采样策略或损失函数
-4. **数据来源**：数据集整合了多个数据集的图像，使用时请注意各原始数据集的许可协议
+1. **数据使用许可**：请遵守数据集的使用许可协议。
+2. **数据格式**：标注为 MATLAB **`.mat`**；使用 `scipy.io.loadmat` 等加载；**勿**将第三方 `.npy` 当作官方发布。
+3. **类别不平衡**：不同类别细胞核数量差异较大，建议使用适当的采样策略或损失函数。
+4. **数据来源与许可**：见上文「数据来源」；**TCGA、PanNuke、GlaS** 等各原始提供方均有独立使用条款，请一并遵守。
+5. **类别编号**：`class` 为 1–6 时，**具体数字对应哪一类**须以官方 README / `read_label.py` / 论文为准；与其它项目的标签混用前须**单独建立映射**，勿假设通道或 ID 通用。

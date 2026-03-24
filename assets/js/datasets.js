@@ -1,10 +1,12 @@
-// 数据集列表页 - 根据当前页面路径动态计算 JSON 地址，兼容 Live Server 任意根目录
+// 数据集列表页 - 相对当前页面 URL 解析 datasets 路径（比手写 pathname 更稳，兼容 Live Server 任意子目录）
 (function () {
-    var path = window.location.pathname || '';
-    var base = path.replace(/\/[^/]*$/, '/');
-    if (!base.endsWith('/')) base += '/';
-    window.DATASETS_BASE_PATH = base + 'datasets/';
-    window.DATASETS_INDEX_PATH = window.DATASETS_BASE_PATH + '_datasets.json';
+    try {
+        window.DATASETS_BASE_PATH = new URL('datasets/', window.location.href).href;
+        window.DATASETS_INDEX_PATH = new URL('datasets/_datasets.json', window.location.href).href;
+    } catch (e) {
+        window.DATASETS_BASE_PATH = 'datasets/';
+        window.DATASETS_INDEX_PATH = 'datasets/_datasets.json';
+    }
 })();
 
 let allDatasets = [];
@@ -117,7 +119,7 @@ function fetchWithTimeout(url, timeoutMs) {
     var timeoutId = setTimeout(function () {
         controller.abort();
     }, timeoutMs);
-    return fetch(url, { signal: controller.signal }).then(
+    return fetch(url, { signal: controller.signal, cache: 'no-store' }).then(
         function (r) {
             clearTimeout(timeoutId);
             return r;
@@ -125,7 +127,12 @@ function fetchWithTimeout(url, timeoutMs) {
         function (err) {
             clearTimeout(timeoutId);
             if (err.name === 'AbortError') {
-                throw new Error('加载超时（' + (timeoutMs / 1000) + ' 秒）。请确认用 Live Server 打开的是本仓库内的 index.html，且 datasets/_datasets.json 存在。');
+                throw new Error(
+                    '加载超时（' +
+                        (timeoutMs / 1000) +
+                        ' 秒）。请确认：① Live Server 的「根目录」是包含 datasets 文件夹的仓库根目录；② 用 http://127.0.0.1:端口/ 访问（若 localhost 异常可改用 127.0.0.1）；③ 在开发者工具 Network 中查看该请求是否一直 Pending。当前请求地址：' +
+                        url
+                );
             }
             throw err;
         }

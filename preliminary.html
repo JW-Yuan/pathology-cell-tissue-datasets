@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前置知识 | Pathology Cell & Tissue Datasets</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/preliminary.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Pathology Datasets</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">数据集</a></li>
+                <li><a href="preliminary.html" class="nav-link active">前置知识</a></li>
+                <li><a href="https://github.com/JW-Yuan/pathology-cell-tissue-datasets" target="_blank" class="nav-link">GitHub</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section preliminary-section">
+        <div class="container">
+            <div class="preliminary-back">
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> 返回数据集列表
+                </a>
+            </div>
+            <h1 class="preliminary-page-title">
+                <i class="fas fa-book-open"></i>
+                前置知识
+            </h1>
+
+            <div id="preliminary-loading" class="loading">
+                <i class="fas fa-spinner"></i>
+                <p class="loading-text">正在加载前置知识...</p>
+            </div>
+            <div id="preliminary-error" class="error-message" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p class="error-text"></p>
+            </div>
+
+            <div id="preliminary-main" class="preliminary-layout" style="display: none;">
+                <aside class="preliminary-toc-wrap" id="preliminary-toc"></aside>
+                <article class="preliminary-main">
+                    <div class="preliminary-md markdown-content" id="preliminary-md"></div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> Pathology Cell & Tissue Datasets</p>
+            <p>数据与 <a href="https://github.com/JW-Yuan/JW-Yuan.github.io" target="_blank">JW-Yuan.github.io</a> 数据集栏目同步</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/preliminary.js"></script>
+    <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
