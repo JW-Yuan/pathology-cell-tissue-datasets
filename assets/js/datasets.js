@@ -145,23 +145,53 @@ function getDatasetSlug(dataset) {
 }
 
 async function loadDatasetsList() {
-    var url = window.DATASETS_INDEX_PATH || 'datasets/_datasets.json';
-    var response = await fetchWithTimeout(url);
-    if (!response.ok) {
-        throw new Error('无法加载数据: ' + response.status + ' ' + response.statusText + '，请求地址: ' + url);
-    }
-    const list = await response.json();
-    if (!Array.isArray(list)) {
-        throw new Error('_datasets.json 格式错误：应为数组');
-    }
-    return list.map(dataset => {
-        dataset.tasks = parseTasks(dataset.task);
-        if (Array.isArray(dataset.task)) {
-            dataset.task = dataset.task.join(' + ');
-        }
-        dataset.slug = getDatasetSlug(dataset);
-        return dataset;
+    var candidates = [];
+    var primary = window.DATASETS_INDEX_PATH || 'datasets/_datasets.json';
+    candidates.push(primary);
+    try {
+        candidates.push(new URL('datasets/_datasets.json', window.location.origin + '/').href);
+    } catch (e) {}
+    candidates.push('datasets/_datasets.json');
+
+    // 去重，避免同一 URL 重复请求。
+    var seen = {};
+    candidates = candidates.filter(function (u) {
+        if (!u || seen[u]) return false;
+        seen[u] = true;
+        return true;
     });
+
+    var lastError = null;
+    for (var i = 0; i < candidates.length; i++) {
+        var url = candidates[i];
+        try {
+            var response = await fetchWithTimeout(url, i === 0 ? 15000 : 6000);
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status + ' ' + response.statusText);
+            }
+            const list = await response.json();
+            if (!Array.isArray(list)) {
+                throw new Error('_datasets.json 格式错误：应为数组');
+            }
+            return list.map(dataset => {
+                dataset.tasks = parseTasks(dataset.task);
+                if (Array.isArray(dataset.task)) {
+                    dataset.task = dataset.task.join(' + ');
+                }
+                dataset.slug = getDatasetSlug(dataset);
+                return dataset;
+            });
+        } catch (err) {
+            lastError = err;
+        }
+    }
+
+    throw new Error(
+        '无法加载 _datasets.json。已尝试地址：' +
+            candidates.join(' , ') +
+            '。最后一次错误：' +
+            (lastError && lastError.message ? lastError.message : String(lastError))
+    );
 }
 
 async function loadAllDatasets() {

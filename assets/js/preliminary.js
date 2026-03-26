@@ -235,6 +235,43 @@
         }
     }
 
+    function loadScript(url) {
+        return new Promise(function (resolve, reject) {
+            var s = document.createElement('script');
+            s.src = url;
+            s.async = true;
+            s.onload = function () {
+                resolve();
+            };
+            s.onerror = function () {
+                reject(new Error('脚本加载失败: ' + url));
+            };
+            document.head.appendChild(s);
+        });
+    }
+
+    async function ensureMarkedLoaded() {
+        if (typeof marked !== 'undefined') return;
+
+        // 先走 CDN，不可达时回退到仓库本地固定版本。
+        var candidates = [
+            'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
+            'assets/vendor/marked.min.js'
+        ];
+
+        var lastErr = null;
+        for (var i = 0; i < candidates.length; i++) {
+            try {
+                await loadScript(candidates[i]);
+                if (typeof marked !== 'undefined') return;
+            } catch (e) {
+                lastErr = e;
+            }
+        }
+
+        throw lastErr || new Error('未加载 marked 库');
+    }
+
     async function load() {
         var loading = document.getElementById('preliminary-loading');
         var errEl = document.getElementById('preliminary-error');
@@ -246,9 +283,7 @@
             if (!res.ok) throw new Error('无法加载 ' + CONFIG.MARKDOWN_PATH + '（HTTP ' + res.status + '）');
             var md = await res.text();
 
-            if (typeof marked === 'undefined') {
-                throw new Error('未加载 marked 库');
-            }
+            await ensureMarkedLoaded();
 
             marked.setOptions({ breaks: true, gfm: true });
 
