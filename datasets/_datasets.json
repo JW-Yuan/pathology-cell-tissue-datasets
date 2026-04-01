@@ -56,6 +56,25 @@
     "description": "Breast cancer dataset with multiple staining types for registration tasks."
   },
   {
+    "name": "ANORAK",
+    "year": 2023,
+    "organs": "Lung",
+    "staining": "H&E",
+    "size": "92 images (W 477–2000 px, H 536–2000 px, 62 distinct sizes); 92 cell JSON; 130,150 nuclei (7 classes: tumor 39.53%, lymphocyte 21.48%, stroma 18.86%, RBC 15.24%, macrophage 2.87%, karyorrhexis 1.98%, epithelial 0.04%)",
+    "data": "images from literature/public sources (jpg/png) + self-annotated cell_anno (LabelMe JSON: polygon + label per instance)",
+    "task": [
+      "seg",
+      "classi"
+    ],
+    "type": "variable-size RGB tiles",
+    "other": "20x; 92 images; cite image sources; self-annotated cell_anno; layout: image/ + cell_anno/",
+    "links": {
+      "paper": "https://www.nature.com/articles/s43018-023-00694-w",
+      "data": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10899116/"
+    },
+    "description": "H&E tiles (image provenance per source paper); self-annotated cell polygons (7 classes). Not the same as Nature Cancer release annotations. See ANORAK.md for JSON schema."
+  },
+  {
     "name": "Adipocyte",
     "year": 2017,
     "organs": "skin",
