@@ -1,5 +1,15 @@
 # SegPath 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://dakomura.github.io/SegPath/)
+- **任务**：seg
+- **器官/染色**：multiple / H&E
+- **规模**：158,687 patches
+- **经核实的范围**：SegPath: H&E semantic segmentation labels for eight cell/tissue targets derived via IF restaining; Zenodo 7412580 is RBC subset only.
+- **重要提醒**：原作者官网；8类细胞分割，按标记物单独下载
+
+
 ## 数据集描述
 
 SegPath 是一个大规模多器官组织病理学**语义分割**数据集，包含 158,687 张 patch，标注来源于 IHC 对应的 H&E 切片的自动/半自动标注方法。论文发表于 Cell Patterns（2023）。
@@ -137,19 +147,22 @@ def evaluate_segmentation(pred, gt, num_classes, ignore_index=255):
 
 - [官方项目页](https://dakomura.github.io/SegPath/)
 - [论文（Cell Patterns 2023）](https://www.cell.com/patterns/fulltext/S2666-3899(23))
-- [Zenodo 数据下载](https://zenodo.org/records/7412580)
+- [Zenodo 数据下载](https://dakomura.github.io/SegPath/)
 
 ## 引用
 
 如果您使用了此数据集，请引用：
 
 ```bibtex
-@article{segpath2023,
-  title={SegPath: Enriching whole slide image segmentation with detailed clinical annotations},
+@article{komura2023restaining,
+  title={Restaining-based annotation for cancer histology segmentation to overcome annotation-related limitations among pathologists},
   author={Komura, Daisuke and others},
   journal={Patterns},
+  volume={4},
+  number={2},
+  pages={100688},
   year={2023},
-  publisher={Cell Press}
+  doi={10.1016/j.patter.2023.100688}
 }
 ```
 
