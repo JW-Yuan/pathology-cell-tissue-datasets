@@ -1,5 +1,15 @@
 # CPM-17 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [第一方/当前候选来源](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
+- **任务**：seg
+- **组织/染色**：Multiple (four cancer tissue types) / H&E
+- **规模**：Train: 32, test: 32 (7570 nuclei)
+- **标注用途**：CPM 2017 histology nuclei instance segmentation benchmark (32 training and 32 test images); challenge year differs from later paper year.
+- **来源注意**：现有公开下载文件夹；未核实是否挑战主办方维护
+
+
 ## 数据集描述
 
 CPM-17（Cell Position Map Dataset with 17）是一个用于**细胞核实例分割与分类**的基准数据集，包含 64 张来自多种器官（以脑组织为主）的组织病理学图像，共 7,570 个细胞核实例。论文发表于 2019 年（PMC6454006）。
