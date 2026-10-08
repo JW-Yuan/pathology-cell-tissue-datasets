@@ -1,5 +1,15 @@
 # CRCHisto 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://warwick.ac.uk/fac/cross_fac/tia/data/crchistolabelednucleihe/)
+- **任务**：detection、classi
+- **组织/染色**：Colon / H&E
+- **规模**：100 images, 29.756 nuclei (10 wsi, 9 patients)
+- **正确的标注范围**：Colon histology nuclei detection and classification from point/center annotations.
+- **来源说明**：Warwick作者数据页；核中心点标注
+
+
 ## 数据集描述
 
 CRCHisto（Colorectal Cancer Histology Dataset，也称 CRC Labeled Nuclei）是一个用于**结肠癌组织病理图像中细胞核实例分割与分类**的数据集，由英国华威大学（UHCW）发布（2016）。
