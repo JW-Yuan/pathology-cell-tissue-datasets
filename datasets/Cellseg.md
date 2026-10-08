@@ -1,5 +1,15 @@
 # Cellseg 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://neurips22-cellseg.grand-challenge.org/)
+- **任务**：seg
+- **组织/染色**：multiple / multiple 模态也不同
+- **规模**：1,000 annotated microscopy images + 1,725 unlabelled images (challenge/publication release; verify subset split)
+- **准确的标注范围**：NeurIPS 2022 cell instance segmentation in multi-modality microscopy images, not exclusively histopathology WSIs.
+- **补充提醒**：NeurIPS 2022 多模态细胞实例分割官方赛页
+
+
 ## 数据集描述
 
 Cellseg（NeurIPS 2022 Cell Segmentation Challenge）是 NeurIPS 2022 举办的细胞分割挑战赛数据集，正式名称为"**多模态高分辨率显微图像中的弱监督细胞分割**"（Weakly Supervised Cell Segmentation in Multi-modality High-Resolution Microscopy Images）。数据集覆盖多种成像模态和细胞类型，旨在推动通用细胞分割算法的发展。
