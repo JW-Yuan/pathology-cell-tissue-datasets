@@ -1,5 +1,15 @@
 # SegLungTCGA 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://github.com/animgoeth/SegLungTCGA)
+- **任务**：seg
+- **器官/染色**：Lung / H&E
+- **规模**：454 images + file mapping info
+- **经核实的范围**：TCGA lung adenocarcinoma histology segmented into 87x87 μm tissue patches; GitHub provides former/current TCGA file ID mapping.
+- **重要提醒**：原作者数据；87×87单位为μm
+
+
 ## 数据集描述
 
 SegLungTCGA 是一个来自 TCGA 的**肺癌 WSI 分割**数据集，提供从 WSI 中分割出的肺组织图像块及文件映射信息，用于肺癌组织学分析和分割研究。
@@ -13,7 +23,7 @@ SegLungTCGA 是一个来自 TCGA 的**肺癌 WSI 分割**数据集，提供从 W
 - **器官类型**：肺（Lung）— 肺癌（LUAD/LUSC）
 - **染色方式**：H&E（苏木精-伊红）
 - **数据集大小**：454 张图像 + 文件映射信息（mapping info）
-- **图像类型**：从 WSI 中分割出的 87×87 像素 patch 集合
+- **图像类型**：从 WSI 中分割出的 87×87 μm（物理视野） patch 集合
 - **数据来源**：TCGA（LUAD + LUSC）
 - **任务类型**：分割（Lung Tissue Segmentation）
 
@@ -22,7 +32,7 @@ SegLungTCGA 是一个来自 TCGA 的**肺癌 WSI 分割**数据集，提供从 W
 | 统计项 | 数量 |
 |--------|------|
 | 图像/样本总数 | 454 |
-| 图像类型 | 87×87 px patches |
+| 图像类型 | 87×87 μm（物理视野） patches |
 | 肺癌亚型 | LUAD + LUSC |
 | 文件映射 | 提供 TCGA 文件 ID 映射 |
 
@@ -33,7 +43,7 @@ SegLungTCGA 是一个来自 TCGA 的**肺癌 WSI 分割**数据集，提供从 W
 - 附带文件映射信息，可溯源至具体 TCGA 患者和 WSI
 
 ### 小 Patch 格式
-- 87×87 px 的小尺寸 patch，计算需求低
+- 87×87 μm（物理视野） 的小尺寸 patch，计算需求低
 - 适合快速原型验证和小样本研究
 
 ### 肺癌两大亚型
@@ -139,6 +149,6 @@ def evaluate_lung_classification(y_true, y_pred, y_scores):
 ## 注意事项
 
 1. **TCGA 使用协议**：数据来源于 TCGA，使用时遵守 TCGA 数据使用协议（dbGaP）。
-2. **小尺寸限制**：87×87 px 的 patch 尺寸非常小，直接用于大多数模型时需进行 resize 处理。
+2. **小尺寸限制**：87×87 μm（物理视野） 的 patch 尺寸非常小，直接用于大多数模型时需进行 resize 处理。
 3. **文件映射**：提供的文件映射信息可帮助将 patch 关联回原始 TCGA WSI，便于获取更多患者信息。
 4. **数据规模**：454 张图像规模较小，适合快速验证或迁移学习的目标域。
