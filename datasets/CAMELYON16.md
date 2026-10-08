@@ -1,5 +1,15 @@
 # CAMELYON16 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://camelyon16.grand-challenge.org/Data/)
+- **任务**：classi、seg
+- **组织/染色**：Lymph node / H&E
+- **规模**：Train: 270 (160 Normal, 110 with metastases); Test: 130
+- **准确的标注范围**：400 lymph-node WSIs for breast-cancer metastasis detection/slide classification; lesion annotations available on positive slides.
+- **补充提醒**：CAMELYON16官方数据页
+
+
 ## 数据集描述
 
 CAMELYON16（Cancer Metastases in Lymph Nodes Challenge 2016）是首届大规模淋巴结乳腺癌转移检测挑战赛数据集，旨在评估数字病理切片中乳腺癌淋巴结转移自动检测算法的性能。由荷兰 Radboud 大学医学中心（RUMC）和乌得勒支大学医学中心（UMCU）联合提供数据。
