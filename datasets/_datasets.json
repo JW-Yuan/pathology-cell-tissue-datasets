@@ -4,7 +4,7 @@
     "year": 2025,
     "organs": "Melanoma",
     "staining": "H&E",
-    "size": "206 ROIs (primary: 103, metastatic: 103), 97,429 nuclei (10 classes: tumor 58.93%, lymphocyte 22.21%, histiocyte 7.36%, stroma 3.96%, epithelium 2.27%, apoptotic 1.90%, vascular endothelium 1.75%, melanophage 0.71%, plasma cell 0.53%, neutrophil 0.38%)",
+    "size": "Zenodo training v5: 206 ROIs (primary: 103, metastatic: 103), 97,429 nuclei (10 classes: tumor 58.93%, lymphocyte 22.21%, histiocyte 7.36%, stroma 3.96%, epithelium 2.27%, apoptotic 1.90%, vascular endothelium 1.75%, melanophage 0.71%, plasma cell 0.53%, neutrophil 0.38%)",
     "data": "images + nuclei and tissue annotations + context image",
     "task": [
       "seg"
@@ -18,7 +18,7 @@
       "official": "https://zenodo.org/records/15050523"
     },
     "description": "Melanoma H&E nuclei instance segmentation/classification and tissue segmentation; Zenodo v5 released 2025.",
-    "source_note": "Zenodo官方v5，2025发布；注意年份",
+    "source_note": "Zenodo v5 (2025) training package reports 206 annotated ROIs; the 2025 GigaScience article describes a broader 310-ROI dataset. Do not conflate the full study with this training release.",
     "source_status": "verified",
     "source_checked_on": "2026-10-08"
   },
@@ -402,7 +402,7 @@
   },
   {
     "name": "CPM-17",
-    "year": 2019,
+    "year": 2017,
     "organs": "Multiple (four cancer tissue types)",
     "staining": "H&E",
     "size": "Train: 32, test: 32 (7570 nuclei)",
@@ -418,7 +418,7 @@
       "official": "https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA"
     },
     "description": "CPM 2017 histology nuclei instance segmentation benchmark (32 training and 32 test images); challenge year differs from later paper year.",
-    "source_note": "现有公开下载文件夹；未核实是否挑战主办方维护",
+    "source_note": "CPM 2017 challenge year (not later publication year); current linked Google Drive mirror has not been verified as organizer-owned.",
     "source_status": "unverified",
     "source_checked_on": "2026-10-08"
   },
