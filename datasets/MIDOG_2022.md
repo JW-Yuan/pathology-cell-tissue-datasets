@@ -1,189 +1,118 @@
 # MIDOG 2022 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://midog2022.grand-challenge.org/midog2022/)
-- **任务**：detection
-- **组织/染色**：multiple (6 for train 10 for test) / H&E
-- **规模**：Train: 405 cases, 9501 mitotic annotation
-- **任务和标注**：MItosis DOmain Generalization 2022: mitotic figure object detection; 405 training cases and 9,501 mitotic annotations.
-- **来源说明**：官方MIDOG挑战赛；任务为有丝分裂检测
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-MIDOG 2022（MItosis DOmain Generalization Challenge 2022）是 MICCAI 2022 举办的有丝分裂图（Mitotic Figure）检测挑战赛数据集，专注于**跨肿瘤类型、跨实验室、跨物种**的有丝分裂图检测域泛化（Domain Generalization）问题。
+MIDOG 2022（MItosis DOmain Generalization）侧重跨肿瘤、实验室、物种和扫描仪域的**有丝分裂目标检测**，输入 H&E 数字组织图像，输出有丝分裂位置。
 
-### 核心挑战
+### 相关论文与发布方
 
-深度学习模型在有丝分裂检测任务中面临**域偏移（Domain Shift）**问题：不同肿瘤类型、不同扫描仪、不同组织制备方法会导致图像外观差异，严重影响模型跨域泛化性能。
+- [官方/第一方来源](https://midog2022.grand-challenge.org/midog2022/)
+- 论文与数据下载请参考第一方数据入口
 
-## 数据集基本信息
 
-- **器官类型**：多器官（训练 6 种肿瘤，测试 10 种肿瘤）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：
-  - 训练集：405 例，9,501 个有丝分裂图标注
-  - 测试集：含 10 种肿瘤类型（部分未见于训练集）
-- **图像类型**：Patch 图像
-- **任务类型**：分割/检测（Detection of Mitotic Figures）
+---
 
-## 肿瘤类型覆盖
+## 数据集基本信息（汇总）
 
-### 训练集（6 种）
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2022 |
+| **器官/组织或物种** | multiple (6 for train 10 for test) |
+| **染色及模态** | H&E |
+| **具体任务** | detection |
+| **图像单元与尺寸** | Patch |
+| **标注内容** | H&E image regions + mitotic figure detection annotations (locations; not masks) |
+| **扫描/附加条件** | 以官方扫描信息为准 |
 
-| 肿瘤类型 | 来源物种 | 说明 |
-|---------|---------|------|
-| 乳腺癌（Breast carcinoma） | 人 | 最常见，MIDOG 2021 已包含 |
-| 肺癌（Lung carcinoma） | 人 | 新增 |
-| 淋巴瘤（Lymphoma） | 人 | 新增 |
-| 黑色素瘤（Melanoma） | 人 | 新增 |
-| 犬乳腺肿瘤（Canine mammary tumor） | 犬 | 跨物种 |
-| 犬肺癌（Canine lung carcinoma） | 犬 | 跨物种 |
+---
 
-### 测试集（10 种，包含训练中未见的类型）
+## 核心数据量与图像格式
 
-训练集的 6 种 + 额外 4 种（测试时不公开，用于评估泛化能力）
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | Train: 405 cases, 9501 mitotic annotation |
+| **格式/数据形态** | 组织 H&E TIFF/图像区块 + 标注 mitotic figures/hard negatives 的检测坐标 |
+| **采集与版本** | 官方训练版本约 405 个 ROI/cases、9,501 个 mitotic annotations 和 11,051 个难负例；跨多个肿瘤和物种域。 |
 
-## 数据集规模
+---
 
-| 统计项 | 数量 |
-|--------|------|
-| 训练病例数 | 405 |
-| 训练有丝分裂标注数 | 9,501 |
-| 训练图像类型 | 病理 ROI Patch |
+## 任务与标注
 
-## 标注格式
+有丝分裂与 hard negative 为检测标签（中心点或候选框类表示），不是每个细胞核或组织区域的实例像素掩膜。
 
-### JSON 格式标注
+### 类别与标签语义
 
-```python
-import json
-import numpy as np
-from PIL import Image
+- Mitotic figure（有丝分裂细胞）
+- Hard negative（近似核形但非有丝分裂；通常辅助训练）
 
-# 加载图像
-img = np.array(Image.open('mitosis_sample.png').convert('RGB'))
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-# 加载有丝分裂图标注（通常为 JSON 格式，包含中心点坐标）
-with open('mitosis_sample_annotations.json', 'r') as f:
-    annotations = json.load(f)
+---
 
-# 格式示例：
-# {
-#   "mitotic_figures": [
-#     {"x": 320, "y": 450, "label": "mitosis"},
-#     ...
-#   ],
-#   "hard_negatives": [...]
-# }
+## 数据划分与统计口径
 
-mitotic_centers = [(ann['x'], ann['y']) for ann in annotations['mitotic_figures']]
-```
+405 个图像区域覆盖多种域；其中部分 domain 的公开标注可能隐藏/不同阶段开放，详情以官方 download 页面为准。
 
-### SQLite/QuPath 格式
+---
 
-- MIDOG 系列数据集使用 QuPath 格式进行标注
-- 训练数据通过 Zenodo 提供，含有对应的标注 JSON 文件
+## 文件组成与读取方式
 
-## 数据特点
+- WSI 导出的 TIFF/ROI 图像
+- 有丝分裂与 hard-negative 标注文件
+- 官方入门 notebook 与域信息
 
-### 跨域泛化设计
-- 测试集包含训练集中未见过的肿瘤类型，专门评估模型泛化能力
-- 跨物种（人类 + 犬类）设计进一步增加了域差异
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
 
-### 有丝分裂检测挑战
-- 有丝分裂图（Mitotic Figures）在 H&E 切片中极为稀少，类别极不平衡
-- 与类似染色的"有丝分裂模拟物"（Mitosis-like Structures）区分困难
-
-### 难负样本设计
-- 数据集包含专门标注的**难负样本（Hard Negatives）**，即形态上与有丝分裂图相似的非有丝分裂细胞
-
-## 使用建议
-
-### 数据加载
+### 文件核验示例
 
 ```python
-import json
-import numpy as np
-from PIL import Image
+from pathlib import Path
 
-def load_midog_annotations(ann_path):
-    """加载 MIDOG 标注"""
-    with open(ann_path, 'r') as f:
-        data = json.load(f)
-    
-    mitoses = []
-    for ann in data.get('annotations', []):
-        if ann.get('category_id') == 1:  # 1: 有丝分裂
-            bbox = ann['bbox']  # [x, y, w, h] COCO 格式
-            cx = bbox[0] + bbox[2] / 2
-            cy = bbox[1] + bbox[3] / 2
-            mitoses.append({'center': (cx, cy), 'bbox': bbox})
-    
-    return mitoses
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 读取检测标签的图像坐标，统一不同扫描倍率与比例，在滑窗预测时回映射到原图。
+
+### 建模与数据泄漏风险
+
+- 任务应为 mitosis detection，不能被错误写为核或细胞分割；训练域和隐藏域不能无差别混作有标签数据。
 
 ### 评估指标
 
-```python
-# MIDOG 使用 F1 分数（基于距离阈值）
-def compute_detection_f1(pred_centers, gt_centers, threshold=25):
-    """
-    pred_centers: list of (x, y) 预测有丝分裂中心点
-    gt_centers:   list of (x, y) 真实有丝分裂中心点
-    threshold:    匹配距离阈值（像素）
-    """
-    from scipy.spatial.distance import cdist
-    
-    if not pred_centers or not gt_centers:
-        return 0.0
-    
-    dist_matrix = cdist(pred_centers, gt_centers)
-    matched_gt = set()
-    tp = 0
-    
-    for i, pred in enumerate(pred_centers):
-        nearest = np.argmin(dist_matrix[i])
-        if dist_matrix[i, nearest] <= threshold and nearest not in matched_gt:
-            tp += 1
-            matched_gt.add(nearest)
-    
-    fp = len(pred_centers) - tp
-    fn = len(gt_centers) - tp
-    
-    precision = tp / (tp + fp + 1e-8)
-    recall = tp / (tp + fn + 1e-8)
-    f1 = 2 * precision * recall / (precision + recall + 1e-8)
-    
-    return f1
-```
+Mitosis detection F1、官方距离匹配阈值的 precision/recall 与跨域泛化。
+
+---
 
 ## 相关资源
 
-- [Grand Challenge 官方页](https://midog2022.grand-challenge.org/)
-- [挑战赛主页](https://midog.deepmicroscopy.org/)
-- [Zenodo 训练数据](https://zenodo.org/records/6547151)
-- [论文（MedIA 2024）](https://www.sciencedirect.com/science/article/pii/S136184152400080X)
-- [MIDOG++ 扩展数据集（Nature Scientific Data）](https://www.nature.com/articles/s41597-023-02327-4)
-- [Google Drive 下载](https://drive.google.com/drive/folders/1P73g1xg8jw_JGLJaDFQDnxwQA7ROVykA)
+- [data](https://midog2022.grand-challenge.org/)
+- [download](https://drive.google.com/drive/folders/1P73g1xg8jw_JGLJaDFQDnxwQA7ROVykA)
+- [official](https://midog2022.grand-challenge.org/midog2022/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+须从第一方挑战页检索正式引文；缺少文献元数据时暂不编造。
 
-```bibtex
-@article{midog2022,
-  title={Domain generalization across tumor types, laboratories, and species -- insights from the 2022 edition of the Mitosis Domain Generalization Challenge},
-  author={Aubreville, Marc and others},
-  journal={Medical Image Analysis},
-  year={2024}
-}
-```
+---
 
 ## 注意事项
 
-1. **跨域测试集**：测试集包含训练集中未见过的肿瘤类型，评估模型真实泛化能力。
-2. **极端类别不平衡**：有丝分裂图相对于整张切片极为稀少，负样本远多于正样本。
-3. **难负样本**：需特别处理有丝分裂"模拟物"（如凋亡细胞、核分裂象）的假阳性问题。
-4. **MIDOG++**：2023 年发布了 MIDOG++ 扩展版本，覆盖更多肿瘤类型，适合更全面的研究。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：与早期 MIDOG 2021 和 MIDOG++ 可能存在延续域/病例重合，需核实。
+4. **核查边界**：官方MIDOG挑战赛；任务为有丝分裂检测
