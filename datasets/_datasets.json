@@ -284,7 +284,7 @@
     "year": 2022,
     "organs": "multiple",
     "staining": "multiple 模态也不同",
-    "size": "1,000 annotated microscopy images + 1,725 unlabelled images (challenge/publication release; verify subset split)",
+    "size": "1,000 labeled microscopy images + 1,712 unlabeled images + 13 unlabeled WSI (some accounts combine latter as 1,725)",
     "data": "images + limited labeled patches",
     "task": [
       "seg"
@@ -381,7 +381,7 @@
   },
   {
     "name": "CPM-15",
-    "year": null,
+    "year": 2015,
     "organs": "Multiple (two cancer tissue types)",
     "staining": "H&E",
     "size": "15 (2905 nuclei)",
@@ -395,7 +395,7 @@
       "data": "https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I",
       "official": "https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I"
     },
-    "description": "CPM 2015 histology nuclei instance segmentation benchmark; official source of currently linked Google Drive mirror not yet confirmed.",
+    "description": "MICCAI 2015 CPM nuclei instance segmentation benchmark: 15 H&E tissue images, two cancer types, 2,905 annotated nuclei (file mirror provenance remains unverified).",
     "source_note": "现有公开下载文件夹；未核实是否挑战主办方维护",
     "source_status": "unverified",
     "source_checked_on": "2026-10-08"
@@ -472,7 +472,7 @@
     "year": 2021,
     "organs": "multiple (10: adrenal gland, larynx, lymph nodes, mediastinum, pancreas, pleura, skin, testes, thymus, and thyroid gland)",
     "staining": "H&E",
-    "size": "8000 nuclei from 30 patches (from 30 wsi)",
+    "size": "30 H&E cryosection patches, 512x512 from 10 organs (3 images/organ); ~7,596 nuclei as reported in later comparative study",
     "data": "images + segmentation masks + binary labels",
     "task": [
       "seg"
@@ -897,8 +897,8 @@
     "year": 2023,
     "organs": "Pancreas and Colon",
     "staining": "H&E",
-    "size": "",
-    "data": "images +mask",
+    "size": "103 images (1024x1024): train 53 (50 pancreas, 3 colon), validation 10 pancreas, test 40 (20 pancreas, 20 colon)",
+    "data": "1024x1024 H&E PNG images + training mask annotations and tumor-cellularity scores (0-100, MPP in spreadsheet); no public test GT",
     "task": [
       "reg"
     ],
@@ -944,7 +944,7 @@
     "year": 2021,
     "organs": "prostate",
     "staining": "H&E",
-    "size": "train: 1000 , test: 500 with 18'851 glands",
+    "size": "1,500 patches / 18,851 glands (prior compiled count; exact official train/test counts pending verification)",
     "data": "images+mask",
     "task": [
       "seg"
@@ -1083,13 +1083,13 @@
     "year": 2016,
     "organs": "Breast",
     "staining": "H&E",
-    "size": "73",
+    "size": "73 patients, 656 high-power fields/patch images (2016 mitosis detection auxiliary task)",
     "data": "Breast histology image fields + mitotic figure coordinate annotations (CSV)",
     "task": [
       "detection"
     ],
     "type": "patch",
-    "other": "40x (from TCGA) Leica SCN400",
+    "other": "40x; breast cancer specimens from three Dutch pathology centres; auxiliary dataset distinct from TCGA WSI proliferation scoring",
     "links": {
       "data": "https://tupac.grand-challenge.org/",
       "download": "https://tupac.grand-challenge.org/Dataset/",
