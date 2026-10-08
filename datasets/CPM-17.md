@@ -7,7 +7,7 @@
 - **组织/染色**：Multiple (four cancer tissue types) / H&E
 - **规模**：Train: 32, test: 32 (7570 nuclei)
 - **标注用途**：CPM 2017 histology nuclei instance segmentation benchmark (32 training and 32 test images); challenge year differs from later paper year.
-- **来源注意**：现有公开下载文件夹；未核实是否挑战主办方维护
+- **来源注意**：CPM-17 为 2017 挑战赛；所列 Google Drive 下载文件夹尚未核实为挑战主办方维护。
 
 
 ## 数据集描述
