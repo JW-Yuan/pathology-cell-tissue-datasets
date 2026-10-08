@@ -1,191 +1,97 @@
 # ANORAK 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- **第一方来源**：[官方/作者发布页](https://www.nature.com/articles/s43018-023-00694-w)
-- **主要任务**：seg、classi
-- **数据与标注**：images from literature/public sources (jpg/png) + self-annotated cell_anno (LabelMe JSON: polygon + label per instance)
-- **适用范围**：92 lung H&E image tiles with 130,150 independently self-annotated cell polygons (7 local categories); these annotations are NOT the Nature Cancer ANORAK release.
-- **版本/来源提醒**：官方论文对应原始ANORAK；仓库的细胞JSON是自标注版本，不能混同
-
+> 参考 PanNuke 详情页的章节结构，严格区分官方已发布信息、当前收录的版本与尚不能核实的部分。资料核查：2026-10-08。
 
 ## 数据集描述
 
-本条目中的 **H&E 图像**来自**已发表文献或公开来源**（按各原始论文或数据使用协议引用与使用）；**细胞级标注并非来自上述文献的既有标签**，而是由**本项目自行标注**（多边形轮廓 + 类别名）。因此：**图像出处**与**标注协议**应分开理解——下文「标注文件」仅描述 **LabelMe 风格 JSON** 中的自标注结构。
+本条目描述本地整理的 92 张肺组织 H&E 图像及独立人工多边形细胞注释，和 Nature Cancer 2023 的 ANORAK 肺腺癌组织学分级模型同名，但不是该论文发布的同一标签任务。
 
-本条目的 **92 张图和自标注细胞 JSON 尚未核实可与 ANORAK 原论文的 Zenodo 数据逐一对应**；不应用原论文的许可、标签质量或病例来源直接代替本项目的自标注来源审计。
+### 相关论文与官方来源
 
-命名上 **ANORAK** 与公开文献中**肺腺癌病理 AI 模型**同名；若你对比 *Nature Cancer* 等论文，请注意其**公开数据包、任务定义（如生长模式）**与本目录 **`cell_anno/`** 的**细胞多边形**可能不是同一套资源。
+- [原作者/挑战官方发布页面](https://www.nature.com/articles/s43018-023-00694-w)
+- [原论文或挑战论文](https://www.nature.com/articles/s43018-023-00694-w)
 
-本地副本中，**每张图**对应 **一个** JSON 文件，提供**多边形实例分割**及**细胞语义类别**；图像为 **RGB**。**张数、像素分辨率与放大倍数**见下表（分辨率统计基于 `image/` 目录下全部图像读入结果）。
+## 数据集基本信息（汇总）
 
-### 相关论文（图像来源与模型背景 · 供引用时检索）
+| 项目 | 核实内容 |
+|---|---|
+| **发布/赛事年份** | 2023 |
+| **器官/样本** | Lung |
+| **染色/模态** | H&E |
+| **适用任务** | seg、classi |
+| **图像形态** | variable-size RGB tiles |
+| **原始数据与监督** | images from literature/public sources (jpg/png) + self-annotated cell_anno (LabelMe JSON: polygon + label per instance) |
+| **扫描/其他** | 20x; 92 images; cite image sources; self-annotated cell_anno; layout: image/ + cell_anno/ |
 
-| 论文 | 说明 |
-|------|------|
-| **The artificial intelligence-based model ANORAK improves histopathological grading of lung adenocarcinoma**（**Nature Cancer，2023**） | 介绍 **ANORAK 模型**与肺腺癌分级；**不**等同于本文档所述**自标注细胞 JSON** 的来源。实际用图时请**另行引用你获取切片的原始论文/数据库**。 |
+## 核心数据量与图像格式
 
----
-
-## 数据集基本信息（汇总 · 基于本仓库统计的本地副本）
-
-| 项目 | 说明 |
-|------|------|
-| **任务** | 细胞 **实例分割**（多边形）+ **分类**（多类别细胞） |
-| **染色** | **H&E**（与公开报道一致） |
-| **器官/场景** | **肺**（肺腺癌相关 H&E，以论文队列定义为准） |
-| **图像张数** | **92** 张（与 `cell_anno` 中 JSON **一一对应**） |
-| **图像格式** | **JPG**（32 张）与 **PNG**（60 张） |
-| **空间分辨率（像素）** | **宽**约 **477～2000**、**高**约 **536～2000**（逐张不一）；**共 62 种**不同的 **宽×高** 组合，**非**统一 patch 尺寸 |
-| **放大倍率** | **20×**（物镜/全片数字化设置；若与原始文献扫描参数不一致，**以源数据说明为准**） |
-| **标注格式** | JSON：**根为 dict** → 键 **`shapes`** 为 **list** → 每项为**一个细胞**的 dict；训练/评测只需 **`label`** 与 **`points`**（见下文） |
-| **标注归属** | **自标注**（非源文献自带标签） |
-
----
-
-## 核心数据量与标注概览（本地 `cell_anno/*.json` 汇总）
-
-| 特征 | 细节 |
-|------|------|
-| **JSON 文件数** | **92**（与 `image/` 下图像 **同名 stem** 配对） |
-| **单细胞标注** | 每个 `shapes` 元素为一个 dict，**仅需 `label` + `points`**（绝对像素坐标） |
-| **细胞实例总数（全部 JSON 合计）** | **130,150**（`shapes` 列表长度之和） |
-
----
+| 项目 | 核实内容 |
+|---|---|
+| **数量（注明统计单位）** | 92 images (W 477–2000 px, H 536–2000 px, 62 distinct sizes); 92 cell JSON; 130,150 nuclei (7 classes: tumor 39.53%, lymphocyte 21.48%, stroma 18.86%, RBC 15.24%, macrophage 2.87%, karyorrhexis 1.98%, epithelial 0.04%) |
+| **图像/文件表示** | image/{stem}.jpg 或 .png：宽 477–2000、高 536–2000 的 RGB 图像；cell_anno/{stem}.json：LabelMe 风格 `shapes` 列表，每个对象含 `label` 与像素 `points` |
+| **采集与版本说明** | 本地样本统计：总 130,150 个自标注实例；各类别计数须在获得原始 JSON 后重新核对，不能由论文反推。 |
 
 ## 任务与标注
 
-对**每个细胞实例**提供：
+每一个 `shapes[]` 是一个细胞实例，多边形 vertices 需要自行闭合生成实例 mask；以上 JSON 是本项目自标注，不是 Nature Cancer 论文的原始真值。
 
-- **实例分割**：**多边形顶点**列表 `points`（浮点像素坐标）。  
-- **分类**：`label` 为**英文类别名**（见下表）。
+## 标注类别与语义
 
----
+| 项目 | 核实内容 |
+|---|---|
+| **本地自标注（7 类）** | Tumor Cell、Lymphocyte Cell、Stroma Cell、Red Blood Cell、Macrophage Cell、Karyorrhexis Cell、Epithelial cell |
 
-## 细胞类别（`label` 字段）
+> 类别名称与整数 ID 的映射必须以下载数据中的 label map 或发布方代码为准；未在本页列出的类不能推定存在。
 
-下列名称来自本地 JSON **去重统计**；书写与大小写以标注文件为准（如 `Epithelial cell` 与 `Cell` 后缀混用）。
+## 数据划分与评估协议
 
-| 英文 `label`（本地出现） | 含义概要 |
-|--------------------------|----------|
-| **Tumor Cell** | 肿瘤细胞 |
-| **Lymphocyte Cell** | 淋巴细胞 |
-| **Stroma Cell** | 间质 / 基质相关细胞 |
-| **Macrophage Cell** | 巨噬细胞等 |
-| **Karyorrhexis Cell** | 核碎裂 / 核溶解相关形态 |
-| **Red Blood Cell** | 红细胞 |
-| **Epithelial cell** | 上皮细胞（本地实例数较少） |
+92 张 JPG/PNG（32 JPG、60 PNG）与 92 个 JSON 同 stem 对齐；未获得可核验的官方 train/val/test 划分。
 
----
+## 文件结构与读取方法
 
-## 标注统计（本地副本 · 按 `shapes` 条数）
+- image/{stem}.jpg 或 .png：宽 477–2000、高 536–2000 的 RGB 图像
+- cell_anno/{stem}.json：LabelMe 风格 `shapes` 列表，每个对象含 `label` 与像素 `points`
 
-| 细胞类型 | 数量 | 约占比例 |
-|----------|------|----------|
-| Tumor Cell | 51,454 | 39.53% |
-| Lymphocyte Cell | 27,954 | 21.48% |
-| Stroma Cell | 24,549 | 18.86% |
-| Red Blood Cell | 19,832 | 15.24% |
-| Macrophage Cell | 3,735 | 2.87% |
-| Karyorrhexis Cell | 2,580 | 1.98% |
-| Epithelial cell | 46 | 0.04% |
-| **合计** | **130,150** | 100% |
+这些是有来源依据的**文件组成**，不是未经下载验证的精确文件树。不同 release 和镜像可能调整压缩包名或子目录；先检查实际压缩包/路径：
 
-> **类别不平衡**：上皮等类别极少，训练与评估时需单独设计采样或指标。
-
----
-
-## 文件结构（本地目录）
-
-```text
-ANORAK/
-├── image/                    # 与下方 JSON 同名的图像（扩展名可为 .jpg / .png）
-│   ├── train003_Da449.jpg
-│   ├── train005_Da106.png
-│   └── ...
-└── cell_anno/                # LabelMe 风格 JSON，与图像一一对应（同名不同扩展名）
-    ├── train003_Da449.json
-    ├── train005_Da106.json
-    └── ...
+```python
+from pathlib import Path
+root = Path('DATASET_ROOT')  # 替换为已下载并解压的数据目录
+for p in sorted(root.rglob('*')):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
-
-- **配对规则**：`cell_anno` 中 **`trainXXX_DaYYY.json`** 与 `image` 中 **`trainXXX_DaYYY.jpg`** 或 **`.png`** 共 **同一 basename**；加载时需**同时尝试**两种扩展名或按目录列表解析。
-
----
-
-## `cell_anno` 标注文件：JSON 里真正用到的部分
-
-文件整体是一个 **JSON 对象（dict）**。与**细胞标注**相关的逻辑可以**只按下面三层理解**；其余键（如 `version`、`imagePath`、`imageData`、`imageHeight` 等）**不参与**「类别 + 轮廓」的建模，**可一律忽略**。
-
-1. **根对象**：一个 **dict**。  
-2. **`shapes`**：一个 **list**；**每个元素**对应 **一个细胞** 的标注。  
-3. **每个细胞的 dict**：真正需要的是下面两个键：  
-   - **`label`**（`str`）：该细胞的**语义类别**（见上文类别表）。  
-   - **`points`**（`list`）：**绝对像素坐标**下的顶点序列，形如 `[[x, y], [x, y], …]`。顶点按顺序依次相连；**首点与末点不要求重复**（列表在首尾上**不强行闭合**，需要闭合区域时在代码里自行把末边连回首点，或按你的渲染约定处理）。
-
-除 **`shapes` → 每项的 `label` / `points`** 外，**其它字段均可不读**。
-
-### 最小示例（只保留标注相关；`shapes` 内可放**任意多个**细胞）
-
-```json
-{
-  "shapes": [
-    {
-      "label": "Lymphocyte Cell",
-      "points": [[964.0, 1978.0], [965.0, 1980.0], [969.0, 1980.0]]
-    },
-    {
-      "label": "Tumor Cell",
-      "points": [[880.0, 1962.0], [881.0, 1966.0], [916.0, 1978.0], [911.0, 1978.0]]
-    }
-  ]
-}
-```
-
-实际文件中 **`shapes` 往往含大量元素**（一张图上千个细胞）；上例仅展示 **两个** 以说明列表可扩展。每个细胞的 dict 若还带 `group_id`、`shape_type`、`mask` 等键，**若你只关心分割/分类标签，可忽略**。
-
----
 
 ## 使用建议（简要）
 
-### 加载示例
+### 加载与预处理
 
-```python
-import json
-from pathlib import Path
-
-anno_dir = Path("cell_anno")
-for p in sorted(anno_dir.glob("*.json")):
-    with open(p, encoding="utf-8") as f:
-        data = json.load(f)  # dict
-    for cell in data.get("shapes", []):  # list of per-cell dicts
-        label = cell["label"]
-        points = cell["points"]  # 绝对坐标，[[x,y], ...]
-```
+- 本地样本统计：总 130,150 个自标注实例；各类别计数须在获得原始 JSON 后重新核对，不能由论文反推。
+- 核实样本与标注的一一对应关系，并保留原始标签文件的版本号与来源信息。
+- 如果提供了病例/玻片 ID，优先使用**患者或玻片级**数据划分，避免相邻 patch 泄漏。
 
 ### 建模提示
 
-- **尺寸不一**：需缩放、裁剪或保持原始分辨率的网络设计。  
-- **多边形转掩膜**：可将多边形栅格化为实例 mask 再做分割指标。  
-- **红细胞与碎裂核**：占比与任务定义需与你的目标一致（是否作为前景类）。
+- 图像原始出处、授权、患者级去重、20×倍率与人工标签审核流程尚未有可验证的外部逐图证据；不能对外宣传为 ANORAK 官方公开细胞核分割 benchmark。
 
 ### 评估指标
 
-分割：多边形 IoU、Dice、PQ 等；分类：宏/微平均 F1、混淆矩阵等。
-
----
+若用户自建划分，需患者/图像来源隔离；用核实例 PQ 和各类 F1，并声明标注归属。
 
 ## 相关资源
 
-- **Nature Cancer 论文（ANORAK 模型背景）**：[The artificial intelligence-based model ANORAK improves histopathological grading of lung adenocarcinoma](https://www.nature.com/articles/s43018-023-00694-w)  
-- **PMC 全文**：[PMC10899116](https://pmc.ncbi.nlm.nih.gov/articles/PMC10899116/)  
+- [paper](https://www.nature.com/articles/s43018-023-00694-w)
+- [data](https://pmc.ncbi.nlm.nih.gov/articles/PMC10899116/)
+- [official](https://www.nature.com/articles/s43018-023-00694-w)
+- [original_paper_data](https://zenodo.org/records/10016027)
 
----
+## 引用
+
+正式参考文献请在 [原论文](https://www.nature.com/articles/s43018-023-00694-w) 的出版社页面导出 BibTeX，不手写未经核实的作者/期刊字段。
 
 ## 注意事项
 
-1. **图像 vs 标注**：**图像**请按**原始来源**的许可与论文引用；**细胞 JSON 标注**为**自产数据**，发表或分发时需单独说明标注协议与作者。  
-2. **许可**：除图像原始版权外，自标注部分的共享条件以你的项目约定为准。  
-3. **本地副本**：本文档中的 **92 张图、类别分布** 仅针对当前统计的 `image` + `cell_anno`。  
-4. **其他子文件夹**：若数据中还包含 **`组织标注/`** 等 XML，属**组织级**或其它任务，与 `cell_anno` **分开解析**。  
-5. **标签语义**：`label` 字符串仅适用于本套自标注；跨数据集映射前请逐项核对。
+1. **来源可信度**：官方论文对应原始ANORAK；仓库的细胞JSON是自标注版本，不能混同。
+2. **任务边界**：图像原始出处、授权、患者级去重、20×倍率与人工标签审核流程尚未有可验证的外部逐图证据；不能对外宣传为 ANORAK 官方公开细胞核分割 benchmark。
+3. **数据授权**：使用前查阅官方文件的许可、注册与下载条件；源代码许可证不能替代数据许可证。
+4. **可复现性**：统计以对应发布包、真实文件数、患者去重和官方测试划分为准；本页未对每个下载压缩包逐字节校验。
