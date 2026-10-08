@@ -1,167 +1,124 @@
 # Multi-Scanner SCC 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://zenodo.org/records/7418555)
-- **任务**：registration、seg
-- **组织/染色**：Skin (Canine) / H&E
-- **规模**：44 samples á 5 scanners (220 wsi)
-- **任务和标注**：44 canine cutaneous SCC samples scanned using five devices (220 scans), derived from CATCH SCC subset; cross-scanner segmentation/registration.
-- **来源说明**：原作者Zenodo多扫描仪SCC数据
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-Multi-Scanner SCC（Multi-Scanner Squamous Cell Carcinoma）是一个专用于研究**多扫描仪域偏移（Domain Shift）**的犬类皮肤鳞状细胞癌组织病理学数据集，同一批组织标本通过 5 台不同扫描仪扫描，用于 WSI 配准与分割的跨扫描仪泛化研究。
+Multi-Scanner SCC 是 CATCH 犬皮肤鳞状细胞癌子集的多设备扫描扩展，专门研究切片图像在扫描仪差异下的组织分割/配准稳健性。
 
-### 发布机构
+### 相关论文与发布方
 
-由德国埃尔朗根-纽伦堡大学（FAU Erlangen-Nürnberg）计算机科学系模式识别实验室发布，与 CATCH 数据集出自同一团队，发表于 2023 年。
+- [官方/第一方来源](https://zenodo.org/records/7418555)
+- [原论文](https://link.springer.com/chapter/10.1007/978-3-658-41657-7_46)
 
-## 数据集基本信息
 
-- **器官类型**：皮肤（犬类，Canine Skin）— 鳞状细胞癌（Squamous Cell Carcinoma）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：44 个标本 × 5 台扫描仪 = **220 张 WSI**
-- **扫描仪数量**：5 台不同扫描仪
-- **任务类型**：配准（Registration）+ 分割（Segmentation）
-- **数据获取**：Zenodo 公开下载
+---
 
-## 数据集规模
+## 数据集基本信息（汇总）
 
-| 统计项 | 数量 |
-|--------|------|
-| 组织标本数 | 44 |
-| 每标本扫描仪数 | 5 |
-| WSI 总数 | 220 |
-| 注释类型 | 多边形（JSON）|
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2023 |
+| **器官/组织或物种** | Skin (Canine) |
+| **染色及模态** | H&E |
+| **具体任务** | registration、seg |
+| **图像单元与尺寸** | wsi |
+| **标注内容** | images + contours (JSON) |
+| **扫描/附加条件** | 5 scanners |
 
-## 5 台扫描仪
+---
 
-| 扫描仪 | 厂商/型号（参考） | 主要差异 |
-|--------|----------------|---------|
-| Scanner 1 | — | 颜色、分辨率参考基准 |
-| Scanner 2 | — | 颜色响应差异 |
-| Scanner 3 | — | 对比度差异 |
-| Scanner 4 | — | 分辨率/放大倍数差异 |
-| Scanner 5 | — | 综合差异 |
+## 核心数据量与图像格式
 
-> 具体扫描仪型号及参数以 Zenodo 数据描述为准。
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 44 samples á 5 scanners (220 wsi) |
+| **格式/数据形态** | 44 个真实玻片由五台扫描设备得到 220 张金字塔 TIFF WSI，组织多边形提供 MS COCO JSON 与 SlideRunner SQLite |
+| **采集与版本** | 官方 Zenodo 7418555 写明 1,243 个多边形人工标注在 Aperio ScanScope CS2 上，之后传输给另外四台扫描仪。Zenodo 提供约 4 μm/px 的下采样金字塔 TIFF 版本。 |
 
-## 标注格式
+---
 
-### 多边形标注（JSON 格式）
+## 任务与标注
 
-```python
-import json
-import numpy as np
-from shapely.geometry import Polygon
-from PIL import Image, ImageDraw
+手工分割 tumor 和六类皮肤组织；跨扫描的 mask 是经坐标转换迁移，不是五台设备分别独立人工标注。
 
-# 加载 JSON 标注
-with open('sample_001_annotations.json', 'r') as f:
-    annotations = json.load(f)
+### 类别与标签语义
 
-# 解析多边形
-for ann in annotations:
-    label = ann['label']           # 组织类别（如 tumor, epidermis 等）
-    polygon_pts = ann['polygon']   # [[x1,y1], [x2,y2], ...]
-    
-    poly = Polygon(polygon_pts)
-    area = poly.area
-    print(f"标签: {label}, 面积: {area:.0f} 像素²")
-```
+- Tumor（肿瘤）
+- Epidermis（表皮）
+- Dermis（真皮）
+- Subcutis（皮下）
+- Bone（骨）
+- Cartilage（软骨）
+- Inflammation + necrosis（炎症及坏死）
 
-### 标注类别
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-参照 CATCH 数据集的组织类别体系（包含肿瘤区域和皮肤正常组织类别）。
+---
 
-## 数据集特点
+## 数据划分与统计口径
 
-### 跨扫描仪域偏移研究
-- **核心价值**：同一组织标本由 5 台扫描仪扫描，提供了控制变量的跨扫描仪比较
-- 可用于研究扫描仪域偏移对分割和配准算法的影响
+44 样本×5 scanners，只有 44 个原始标本；训练/测试必须以标本而非扫描图片分组。
 
-### 配准任务
-- 5 台扫描仪扫描同一标本，不同扫描仪的图像间存在轻微形变差异
-- 适合研究 WSI 配准算法
+---
 
-### 犬类皮肤鳞状细胞癌
-- 鳞状细胞癌（SCC）是人类和犬类皮肤中常见的恶性肿瘤之一
-- 与 CATCH 数据集共享相似的组织学背景
+## 文件组成与读取方式
 
-## 使用建议
+- `scc.json`：COCO polygon 标注
+- `scc.sqlite`：SlideRunner 注释格式
+- 多扫描仪金字塔 TIFF 文件（5 台设备）
 
-### 多扫描仪数据对齐
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import openslide
-import numpy as np
-from PIL import Image
+from pathlib import Path
 
-def load_multi_scanner_pair(specimen_id, scanner1_path, scanner2_path, 
-                            patch_size=512, level=1):
-    """
-    加载同一标本不同扫描仪的图像对
-    用于配准研究
-    """
-    wsi1 = openslide.OpenSlide(scanner1_path)
-    wsi2 = openslide.OpenSlide(scanner2_path)
-    
-    # 获取缩略图（用于粗配准估计）
-    thumb1 = wsi1.get_thumbnail((1000, 1000))
-    thumb2 = wsi2.get_thumbnail((1000, 1000))
-    
-    return {
-        'scanner1': {'wsi': wsi1, 'thumbnail': np.array(thumb1)},
-        'scanner2': {'wsi': wsi2, 'thumbnail': np.array(thumb2)},
-        'specimen_id': specimen_id
-    }
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
 
-### 域适应实验设计
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
 
-```python
-# 典型实验设计：
-# - 源域（Source Domain）：Scanner 1 的标注数据
-# - 目标域（Target Domain）：其余 4 台扫描仪的未标注数据
-# - 评估：在目标域上的分割性能
+---
 
-# 颜色归一化预处理（重要！）
-def macenko_normalize(img, reference_img):
-    """Macenko 颜色归一化"""
-    # 参见 staintools 库实现
-    pass
+## 使用建议（简要）
 
-# 或使用 Reinhard 颜色归一化
-def reinhard_normalize(img, target_mean, target_std):
-    """Reinhard 颜色归一化"""
-    pass
-```
+### 加载与预处理
+
+- 统一不同设备像素尺寸和图像仿射/非刚性配准；标注坐标从原始扫描仪转换需核查。
+
+### 建模与数据泄漏风险
+
+- 220 张扫描图 ≠ 220 个独立病例，且所有对象为犬而不是人；也不能与 CATCH SCC 子集当独立数据。
+
+### 评估指标
+
+跨设备 mIoU/Dice、配准 landmark error（若有评估）及 domain shift 鲁棒性。
+
+---
 
 ## 相关资源
 
-- [Zenodo 数据下载](https://zenodo.org/records/7418555)
-- [论文](https://link.springer.com/chapter/10.1007/978-3-658-41657-7_46)
-- [CATCH 相关数据集](https://www.cancerimagingarchive.net/collection/catch/)
+- [data](https://zenodo.org/records/7418555)
+- [paper](https://link.springer.com/chapter/10.1007/978-3-658-41657-7_46)
+- [download](https://zenodo.org/records/7418555)
+- [official](https://zenodo.org/records/7418555)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+请从 [出版社/原论文](https://link.springer.com/chapter/10.1007/978-3-658-41657-7_46) 导出 BibTeX；不编写未经证实的作者或卷号。
 
-```bibtex
-@inproceedings{multi_scanner_scc2023,
-  title={Multi-Scanner Canine Cutaneous Squamous Cell Carcinoma Histopathology Dataset},
-  author={Wilm, Frauke and others},
-  booktitle={Bildverarbeitung für die Medizin 2023},
-  year={2023},
-  publisher={Springer}
-}
-```
+---
 
 ## 注意事项
 
-1. **物种差异**：数据为犬类病理，不直接用于人类诊断，但组织学模式有参考价值。
-2. **扫描仪信息**：使用前查阅 Zenodo 页面的详细扫描仪参数。
-3. **配准难度**：同一标本的不同扫描图像存在非线性形变，简单的刚性配准可能不够。
-4. **与 CATCH 联合使用**：本数据集与 CATCH 同出一处，建议联合研究跨肿瘤类型和跨扫描仪的泛化问题。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：来源明确为 CATCH 的 44 张 SCC 标本。
+4. **核查边界**：原作者Zenodo多扫描仪SCC数据
