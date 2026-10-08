@@ -1,5 +1,15 @@
 # Adipocyte 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://github.com/ieee8023/countception)
+- **研究任务**：cell detection
+- **组织/染色**：Adipose tissue (human subcutaneous) / H&E
+- **规模**：200 patches
+- **标注与使用范围**：Human subcutaneous adipose tissue image patches for adipocyte counting; source project is Count-ception.
+- **原始来源说明**：原作者公开数据与代码
+
+
 ## 数据集描述
 
 Adipocyte 是来自人类皮下脂肪组织的细胞检测数据集，由 GTEx（基因型与组织表达）联盟提供，用于验证 Count-Ception（全卷积计数网络）等细胞计数与检测方法。
@@ -10,7 +20,7 @@ Adipocyte 是来自人类皮下脂肪组织的细胞检测数据集，由 GTEx�
 
 ## 数据集基本信息
 
-- **器官类型**：皮肤（脂肪组织，Skin/Adipose）
+- **器官类型**：人体皮下脂肪组织，Skin/Adipose）
 - **染色方式**：H&E（苏木精-伊红）
 - **数据集大小**：200 个 ROI（感兴趣区域图像块）
 - **图像分辨率**：120×150 像素（patch 大小）
