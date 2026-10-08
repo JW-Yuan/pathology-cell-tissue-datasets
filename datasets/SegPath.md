@@ -1,174 +1,119 @@
 # SegPath 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://dakomura.github.io/SegPath/)
-- **任务**：seg
-- **器官/染色**：multiple / H&E
-- **规模**：158,687 patches
-- **经核实的范围**：SegPath: H&E semantic segmentation labels for eight cell/tissue targets derived via IF restaining; Zenodo 7412580 is RBC subset only.
-- **重要提醒**：原作者官网；8类细胞分割，按标记物单独下载
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-SegPath 是一个大规模多器官组织病理学**语义分割**数据集，包含 158,687 张 patch，标注来源于 IHC 对应的 H&E 切片的自动/半自动标注方法。论文发表于 Cell Patterns（2023）。
+SegPath 使用同一组织切片重新染色（restaining）和免疫荧光来构建 H&E 组织图像的细胞/组织级语义分割标签，突破人工注释困难。
 
-### 标注方法亮点
+### 相关论文与发布方
 
-SegPath 使用了一种创新的**基于 IHC 的半自动标注框架**：利用细胞类型特异性的 IHC 抗体标记生成伪标注（Pseudo-labels），再对应到相邻的 H&E 切片上，实现大规模自动化标注。
+- [官方/第一方来源](https://dakomura.github.io/SegPath/)
+- [原论文](https://doi.org/10.1016/j.patter.2023.100688)
 
-## 数据集基本信息
 
-- **器官类型**：多器官（multiple）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：158,687 张 patch
-- **图像类型**：Patch（标准化尺寸）
-- **放大倍数**：20x
-- **扫描仪**：Zeiss MIRAX MIDI
-- **任务类型**：分割（Semantic/Instance Segmentation）
+---
 
-## 数据集规模
+## 数据集基本信息（汇总）
 
-| 统计项 | 数量 |
-|--------|------|
-| Patch 总数 | 158,687 |
-| 来源器官类型 | 多器官 |
-| 放大倍数 | 20x |
-| 标注类型 | 多类细胞/组织类型 |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2023 |
+| **器官/组织或物种** | multiple |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | patch (984x984) |
+| **标注内容** | 984x984 H&E patches + per-target binary masks obtained using registered restained immunofluorescence |
+| **扫描/附加条件** | 20x - Zeiss MIRAX MIDI |
 
-## 标注来源与方法
+---
 
-### IHC 引导的自动标注
+## 核心数据量与图像格式
 
-```
-H&E 切片 ←→ 连续 IHC 切片（抗原特异性）
-           ↓
-      IHC 颜色分割 → 细胞类型标注
-           ↓
-      形变配准（Registration）到 H&E 切片
-           ↓
-      生成 H&E 对应的伪标注
-```
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 158,687 patches |
+| **格式/数据形态** | 984×984 H&E patches 与多个目标 marker 衍生的二值细胞/组织 masks；不同目标可单独下载 |
+| **采集与版本** | 约 158,687 个组织 patches（具体不同 marker 的子集数量应单独统计）；官方项目页列出八个目标的分布，不应以其中红细胞 Zenodo 包概括全部数据。 |
 
-### 覆盖的细胞类型（通过 IHC 标志物）
+---
 
-| IHC 标志物 | 对应细胞类型 | 说明 |
-|----------|------------|------|
-| CD3 / CD8 | T 淋巴细胞 | 免疫浸润 |
-| CD20 | B 淋巴细胞 | 淋巴滤泡 |
-| CD68 | 巨噬细胞 | 肿瘤微环境 |
-| KI67 | 增殖细胞 | 细胞周期 |
-| CK（广谱） | 上皮/肿瘤细胞 | 上皮来源 |
-| SMA / Vimentin | 间质/肌成纤维细胞 | 结缔组织 |
+## 任务与标注
 
-（具体标志物以官方数据说明为准）
+各目标分割标签来自重新染色后的对应位置映射与 marker 识别，常见为单一目标的二值语义 mask，而不是像 PanNuke 那样所有类别同时具有核实例 ID。
 
-## 数据特点
+### 类别与标签语义
 
-### 大规模自动化标注
-- 超过 15 万张 patch，是多类细胞分割领域规模最大的公开数据集之一
-- 自动标注方法大幅降低了人工成本
+- 八类细胞/组织分割目标：完整组织/marker 名称按原作者 SegPath 官网表
+- 不同 marker 子集的 GT 不是天然同一张 H&E 的八通道联标
 
-### IHC-H&E 配对
-- 利用 IHC 的细胞类型特异性提供高质量标注信息
-- 标注准确性通过病理学家验证
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-### 多器官覆盖
-- 来自多种器官的图像，增加了模型训练的多样性和泛化能力
+---
 
-## 使用建议
+## 数据划分与统计口径
 
-### 数据加载
+每个目标的标注与发布包独立组织，不能把不同 marker 子集的 patch 数机械相加成唯一样本数；划分依作者官方基准。
+
+---
+
+## 文件组成与读取方式
+
+- H&E 图像 patches
+- IF/restaining 对齐生成的 per-target segmentation mask
+- 官方主页为各 target 单独给出的数据集链接
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import os
-import numpy as np
-from PIL import Image
-import glob
+from pathlib import Path
 
-def load_segpath_dataset(root_dir, split='train'):
-    """加载 SegPath 数据集"""
-    img_dir = os.path.join(root_dir, split, 'images')
-    label_dir = os.path.join(root_dir, split, 'labels')
-    mask_dir = os.path.join(root_dir, split, 'masks')
-    
-    img_paths = sorted(glob.glob(os.path.join(img_dir, '*.png')))
-    
-    dataset = []
-    for img_path in img_paths:
-        fname = os.path.basename(img_path)
-        mask_path = os.path.join(mask_dir, fname)
-        
-        img = np.array(Image.open(img_path).convert('RGB'))
-        
-        if os.path.exists(mask_path):
-            mask = np.array(Image.open(mask_path).convert('L'))
-        else:
-            mask = None
-        
-        dataset.append({'image': img, 'mask': mask, 'filename': fname})
-    
-    return dataset
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 逐个 target 加载 image/mask 并确认是否属于同一个切片配对，避免错误拼成多标签实例分割。
+
+### 建模与数据泄漏风险
+
+- 原索引中的 Zenodo 7412580 是 RBC 子集，不是全部 SegPath；不能错误套用只含 H&E 的人工核 label 规则。
 
 ### 评估指标
 
-```python
-import numpy as np
+各 target Dice/IoU、pixel-level F1；可将细胞目标和组织目标分组报告。
 
-def evaluate_segmentation(pred, gt, num_classes, ignore_index=255):
-    """计算多类分割评估指标"""
-    iou_per_class = []
-    dice_per_class = []
-    
-    for c in range(num_classes):
-        pred_c = (pred == c) & (gt != ignore_index)
-        gt_c = (gt == c) & (gt != ignore_index)
-        
-        intersection = (pred_c & gt_c).sum()
-        union = (pred_c | gt_c).sum()
-        
-        iou = intersection / (union + 1e-8)
-        dice = 2 * intersection / (pred_c.sum() + gt_c.sum() + 1e-8)
-        
-        iou_per_class.append(iou)
-        dice_per_class.append(dice)
-    
-    return {
-        'mIoU': np.mean(iou_per_class),
-        'mDice': np.mean(dice_per_class),
-        'IoU_per_class': iou_per_class,
-        'Dice_per_class': dice_per_class
-    }
-```
+---
 
 ## 相关资源
 
-- [官方项目页](https://dakomura.github.io/SegPath/)
-- [论文（Cell Patterns 2023）](https://www.cell.com/patterns/fulltext/S2666-3899(23))
-- [Zenodo 数据下载](https://dakomura.github.io/SegPath/)
+- [data](https://dakomura.github.io/SegPath/)
+- [paper](https://doi.org/10.1016/j.patter.2023.100688)
+- [download](https://dakomura.github.io/SegPath/)
+- [official](https://dakomura.github.io/SegPath/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+正确 BibTeX 请从 [论文记录](https://doi.org/10.1016/j.patter.2023.100688) 导出；不编造作者与卷期页。
 
-```bibtex
-@article{komura2023restaining,
-  title={Restaining-based annotation for cancer histology segmentation to overcome annotation-related limitations among pathologists},
-  author={Komura, Daisuke and others},
-  journal={Patterns},
-  volume={4},
-  number={2},
-  pages={100688},
-  year={2023},
-  doi={10.1016/j.patter.2023.100688}
-}
-```
+---
 
 ## 注意事项
 
-1. **伪标注噪声**：IHC 引导的自动标注可能含有一定噪声，使用时注意标注质量评估。
-2. **大规模数据管理**：15 万张 patch 的存储和加载需要高效的数据管道（如 HDF5、LMDB 或 WebDataset）。
-3. **IHC-H&E 配准误差**：自动配准存在一定误差，标注边界精度不如手工标注。
-4. **数据许可**：使用前查阅 Zenodo 数据许可协议。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：可能与原始 WSI 来源数据库存在交叉，须核对样本 ID 和切片级来源。
+4. **核查边界**：原作者官网；8类细胞分割，按标记物单独下载
