@@ -1,168 +1,119 @@
 # CoCaHis 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [第一方/当前候选来源](https://cocahis.irb.hr/)
-- **任务**：seg
-- **组织/染色**：Liver (metastatic colorectal cancer) / H&E
-- **规模**：82 (19 patients)
-- **标注用途**：Frozen-section histopathology images from colorectal cancer liver metastases; multiple experts' tissue-region annotations.
-- **来源注意**：原作者网站；结肠癌肝转移灶
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CoCaHis（Colon Cancer Histopathological Dataset）是一个用于结肠癌术中计算机辅助诊断的组织病理学数据集，包含 82 张结肠癌冷冻切片 H&E 染色图像及多标注者像素级分割掩码。
+CoCaHis 是**结肠癌肝转移灶**的术中 H&E 冷冻切片像素级组织标注数据。它不是普通结肠原发部位的病理切片，数据目的包括术中辅助诊断。
 
-### 临床背景
+### 相关论文与发布方
 
-数据集专为**术中冷冻切片**（Intraoperative Frozen Section）分析设计，服务于结直肠手术中的实时切缘诊断。患者均为**肝转移性结肠癌**（Metastatic Colon Cancer），数据来自克罗地亚鲁杰尔·博斯科维奇研究所（IRB Zagreb）。
+- [官方/第一方来源](https://cocahis.irb.hr/)
+- [原论文](https://doi.org/10.1016/j.bspc.2020.102402)
 
-## 数据集基本信息
 
-- **器官类型**：结肠（转移性结肠癌，Colon - Metastatic Colon Cancer）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：82 张图像（19 例患者）
-- **图像分辨率**：1037 × 1388 像素（patch 大小）
-- **标注类型**：多标注者像素级分割掩码（肿瘤区域 vs. 非肿瘤区域）
-- **任务类型**：分割（Semantic Segmentation）
+---
 
-## 数据集规模
+## 数据集基本信息（汇总）
 
-| 统计项 | 数量 |
-|--------|------|
-| 患者数 | 19 |
-| 图像总数 | 82 |
-| 图像分辨率 | 1037 × 1388 px |
-| 标注者数量 | 多个（含资深病理学家） |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2021 |
+| **器官/组织或物种** | Liver (metastatic colorectal cancer) |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | patch(1037, 1388) |
+| **标注内容** | images + mask from different annotator |
+| **扫描/附加条件** | 以官方扫描信息为准 |
 
-## 标注格式
+---
 
-### 多标注者设计
+## 核心数据量与图像格式
 
-- 每张图像由**多名标注者**独立进行像素级分割标注
-- 标注者包括：病理学医生、住院医生和经过训练的医学生
-- 提供各标注者原始标注及**融合后的共识掩码（Consensus Mask）**
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 82 (19 patients) |
+| **格式/数据形态** | 82 张 H&E 冷冻切片显微图和多位专家给出的像素级 ground truth；另有色彩归一化版本 |
+| **采集与版本** | 19 名具有肝转移性结肠癌的患者，7 名不同经验水平标注者；癌组织约占图像像素的三分之一。 |
 
-### 标注类别
+---
 
-| 类别 | 像素值 | 说明 |
-|------|--------|------|
-| 背景/非肿瘤 | 0 | 正常组织、间质等 |
-| 肿瘤 | 1 | 结肠癌肿瘤细胞区域 |
+## 任务与标注
 
-### 文件格式
+区域级癌与非癌组织像素分割，多标注者可能存在差异；不包含每个细胞核的单独实例轮廓。
 
-- 图像：`.png` 或 `.jpg` 格式，RGB 三通道
-- 掩码：二值 `.png` 掩码（肿瘤区域 = 1，背景 = 0）
-- 多标注者掩码以单独文件存储
+### 类别与标签语义
 
-## 数据集特点
+- Cancerous tumor regions：癌病灶区域
+- Non-cancer tissue：其余组织；具体忽略区域/标注者差异以原始 mask 为准
 
-### 术中冷冻切片
-- 冷冻切片质量通常低于石蜡包埋切片（FFPE）
-- 存在冷冻伪影（冰晶效应）、组织收缩等质量问题
-- 反映真实临床手术场景中的图像质量挑战
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-### 多标注者标注差异
-- 数据集提供了研究**标注者间差异**（Inter-observer Variability）的机会
-- 适合研究如何融合多标注者意见（Consensus Annotation）
+---
 
-### 转移性结肠癌
-- 患者均为肝转移性结肠癌，代表晚期疾病状态
-- 肿瘤形态可能与原发灶有所不同（转移灶形态）
+## 数据划分与统计口径
 
-## 使用建议
+82 张图、19 名患者；论文提供训练/测试分组信息，应遵从已有划分并保证患者不泄漏。
 
-### 数据加载
+---
 
-```python
-import os
-import h5py
-import numpy as np
-from PIL import Image
+## 文件组成与读取方式
 
-# CoCaHis 可能提供 HDF5 格式
-with h5py.File('CoCaHis.hdf5', 'r') as f:
-    # 探索数据集结构
-    print(list(f.keys()))  # 查看顶层键
-    
-    # 加载图像和标注
-    images = f['images'][:]  # (N, H, W, 3)
-    masks_annotator1 = f['annotations/annotator1'][:]  # (N, H, W)
-    masks_annotator2 = f['annotations/annotator2'][:]
-    consensus_masks = f['annotations/consensus'][:]
+- H&E 原始冷冻切片图像
+- 专家各自标注的像素真值 map
+- 颜色标准化衍生图片（原作者提供）
 
-# 或加载单张图像
-img = Image.open('image_001.png').convert('RGB')
-mask = Image.open('mask_001.png').convert('L')
-img_array = np.array(img)    # (1037, 1388, 3)
-mask_array = np.array(mask)  # (1037, 1388) 二值掩码
-```
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
 
-### 多标注者融合策略
+### 文件核验示例
 
 ```python
-import numpy as np
+from pathlib import Path
 
-def fuse_annotations(annotations, strategy='majority'):
-    """
-    annotations: list of binary masks from different annotators
-    strategy: 'majority' (多数投票), 'intersection' (交集), 'union' (并集)
-    """
-    stacked = np.stack(annotations, axis=0)  # (num_annotators, H, W)
-    
-    if strategy == 'majority':
-        return (stacked.sum(axis=0) >= len(annotations) / 2).astype(np.uint8)
-    elif strategy == 'intersection':
-        return (stacked.sum(axis=0) == len(annotations)).astype(np.uint8)
-    elif strategy == 'union':
-        return (stacked.sum(axis=0) > 0).astype(np.uint8)
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 如研究标注一致性，分别读取不同专家真值而非直接多数投票覆盖原始数据。
+
+### 建模与数据泄漏风险
+
+- 必须标识 organ=Liver、primary_cancer=Colon；同一患者产生多个 ROI，不得随机 patch 级泄漏。
 
 ### 评估指标
 
-```python
-# 二值分割评估
-def evaluate_binary_seg(pred, gt):
-    tp = ((pred == 1) & (gt == 1)).sum()
-    fp = ((pred == 1) & (gt == 0)).sum()
-    fn = ((pred == 0) & (gt == 1)).sum()
-    tn = ((pred == 0) & (gt == 0)).sum()
-    
-    dice = 2 * tp / (2 * tp + fp + fn + 1e-8)
-    iou = tp / (tp + fp + fn + 1e-8)
-    sensitivity = tp / (tp + fn + 1e-8)
-    specificity = tn / (tn + fp + 1e-8)
-    
-    return {'Dice': dice, 'IoU': iou, 'Sensitivity': sensitivity, 'Specificity': specificity}
-```
+肿瘤分割 Dice/IoU、敏感度及病例层面的准确率；核实例 PQ 不适用。
+
+---
 
 ## 相关资源
 
-- [官方数据集页面](https://cocahis.irb.hr/)
-- [论文（Biomedical Signal Processing and Control, 2021）](https://www.sciencedirect.com/science/article/abs/pii/S1746809420305085)
-- [HDF5 数据下载](http://cocahis.irb.hr/wp-content/uploads/2020/12/CoCaHis.hdf5)
+- [data](https://cocahis.irb.hr/)
+- [paper](https://doi.org/10.1016/j.bspc.2020.102402)
+- [download](http://cocahis.irb.hr/wp-content/uploads/2020/12/CoCaHis.hdf5)
+- [official](https://cocahis.irb.hr/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+引用请从 [原论文或出版社页面](https://doi.org/10.1016/j.bspc.2020.102402) 导出正式 BibTeX；不使用未核实的作者/卷页。
 
-```bibtex
-@article{cocahis2021,
-  title={A dataset and a methodology for intraoperative computer-aided diagnosis of a tumor in colorectal surgery},
-  author={Gupta, Luka and others},
-  journal={Biomedical Signal Processing and Control},
-  volume={62},
-  pages={102098},
-  year={2021},
-  publisher={Elsevier}
-}
-```
+---
 
 ## 注意事项
 
-1. **冷冻切片质量**：图像质量低于常规 FFPE 切片，含冻结伪影，模型需有一定鲁棒性。
-2. **数据规模小**：仅 82 张图像，适合作为验证集或迁移学习目标域。
-3. **多标注者差异**：建议研究标注一致性，选择合适的共识策略。
-4. **HDF5 格式**：官方提供 HDF5 格式数据，加载时需使用 h5py 库。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：源于独立的术中肝转移队列，不等同于 CRAG/GlaS 的结肠腺体分割。
+4. **核查边界**：原作者网站；结肠癌肝转移灶
