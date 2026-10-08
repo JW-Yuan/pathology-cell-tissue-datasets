@@ -1,213 +1,118 @@
 # Kumar 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://monuseg.grand-challenge.org/Data/)
-- **任务**：seg
-- **组织/染色**：Multiple (7 organs) / H&E
-- **规模**：Train: 16 (13.372 nuclei), test same organ (4.130 nuclei): 8, test diff organ (4.121 nuclei): 6
-- **正确的标注范围**：30 histopathology images from seven organs for nuclei instance segmentation; no official nucleus-type labels.
-- **来源说明**：原作者Kumar文献由MoNuSeg官方页引用；数据链接仍需按版本匹配
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-Kumar 数据集（也称为 MoNuSeg 的前身或 Kumar et al. 数据集）是一个多器官 H&E 组织病理学图像中**细胞核实例分割**的基准数据集，由 Kumar 等在 IEEE TMI（2017）发表。该数据集首次提出了跨器官细胞核分割的评估框架。
+Kumar 等 2017 发表的跨组织细胞核实例分割数据与技术，采自 TCGA 多器官 H&E 图像。与 MoNuSeg 2018 常用训练核图像/同源基准有密切联系。
 
-### 数据来源
+### 相关论文与发布方
 
-图像来源于 **TCGA（The Cancer Genome Atlas）**，涵盖 8 种器官的 H&E 染色 WSI 切片，采用 40x 放大倍数扫描。
+- [官方/第一方来源](https://monuseg.grand-challenge.org/Data/)
+- [原论文](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7872382)
 
-## 数据集基本信息
 
-- **器官类型**：多器官（8 种）：乳腺、肝脏、肾脏、前列腺、膀胱、结肠、脑、胃
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：
-  - 训练集：16 张图像（13,372 个细胞核）
-  - 测试集（相同器官）：8 张图像（4,130 个细胞核）
-  - 测试集（不同器官）：6 张图像（4,121 个细胞核）
-- **图像分辨率**：1000 × 1000 像素
-- **放大倍数**：40x（TCGA）
-- **任务类型**：分割（seg）+ 分类（classi）
+---
 
-## 数据集划分
+## 数据集基本信息（汇总）
 
-| 子集 | 图像数 | 细胞核数 | 说明 |
-|------|--------|---------|------|
-| 训练集 | 16 | 13,372 | 来自 8 种器官（每种 2 张）|
-| 测试集（相同器官） | 8 | 4,130 | 与训练集相同器官 |
-| 测试集（不同器官） | 6 | 4,121 | 与训练集**不同**器官（跨器官泛化）|
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2017 |
+| **器官/组织或物种** | Multiple (7 organs) |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | patch (1000x1000) |
+| **标注内容** | images + nuclei seg + label |
+| **扫描/附加条件** | 40x (TCGA) |
 
-## 涉及器官（8 种）
+---
 
-| 器官 | 英文 | 典型细胞核特征 |
-|------|------|--------------|
-| 乳腺 | Breast | 上皮、间质多样 |
-| 肝脏 | Liver | 肝细胞大、圆 |
-| 肾脏 | Kidney | 肾小管、肾小球 |
-| 前列腺 | Prostate | 腺体细胞密集 |
-| 膀胱 | Bladder | 移行上皮 |
-| 结肠 | Colon | 腺体上皮 |
-| 脑 | Brain | 胶质细胞、神经元 |
-| 胃 | Stomach | 胃腺体上皮 |
+## 核心数据量与图像格式
 
-## 标注格式
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | Train: 16 (13.372 nuclei), test same organ (4.130 nuclei): 8, test diff organ (4.121 nuclei): 6 |
+| **格式/数据形态** | 30 张 1000×1000 H&E 图像、核边界实例真值 |
+| **采集与版本** | 7 种器官：Breast、Liver、Kidney、Prostate、Bladder、Colon、Stomach；传统训练/测试安排为 16 train + 14 testing（8 同域+6 跨域）。 |
 
-### XML 格式标注
+---
 
-```python
-import xml.etree.ElementTree as ET
-import numpy as np
-from PIL import Image, ImageDraw
+## 任务与标注
 
-def load_kumar_annotation(xml_path, image_size=(1000, 1000)):
-    """从 XML 标注文件加载细胞核多边形"""
-    tree = ET.parse(xml_path)
-    root = tree.getroot()
-    
-    nuclei_polygons = []
-    
-    for region in root.iter('Region'):
-        vertices = []
-        for vertex in region.iter('Vertex'):
-            x = float(vertex.get('X'))
-            y = float(vertex.get('Y'))
-            vertices.append((x, y))
-        if len(vertices) > 2:
-            nuclei_polygons.append(vertices)
-    
-    # 将多边形转换为实例分割掩码
-    mask = Image.new('I', image_size, 0)
-    draw = ImageDraw.Draw(mask)
-    
-    for i, poly in enumerate(nuclei_polygons):
-        draw.polygon(poly, fill=i + 1)
-    
-    return nuclei_polygons, np.array(mask)
+逐核实例轮廓/二值分割，不包含所有核的临床表型语义类型标注。
 
-# 使用示例
-polygons, inst_mask = load_kumar_annotation('TCGA-18-5592_1.xml')
-```
+### 类别与标签语义
 
-### 文件结构
+- Nucleus/Background
+- Organ 类型是原图来源信息，不是单核分类标签
 
-```
-kumar/
-├── train/
-│   ├── images/    # (*.tif) 1000x1000 图像
-│   └── annotations/ # (*.xml) 细胞核多边形标注
-├── test_same_organ/
-│   ├── images/
-│   └── annotations/
-└── test_diff_organ/
-    ├── images/
-    └── annotations/
-```
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-## 数据特点
+---
 
-### 跨器官泛化测试
-- 专门设计了"**不同器官**"测试集，用于评估模型的跨器官泛化能力
-- 是最早系统评估细胞核分割跨域泛化性能的数据集之一
+## 数据划分与统计口径
 
-### 多器官覆盖
-- 8 种不同器官，覆盖了细胞核形态的多种变化（大小、圆度、聚集程度等）
+常见协议 16 train、8 same-organ test、6 different-organ test；并非所有 MoNuSeg 后续挑战划分都等于这项原论文划分。
 
-### AJI 指标贡献
-- 论文提出了 **AJI（Aggregated Jaccard Index）** 指标，成为细胞核分割评估的标准指标
+---
 
-## 使用建议
+## 文件组成与读取方式
 
-### AJI（Aggregated Jaccard Index）计算
+- TCGA H&E 裁剪图像
+- 核实例轮廓/掩膜标签，实际文件组织视 Kumar 原始/镜像版本
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import numpy as np
+from pathlib import Path
 
-def compute_aji(pred_inst, gt_inst):
-    """
-    Aggregated Jaccard Index (AJI)
-    Kumar et al. IEEE TMI 2017 中提出
-    
-    Args:
-        pred_inst: (H, W) 预测实例掩码（0=背景，1..N=实例ID）
-        gt_inst:   (H, W) 真实实例掩码
-    Returns:
-        aji: AJI 分数 (0~1)
-    """
-    gt_ids = np.unique(gt_inst)[1:]  # 去除背景
-    pred_ids = np.unique(pred_inst)[1:]
-    
-    if len(gt_ids) == 0:
-        return 1.0 if len(pred_ids) == 0 else 0.0
-    
-    # 贪心匹配：每个 GT 实例匹配最大 IoU 的 Pred 实例
-    total_intersection = 0
-    total_union = 0
-    matched_pred = set()
-    
-    for gt_id in gt_ids:
-        gt_mask = (gt_inst == gt_id)
-        best_iou = 0
-        best_pred_id = None
-        best_intersection = 0
-        best_union = 0
-        
-        for pred_id in pred_ids:
-            if pred_id in matched_pred:
-                continue
-            pred_mask = (pred_inst == pred_id)
-            intersection = (gt_mask & pred_mask).sum()
-            union = (gt_mask | pred_mask).sum()
-            iou = intersection / (union + 1e-8)
-            
-            if iou > best_iou:
-                best_iou = iou
-                best_pred_id = pred_id
-                best_intersection = intersection
-                best_union = union
-        
-        total_intersection += best_intersection
-        if best_pred_id is not None:
-            total_union += best_union
-            matched_pred.add(best_pred_id)
-        else:
-            total_union += gt_mask.sum()
-    
-    # 未匹配的预测实例计入分母（FP）
-    for pred_id in pred_ids:
-        if pred_id not in matched_pred:
-            total_union += (pred_inst == pred_id).sum()
-    
-    aji = total_intersection / (total_union + 1e-8)
-    return aji
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 在 train/test 中按原始图像来源进行划分，实例 ID 需要唯一；不得凭 mask 假设有核型分类。
+
+### 建模与数据泄漏风险
+
+- 原先引用的 MoNuSeg 页面是关联挑战第一方入口，Kumar 2017 原始发布和后续 MoNuSeg 的 44 张竞赛数据需分别核对。
+
+### 评估指标
+
+AJI、Dice、核实例 PQ；应使用原论文 same-organ 与 cross-organ 方案。
+
+---
 
 ## 相关资源
 
-- [Google Drive 数据下载](https://drive.google.com/drive/folders/1bI3RyshWej9c4YoRW-_q7lh7FOFDFUrJ)
-- [论文（IEEE TMI 2017）](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7872382)
-- [备用下载链接](https://drive.google.com/drive/folders/1SZMgB9ztnPWWlChWxNPLYDHBVCTdenu4)
+- [data](https://drive.google.com/drive/folders/1bI3RyshWej9c4YoRW-_q7lh7FOFDFUrJ)
+- [paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7872382)
+- [download](https://drive.google.com/drive/folders/1SZMgB9ztnPWWlChWxNPLYDHBVCTdenu4)
+- [official](https://monuseg.grand-challenge.org/Data/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+请从 [出版社/原论文](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7872382) 导出 BibTeX；不编写未经证实的作者或卷号。
 
-```bibtex
-@article{kumar2017dataset,
-  title={A dataset and a technique for generalized nuclear segmentation for computational pathology},
-  author={Kumar, Neeraj and Verma, Ruchika and Sharma, Sanuj and others},
-  journal={IEEE Transactions on Medical Imaging},
-  volume={36},
-  number={7},
-  pages={1550--1560},
-  year={2017},
-  publisher={IEEE}
-}
-```
+---
 
 ## 注意事项
 
-1. **XML 标注格式**：标注为 XML 多边形格式，使用前需转换为实例掩码（见上方代码）。
-2. **AJI 指标**：使用 AJI 评估时，请使用与 MoNuSeg 挑战赛一致的标准实现。
-3. **TCGA 来源**：图像来自 TCGA，使用时需遵守 TCGA 数据使用协议（dbGaP）。
-4. **与 MoNuSeg 的关系**：MoNuSeg 2018 数据集在 Kumar 数据集基础上扩展，两者图像部分重叠。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：与 MoNuSeg 训练样本关联；不要把 Kumar 与 MoNuSeg 视为完全独立外部验证。
+4. **核查边界**：原作者Kumar文献由MoNuSeg官方页引用；数据链接仍需按版本匹配
