@@ -1,153 +1,99 @@
 # ADP 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://www.dsp.utoronto.ca/projects/ADP/)
-- **研究任务**：multi-label (3) classification (hierarchy)
-- **组织/染色**：multiple / multiple (most H&E)
-- **规模**：Train: 14,134; Valid: 1,767; Test: 1,767 patches from 100 WSIs
-- **标注与使用范围**：Atlas of Digital Pathology: 1088x1088 H&E/other-stain image patches annotated with hierarchical multi-label tissue types.
-- **原始来源说明**：多标签组织病理分类官方主页
-
+> 参考 PanNuke 详情页的章节结构，严格区分官方已发布信息、当前收录的版本与尚不能核实的部分。资料核查：2026-10-08。
 
 ## 数据集描述
 
-ADP（Atlas of Digital Pathology）是一个通用的多器官组织学组织类型（Histological Tissue Type, HTT）标注数据集，发表于 CVPR 2019。数据集旨在为基于深度学习的数字病理学研究提供多器官、多组织类型的分层标注基准。
+Atlas of Digital Pathology：多组织类型的数字病理图像块与层次化组织学标签库，强调多标签、层级分类而非细胞核分割。
 
-### 核心贡献
+### 相关论文与官方来源
 
-- 提出了一套 **57 类层次化 HTT（Histological Tissue Type）** 标注体系
-- 覆盖多个器官的大规模 patch 级标注数据集
-- 支持**多标签分类**和**分层分类**任务
+- [原作者/挑战官方发布页面](https://www.dsp.utoronto.ca/projects/ADP/)
+- [原论文或挑战论文](https://openaccess.thecvf.com/content_CVPR_2019/papers/Hosseini_Atlas_of_Digital_Pathology_A_Generalized_Hierarchical_Histological_Tissue_Type-Annotated_CVPR_2019_paper.pdf)
+- [项目源码或组织者仓库](https://github.com/mahdihosseini/ADP)
 
-## 数据集基本信息
+## 数据集基本信息（汇总）
 
-- **器官类型**：多器官（multiple）—— 来自 100 个 WSI，涵盖多种器官
-- **染色方式**：多染色（大多数为 H&E）
-- **数据集大小**：
-  - 训练集：14,134 张 patch
-  - 验证集：1,767 张 patch
-  - 测试集：1,767 张 patch
-  - 总计：约 17,668 张（来自 100 个 WSI）
-- **图像分辨率**：1088 × 1088 像素（patch 大小）
-- **放大倍数**：40x — Huron TissueScope LE1.2 扫描仪
-- **标注类型**：57 种 HTT 的层次化多标签分类
+| 项目 | 核实内容 |
+|---|---|
+| **发布/赛事年份** | 2019 |
+| **器官/样本** | multiple |
+| **染色/模态** | multiple (most H&E) |
+| **适用任务** | multi-label (3) classification (hierarchy) |
+| **图像形态** | patch (1088x1088) |
+| **原始数据与监督** | images + 57 hierarchical HTTs (histological tissue type) |
+| **扫描/其他** | 40x - Huron TissueScope LE1.2 WSI |
 
-## 标注体系
+## 核心数据量与图像格式
 
-### HTT 层次结构（3 级）
+| 项目 | 核实内容 |
+|---|---|
+| **数量（注明统计单位）** | Train: 14,134; Valid: 1,767; Test: 1,767 patches from 100 WSIs |
+| **图像/文件表示** | WSI 提取的 RGB patches；组织学层级标签与类别对应表；具体 CSV/图像目录须按 ADP 数据包检查 |
+| **采集与版本说明** | 数据源包括多样组织学类型和多种染色，主要为 H&E；扫描于 Huron TissueScope LE 1.2（原仓库记录）。 |
 
-```
-Level 1 (大类, 约 8 类)
-├── Level 2 (中类, 约 20 类)
-│   └── Level 3 (细粒度, 约 57 类)
-```
+## 任务与标注
 
-- **Level 1 示例**：Epithelium（上皮）、Connective Tissue（结缔组织）、Muscle（肌肉）等
-- **Level 2 示例**：Glandular Epithelium（腺上皮）、Squamous Epithelium（鳞状上皮）等
-- **Level 3**：57 种具体的组织学组织类型，每张 patch 可标注多个类别（多标签）
+图像级多标签 HTT，不是像素级组织轮廓；处理时须保持三个层级之间的父子约束。
 
-### 标注数量
+## 标注类别与语义
 
-| 层级 | 类别数 |
-|------|--------|
-| Level 1 | 8 |
-| Level 2 | 20 |
-| Level 3 | 57 |
+| 项目 | 核实内容 |
+|---|---|
+| **HTT（Histological Tissue Type）** | 57 个层级组织类型；按三级 taxonomy 组织 |
+| **监督形式** | 多标签存在性/层次标签；不是为每个细胞核提供 ID 或实例 mask |
 
-## 数据集划分
+> 类别名称与整数 ID 的映射必须以下载数据中的 label map 或发布方代码为准；未在本页列出的类不能推定存在。
 
-| 子集 | Patch 数量 |
-|------|-----------|
-| 训练集 | 14,134 |
-| 验证集 | 1,767 |
-| 测试集 | 1,767 |
-| **合计** | **~17,668** |
+## 数据划分与评估协议
 
-## 数据特点
+从 100 张 WSI 提取 17,668 张 1088×1088 patches；Train 14,134、Validation 1,767、Test 1,767。
 
-### 多标签分层分类
-- 每张 patch 可能同时含有多种组织类型（多标签）
-- 标注具有层次结构，支持层次化分类算法的评估
+## 文件结构与读取方法
 
-### 大规模多器官覆盖
-- 来自 100 个不同器官的 WSI
-- 涵盖组织学中常见的主要组织类型
+- WSI 提取的 RGB patches
+- 组织学层级标签与类别对应表；具体 CSV/图像目录须按 ADP 数据包检查
 
-### 高分辨率
-- 1088×1088 px 的 patch 尺寸，信息量丰富
-- 40x 高倍放大，细节清晰
-
-## 使用建议
-
-### 数据加载
+这些是有来源依据的**文件组成**，不是未经下载验证的精确文件树。不同 release 和镜像可能调整压缩包名或子目录；先检查实际压缩包/路径：
 
 ```python
-import os
-import json
-import numpy as np
-from PIL import Image
-
-# 加载 ADP 数据集
-# 假设标注以 JSON 格式存储
-with open('adp_labels.json', 'r') as f:
-    labels = json.load(f)
-
-# 示例结构：
-# {
-#   "image_id": "patch_001.png",
-#   "htts_l1": [1, 3],        # Level 1 HTT 标签索引
-#   "htts_l2": [2, 7, 12],    # Level 2 HTT 标签索引
-#   "htts_l3": [5, 18, 33]    # Level 3 HTT 标签索引
-# }
-
-img = Image.open(os.path.join('adp_images', labels['image_id']))
-img_array = np.array(img)  # (1088, 1088, 3)
+from pathlib import Path
+root = Path('DATASET_ROOT')  # 替换为已下载并解压的数据目录
+for p in sorted(root.rglob('*')):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 数据源包括多样组织学类型和多种染色，主要为 H&E；扫描于 Huron TissueScope LE 1.2（原仓库记录）。
+- 核实样本与标注的一一对应关系，并保留原始标签文件的版本号与来源信息。
+- 如果提供了病例/玻片 ID，优先使用**患者或玻片级**数据划分，避免相邻 patch 泄漏。
+
+### 建模提示
+
+- 层级分类既有父类也有子类，不能把 57 标签视为彼此完全互斥的单一 softmax 分类。
 
 ### 评估指标
 
-```python
-# 多标签分类常用指标
-from sklearn.metrics import f1_score, average_precision_score
-
-# 宏平均 F1（按类别平均）
-f1_macro = f1_score(y_true, y_pred, average='macro')
-
-# 加权 F1
-f1_weighted = f1_score(y_true, y_pred, average='weighted')
-
-# mAP（平均精度均值）
-mAP = average_precision_score(y_true, y_scores, average='macro')
-```
-
-### 层次化分类建议
-- 可使用**层次化 softmax** 或**条件随机场**利用标签间的层次依赖关系
-- 上层标签可作为下层标签的约束条件
+micro/macro F1、mAP、多标签 AUROC；分层统计类别性能。
 
 ## 相关资源
 
-- [官方项目页](https://www.dsp.utoronto.ca/projects/ADP/)
-- [GitHub 代码](https://github.com/mahdihosseini/ADP)
-- [论文（CVPR 2019）](https://openaccess.thecvf.com/content_CVPR_2019/papers/Hosseini_Atlas_of_Digital_Pathology_A_Generalized_Hierarchical_Histological_Tissue_Type-Annotated_CVPR_2019_paper.pdf)
+- [data](https://www.dsp.utoronto.ca/projects/ADP/)
+- [github](https://github.com/mahdihosseini/ADP)
+- [paper](https://openaccess.thecvf.com/content_CVPR_2019/papers/Hosseini_Atlas_of_Digital_Pathology_A_Generalized_Hierarchical_Histological_Tissue_Type-Annotated_CVPR_2019_paper.pdf)
+- [official](https://www.dsp.utoronto.ca/projects/ADP/)
 
 ## 引用
 
-如果您使用了此数据集，请引用：
-
-```bibtex
-@inproceedings{hosseini2019atlas,
-  title={Atlas of digital pathology: A generalized hierarchical histological tissue type-annotated database for deep learning},
-  author={Hosseini, Mahdi S and Chan, Lyndon and Tse, Gabriel and Tang, Michael and Deng, Jun and Norouzi, Sajad and Rowsell, Corwyn and Plataniotis, Konstantinos N and Damaskinos, Savvas},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-  pages={11744--11753},
-  year={2019}
-}
-```
+正式参考文献请在 [原论文](https://openaccess.thecvf.com/content_CVPR_2019/papers/Hosseini_Atlas_of_Digital_Pathology_A_Generalized_Hierarchical_Histological_Tissue_Type-Annotated_CVPR_2019_paper.pdf) 的出版社页面导出 BibTeX，不手写未经核实的作者/期刊字段。
 
 ## 注意事项
 
-1. **多标签特性**：一张 patch 可同时含多种组织类型，需使用多标签分类框架（如 Binary Cross-Entropy 损失）。
-2. **层次关系利用**：标签的层次结构是该数据集的核心特色，建议充分利用。
-3. **数据获取**：数据通过官方项目页和 GitHub 申请获取。
-4. **版权声明**：数据使用需遵守相关许可协议，商业用途须联系作者。
+1. **来源可信度**：多标签组织病理分类官方主页。
+2. **任务边界**：层级分类既有父类也有子类，不能把 57 标签视为彼此完全互斥的单一 softmax 分类。
+3. **数据授权**：使用前查阅官方文件的许可、注册与下载条件；源代码许可证不能替代数据许可证。
+4. **可复现性**：统计以对应发布包、真实文件数、患者去重和官方测试划分为准；本页未对每个下载压缩包逐字节校验。
