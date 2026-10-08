@@ -1,5 +1,14 @@
 # PUMA 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- **第一方来源**：[官方/作者发布页](https://zenodo.org/records/15050523)
+- **主要任务**：seg
+- **数据与标注**：images + nuclei and tissue annotations + context image
+- **适用范围**：Melanoma H&E nuclei instance segmentation/classification and tissue segmentation; Zenodo v5 released 2025.
+- **版本/来源提醒**：Zenodo官方v5，2025发布；注意年份
+
+
 ## 数据集描述
 
 PUMA (Pathology Understanding through Multi-scale Analysis) 是一个用于黑色素瘤组织病理学分析的数据集。该数据集包含原发性和转移性黑色素瘤的ROI（感兴趣区域）图像，提供了详细的细胞核和组织级别的注释。
@@ -187,11 +196,12 @@ PUMA/
 如果您使用了此数据集，请引用：
 
 ```bibtex
-@article{puma2024,
-  title={PUMA: A Comprehensive Dataset for Pathology Understanding through Multi-scale Analysis},
-  author={Author, A. and Author, B.},
+@article{schuiveling2025novel,
+  title={A novel dataset for nuclei and tissue segmentation in melanoma with baseline nuclei segmentation and tissue segmentation benchmarks},
+  author={Schuiveling, Mark and Liu, Hong and Eek, Daniel and Breimer, Gerben E and Suijkerbuijk, Karijn P M and Blokx, Willeke A M and Veta, Mitko},
   journal={GigaScience},
-  year={2024},
+  volume={14},
+  year={2025},
   doi={10.1093/gigascience/giaf011}
 }
 ```
