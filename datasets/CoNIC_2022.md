@@ -1,12 +1,22 @@
 # CoNIC 2022 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [第一方/当前候选来源](https://github.com/TissueImageAnalytics/CoNIC)
+- **任务**：seg、classi、counting
+- **组织/染色**：Colon / H&E
+- **规模**：4981 patch with 431.913 nuclei of 6 types
+- **标注用途**：Colon Nuclei Identification and Counting challenge: instance segmentation, 6-class nucleus classification and cell-count regression; based on Lizard.
+- **来源注意**：组织者发布代码；CoNIC与Lizard来源有重叠
+
+
 ## 数据集描述
 
-CoNIC（Colon Nuclei Identification and Counting Challenge 2022）是一个以结肠组织中**细胞核实例分割、分类和计数**为核心任务的挑战赛数据集。数据集是目前已知规模最大的结肠细胞核实例分割与分类公开数据集，包含超过 53.5 万个独立细胞核。
+CoNIC（Colon Nuclei Identification and Counting Challenge 2022）是一个以结肠组织中**细胞核实例分割、分类和计数**为核心任务的挑战赛数据集。挑战数据由 Lizard 相关数据整理而来，主要包含约 4,981 张 256×256 图像块，涉及约 431,913 个核及六种核类别。
 
 ### 数据来源
 
-CoNIC 2022 数据集是 **Lizard 数据集**的扩展版本，在其基础上增加了更多图像和更细化的任务设置（增加了细胞核计数回归任务）。图像来自结肠组织切片，汇集了多个公开数据源的图像并重新标注。
+CoNIC 2022 挑战数据与 Lizard 数据集存在来源重叠，并以细胞核分割/分类和类别计数回归为两个赛题；不能认为这是一套与 Lizard 完全独立的核样本。图像来自结肠组织切片，汇集了多个公开数据源的图像并重新标注。
 
 ## 数据集基本信息
 
@@ -58,6 +68,8 @@ CoNIC 2022 包含**两个子任务**：
 ## 标注格式
 
 ### 数据文件结构
+
+> **注意：以下 PNG 布局为示意/预处理形式，不是官方发布文件结构。实际下载数据应按组织者 GitHub 指南读取 NumPy 格式数组。**
 
 ```
 conic_data/
