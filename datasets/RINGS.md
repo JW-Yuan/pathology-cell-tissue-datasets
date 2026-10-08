@@ -32,9 +32,9 @@ RINGS（Rapid IdentificatioN of Glandular Structures）是前列腺腺体自动�
 
 | 特征 | 描述 |
 |---|---|
-| **规模与计数单位** | train: 1000 , test: 500 with 18'851 glands |
+| **规模与计数单位** | 1,500 patches / 18,851 glands (prior compiled count; exact official train/test counts pending verification) |
 | **格式/数据形态** | 前列腺 H&E 组织图像块及人工 gland 区域/轮廓 GT |
-| **采集与版本** | 当前主索引记录约 1000 train + 500 test 图像、共 18,851 glands；这属于此前整理口径，需要再按官方实际下载表核查分布。Mendeley Data 原作者记录可明确核实 gland segmentation 任务。 |
+| **采集与版本** | 先前整理版本统计约 1,500 张 patch 与 18,851 个腺体，但第一方 Mendeley 页面摘要未逐项确认这两个数量，完整计数须以下载包为准。Mendeley Data 原作者记录可明确核实 gland segmentation 任务。 |
 
 ---
 
