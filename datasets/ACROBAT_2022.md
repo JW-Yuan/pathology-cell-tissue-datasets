@@ -1,5 +1,14 @@
 # ACROBAT 2022 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- **第一方来源**：[官方/作者发布页](https://acrobat.grand-challenge.org/)
+- **主要任务**：registration
+- **数据与标注**：images (1 H&E match to 1-4 IHC) + landmarks
+- **适用范围**：Breast H&E-to-IHC whole-slide image registration challenge with landmarks; counts refer to challenge splits.
+- **版本/来源提醒**：ACROBAT官方配准挑战赛
+
+
 ## 数据集描述
 
 ACROBAT（Automatic Registration of Breast Cancer Tissue）是目前规模最大的 WSI 配准数据集，旨在推进乳腺癌组织病理全切片图像（WSI）多染色配准算法的研究与开发。
