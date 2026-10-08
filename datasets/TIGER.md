@@ -1,5 +1,15 @@
 # TIGER 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://tiger.grand-challenge.org/Data/)
+- **任务**：detection、seg、tils-scoring
+- **组织/染色**：Breast / H&E
+- **规模**：WSIROIS: 195 wsi, WSIBULK: 93, WSITILS: 82
+- **数据集性质**：Breast tumor-infiltrating lymphocyte detection, invasive tumor/stroma segmentation and slide-level TIL scoring; annotation availability varies by subset.
+- **来源提醒**：官方TIL评估；检测+组织分割+评分
+
+
 ## 数据集描述
 
 TIGER（**T**umor **I**nfiltratinG lymphocytes in breast cancER）是**第一个**专注于乳腺癌 H&E 切片中肿瘤浸润淋巴细胞（TILs）**全自动化评估**的挑战性数据集，由荷兰拉德堡德大学医学中心（Radboudumc）诊断图像分析组（DIAG）联合**国际免疫肿瘤生物标志物工作组**（TIL Working Group）共同发起。
