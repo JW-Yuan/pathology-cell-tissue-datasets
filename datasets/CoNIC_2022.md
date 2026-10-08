@@ -1,203 +1,124 @@
 # CoNIC 2022 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [第一方/当前候选来源](https://github.com/TissueImageAnalytics/CoNIC)
-- **任务**：seg、classi、counting
-- **组织/染色**：Colon / H&E
-- **规模**：4981 patch with 431.913 nuclei of 6 types
-- **标注用途**：Colon Nuclei Identification and Counting challenge: instance segmentation, 6-class nucleus classification and cell-count regression; based on Lizard.
-- **来源注意**：组织者发布代码；CoNIC与Lizard来源有重叠
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CoNIC（Colon Nuclei Identification and Counting Challenge 2022）是一个以结肠组织中**细胞核实例分割、分类和计数**为核心任务的挑战赛数据集。挑战数据由 Lizard 相关数据整理而来，主要包含约 4,981 张 256×256 图像块，涉及约 431,913 个核及六种核类别。
+CoNIC 2022 是结肠细胞核识别与计数挑战，采用 Lizard 相关图像和标签，设置两类评测：核实例分割+分类，以及按类别回归核数量。
 
-### 数据来源
+### 相关论文与发布方
 
-CoNIC 2022 挑战数据与 Lizard 数据集存在来源重叠，并以细胞核分割/分类和类别计数回归为两个赛题；不能认为这是一套与 Lizard 完全独立的核样本。图像来自结肠组织切片，汇集了多个公开数据源的图像并重新标注。
+- [官方/第一方来源](https://github.com/TissueImageAnalytics/CoNIC)
+- [原论文](https://arxiv.org/pdf/2111.14485.pdf)
+- [官方代码/原作者仓库](https://github.com/TissueImageAnalytics/CoNIC)
 
-## 数据集基本信息
+---
 
-- **器官类型**：结肠 (Colon)
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：4,981 个 patch，包含 431,913+ 个细胞核（6 类）
-- **图像分辨率**：256 × 256 像素
-- **放大倍数**：20x
-- **任务类型**：分割（seg）+ 分类（classi）+ 细胞数量回归（reg）
+## 数据集基本信息（汇总）
 
-## 数据集规模
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2022 |
+| **器官/组织或物种** | Colon |
+| **染色及模态** | H&E |
+| **具体任务** | seg、classi、counting |
+| **图像单元与尺寸** | patch (256x256) |
+| **标注内容** | H&E patches + per-pixel instance/class masks (official arrays include NumPy representations) + class-wise counting targets |
+| **扫描/附加条件** | 20x(from lizard 切片而来) |
 
-| 统计项 | 数量 |
-|--------|------|
-| Patch 总数 | 4,981 |
-| 细胞核实例总数 | >431,913 |
-| 细胞核类别数 | 6 |
-| Patch 尺寸 | 256 × 256 px |
+---
 
-## 细胞核类别统计
+## 核心数据量与图像格式
 
-| 类别 | 英文 | 中文 | 比例 |
-|------|------|------|------|
-| 1 | Neutrophil | 中性粒细胞 | — |
-| 2 | Epithelial | 上皮细胞 | — |
-| 3 | Lymphocyte | 淋巴细胞 | — |
-| 4 | Plasma | 浆细胞 | — |
-| 5 | Eosinophil | 嗜酸性粒细胞 | — |
-| 6 | Connective | 结缔组织细胞 | — |
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 4981 patch with 431.913 nuclei of 6 types |
+| **格式/数据形态** | 256×256 H&E RGB patch + NumPy `.npy` 标注数组；标准评测的实例/类别输出形状 N×256×256×2 |
+| **采集与版本** | 训练/公开版本约 4,981 个 patch 与 431,913 个已注释核。来自 Lizard 语义标注，不能当作独立的新病理患者。 |
 
-（具体比例与 Lizard 数据集相近，以官方发布数据为准）
+---
 
-## 任务定义
+## 任务与标注
 
-CoNIC 2022 包含**两个子任务**：
+核 ID mask 保存每像素所属实例，类别类型 mask 保存六种核类型；第二个赛道仅使用六维核数量，可不输出精细轮廓。
 
-### Task 1：细胞核分割与分类（Segmentation + Classification）
+### 类别与标签语义
 
-- 输入：256×256 的 H&E 图像
-- 输出：
-  - **实例分割掩码（inst_map）**：像素值为实例 ID
-  - **类别掩码（class_map）**：像素值为 1–6 的细胞核类别
+- Neutrophil（中性粒细胞）
+- Epithelial（上皮细胞）
+- Lymphocyte（淋巴细胞）
+- Plasma（浆细胞）
+- Eosinophil（嗜酸性粒细胞）
+- Connective（结缔组织细胞）
 
-### Task 2：细胞核计数（Cell Counting/Regression）
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-- 输入：256×256 的 H&E 图像
-- 输出：每种类别的细胞核数量（6 维回归向量）
+---
 
-## 标注格式
+## 数据划分与统计口径
 
-### 数据文件结构
+使用 challenge 原始训练/隐藏测试划分。`.npy` 标注通道 0 常代表 instance ID，通道 1 表示类型编码；精确编码从组织者示例读取。
 
-> **注意：以下 PNG 布局为示意/预处理形式，不是官方发布文件结构。实际下载数据应按组织者 GitHub 指南读取 NumPy 格式数组。**
+---
 
-```
-conic_data/
-├── images/       # 图像文件 (.png) 256x256 RGB
-└── masks/        # 标注掩码 (.png) 256x256
-    ├── inst_map  # 实例 ID 掩码 (16位或32位整数)
-    └── class_map # 类别掩码 (8位整数, 1-6)
-```
+## 文件组成与读取方式
 
-### 掩码说明
+- 训练图像 NumPy 数组
+- 实例 ID + 类别编号的两通道 NumPy 标签数组
+- 按核类型汇总的 counting 目标及评估代码
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import numpy as np
-from PIL import Image
+from pathlib import Path
 
-# 加载实例分割掩码
-inst_mask = np.array(Image.open('mask_inst.png'))  # 每个像素为实例 ID，0 为背景
-# 加载类别掩码
-class_mask = np.array(Image.open('mask_class.png'))  # 像素值: 0=背景, 1-6=细胞核类别
-
-# 提取单个实例
-instance_ids = np.unique(inst_mask)
-instance_ids = instance_ids[instance_ids != 0]  # 去除背景
-
-# 获取实例的类别
-for inst_id in instance_ids:
-    inst_pixels = (inst_mask == inst_id)
-    class_id = class_mask[inst_pixels][0]  # 同一实例像素类别相同
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
 
-## 数据特点
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
 
-### Lizard 超集
-- CoNIC 数据集是 Lizard 的扩展，标注质量高，已被广泛验证
-- 提供了目前最大规模的结肠细胞核分割标注
+---
 
-### 三合一任务
-- 同时评估分割、分类和计数，全面衡量算法性能
-- 计数任务不依赖实例分割，可单独研究
+## 使用建议（简要）
 
-### 高密度标注
-- 256×256 patch 内平均含约 87 个细胞核
-- 细胞核密集，粘连和重叠现象普遍
+### 加载与预处理
 
-## 使用建议
+- 使用 `np.load` 检查 `.npy` shape 与每像素的实例/类别 ID；不要照抄某些第三方教程中 PNG 单掩膜的布局。
 
-### 数据加载
+### 建模与数据泄漏风险
 
-```python
-import numpy as np
-from PIL import Image
-import os
-
-def load_conic_sample(img_path, inst_path, class_path):
-    """加载一个 CoNIC 样本"""
-    img = np.array(Image.open(img_path).convert('RGB'))          # (256, 256, 3)
-    inst_map = np.array(Image.open(inst_path).convert('I'))      # (256, 256) int32
-    class_map = np.array(Image.open(class_path).convert('L'))    # (256, 256) uint8
-    return img, inst_map, class_map
-
-def count_cells(class_map, inst_map):
-    """统计每类细胞核数量"""
-    counts = {}
-    class_names = {1: 'neutrophil', 2: 'epithelial', 3: 'lymphocyte',
-                   4: 'plasma', 5: 'eosinophil', 6: 'connective'}
-    
-    inst_ids = np.unique(inst_map)
-    inst_ids = inst_ids[inst_ids != 0]
-    
-    for inst_id in inst_ids:
-        pixels = inst_map == inst_id
-        cls = class_map[pixels][0]
-        if cls in class_names:
-            counts[class_names[cls]] = counts.get(class_names[cls], 0) + 1
-    
-    return counts
-```
+- 有细胞核“计数回归”（counting），不是 image registration；与 Lizard 重叠，跨数据集结果不能当外部验证。
 
 ### 评估指标
 
-```python
-# 官方评估指标
-# Task 1: mPQ+ (multi-class Panoptic Quality)
-# Task 2: R² (R-squared, 回归系数)
+任务1：mPQ⁺（multi-class panoptic quality）；任务2：按类别 R²（multi-class coefficient of determination）。
 
-# mPQ+ 计算（简化版）
-def compute_pq(pred_inst, pred_class, gt_inst, gt_class, num_classes=6):
-    """计算 Panoptic Quality (PQ) per class"""
-    pqs = []
-    for c in range(1, num_classes + 1):
-        pred_c = pred_inst * (pred_class == c)
-        gt_c = gt_inst * (gt_class == c)
-        # ... IoU 匹配计算 TP/FP/FN
-        # PQ = SQ * RQ = (sum_IoU / TP) * (TP / (TP + 0.5*FP + 0.5*FN))
-    return np.mean(pqs)  # mPQ+
-```
+---
 
 ## 相关资源
 
-- [Grand Challenge 官方页](https://conic-challenge.grand-challenge.org/)
-- [GitHub 代码](https://github.com/TissueImageAnalytics/CoNIC)
-- [论文（arXiv 2021）](https://arxiv.org/pdf/2111.14485.pdf)
-- [挑战赛结果论文（MedIA 2024）](https://www.sciencedirect.com/science/article/pii/S1361841523003079)
-- [Google Drive 下载](https://drive.google.com/drive/folders/1il9jG7uA4-ebQ_lNmXbbF2eOK9uNwheb)
+- [data](https://conic-challenge.grand-challenge.org/)
+- [github](https://github.com/TissueImageAnalytics/CoNIC)
+- [paper](https://arxiv.org/pdf/2111.14485.pdf)
+- [download](https://drive.google.com/drive/folders/1il9jG7uA4-ebQ_lNmXbbF2eOK9uNwheb)
+- [official](https://github.com/TissueImageAnalytics/CoNIC)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+引用请从 [原论文或出版社页面](https://arxiv.org/pdf/2111.14485.pdf) 导出正式 BibTeX；不使用未核实的作者/卷页。
 
-```bibtex
-@article{conic2022,
-  title={CoNIC: Colon Nuclei Identification and Counting Challenge 2022},
-  author={Graham, Simon and others},
-  journal={arXiv preprint arXiv:2111.14485},
-  year={2021}
-}
-
-@article{conic_challenge2024,
-  title={CoNIC Challenge: Pushing the frontiers of nuclear detection, segmentation, classification and counting},
-  author={Graham, Simon and others},
-  journal={Medical Image Analysis},
-  year={2024}
-}
-```
+---
 
 ## 注意事项
 
-1. **与 Lizard 的关系**：CoNIC 数据是 Lizard 的子集/扩展，两者标注体系一致，可互相参考。
-2. **掩码格式注意**：实例掩码可能需要 16 位或 32 位图像格式存储，加载时需确认位深度。
-3. **类别编号**：类别 1–6 的具体对应关系以官方 GitHub 代码为准，不可自行假定。
-4. **mPQ+ 指标**：官方主要评估指标为 mPQ+，不同于普通 Dice 或 IoU，需使用官方评估脚本。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：Lizard 与 CoNIC 样本图像/标签有实质性重叠。
+4. **核查边界**：组织者发布代码；CoNIC与Lizard来源有重叠
