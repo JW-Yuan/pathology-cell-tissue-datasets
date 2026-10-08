@@ -1,113 +1,97 @@
 # ACROBAT 2022 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- **第一方来源**：[官方/作者发布页](https://acrobat.grand-challenge.org/)
-- **主要任务**：registration
-- **数据与标注**：images (1 H&E match to 1-4 IHC) + landmarks
-- **适用范围**：Breast H&E-to-IHC whole-slide image registration challenge with landmarks; counts refer to challenge splits.
-- **版本/来源提醒**：ACROBAT官方配准挑战赛
-
+> 参考 PanNuke 详情页的章节结构，严格区分官方已发布信息、当前收录的版本与尚不能核实的部分。资料核查：2026-10-08。
 
 ## 数据集描述
 
-ACROBAT（Automatic Registration of Breast Cancer Tissue）是目前规模最大的 WSI 配准数据集，旨在推进乳腺癌组织病理全切片图像（WSI）多染色配准算法的研究与开发。
+乳腺癌 H&E 与免疫组化 IHC 全切片跨染色配准挑战；核心是多模态组织形变匹配，不是将组织掩膜预测当成首要任务。
 
-### 核心目标
+### 相关论文与官方来源
 
-将 IHC（免疫组化）染色的乳腺癌组织切片 WSI 与对应的 H&E 染色 WSI 进行精准配准（Multimodal WSI Registration）。每位患者的 H&E 切片可匹配 1–4 张 IHC 切片（如 ER、PR、HER2、KI67）。
+- [原作者/挑战官方发布页面](https://acrobat.grand-challenge.org/)
+- [原论文或挑战论文](https://openreview.net/pdf?id=5TTocO2VI3r)
 
-## 数据集基本信息
+## 数据集基本信息（汇总）
 
-- **器官类型**：乳腺 (Breast)
-- **染色方式**：多染色（H&E + IHC：ER、PR、HER2、KI67）
-- **数据集大小**：Train: 750 张；Valid: 100 张；Test: 300 张（共 1152 例乳腺癌患者，4212 张 WSI）
-- **放大倍数**：40x — Hamamatsu 扫描仪
-- **数据来源**：CHIME Study（瑞典）
-- **任务类型**：WSI 配准（Registration）
+| 项目 | 核实内容 |
+|---|---|
+| **发布/赛事年份** | 2022 |
+| **器官/样本** | Breast |
+| **染色/模态** | Multiple (IHC, H&E) |
+| **适用任务** | registration |
+| **图像形态** | wsi |
+| **原始数据与监督** | images (1 H&E match to 1-4 IHC) + landmarks |
+| **扫描/其他** | 40x - Hamamatsu |
 
-## 数据集规模与划分
+## 核心数据量与图像格式
 
-| 子集 | WSI 数量 | 说明 |
-|------|---------|------|
-| 训练集 | 750 | 含 H&E + IHC 配对，带 landmark 标注 |
-| 验证集 | 100 | 同上 |
-| 测试集 | 300 | 同上 |
-| **合计** | **1150（竞赛）** | 总数据 4212 张 WSI（含全数据集） |
+| 项目 | 核实内容 |
+|---|---|
+| **数量（注明统计单位）** | Train: 750 train; Valid: 100; Test: 300 |
+| **图像/文件表示** | H&E 与 IHC 的 WSI 配对（多级金字塔）；配对元数据与 landmarks（对应点坐标） |
+| **采集与版本说明** | 乳腺组织、手工选择的解剖/组织对应位置；不同染色显色和形变会影响点位置精度。 |
 
-## 标注格式
+## 任务与标注
 
-- **Landmark 点标注**：每对 H&E–IHC 图像间提供对应的地标点（landmark）坐标，用于评估配准精度
-- 标注格式为结构化坐标文件，评估指标为地标点配准误差（Target Registration Error, TRE）
+核心监督和测评是真实对应 landmark 坐标，图像配准需先统一扫描比例与物理像素坐标系。
 
-## 数据特点
+## 标注类别与语义
 
-### 多染色配对
-- 每个 H&E WSI 对应 1–4 张 IHC WSI
-- IHC 类型包括：ER（雌激素受体）、PR（孕激素受体）、HER2（人表皮生长因子受体 2）、KI67（增殖标志物）
+| 项目 | 核实内容 |
+|---|---|
+| **配准对应** | 病理学专家提供跨图 landmark 对 |
+| **染色对** | 每张 H&E 对应 1–4 张 IHC，具体配对随病例变化 |
 
-### 临床意义
-- 跨染色配准是临床研究和多组学整合分析的基础工具
-- 支持形态与生物标志物的空间关联分析
+> 类别名称与整数 ID 的映射必须以下载数据中的 label map 或发布方代码为准；未在本页列出的类不能推定存在。
 
-### 技术挑战
-- H&E 与 IHC 图像颜色外观差异大
-- 组织切片可能存在形变、旋转等非线性形变
-- WSI 分辨率极高，计算量大
+## 数据划分与评估协议
 
-## 使用建议
+挑战组织形式为训练 750、验证 100、测试 300 的配对样本统计；论文完整发布规模及图像对数量不同，不能视作 1:1 的 1,150 独立病人。
+
+## 文件结构与读取方法
+
+- H&E 与 IHC 的 WSI 配对（多级金字塔）
+- 配对元数据与 landmarks（对应点坐标）
+
+这些是有来源依据的**文件组成**，不是未经下载验证的精确文件树。不同 release 和镜像可能调整压缩包名或子目录；先检查实际压缩包/路径：
+
+```python
+from pathlib import Path
+root = Path('DATASET_ROOT')  # 替换为已下载并解压的数据目录
+for p in sorted(root.rglob('*')):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
+```
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 乳腺组织、手工选择的解剖/组织对应位置；不同染色显色和形变会影响点位置精度。
+- 核实样本与标注的一一对应关系，并保留原始标签文件的版本号与来源信息。
+- 如果提供了病例/玻片 ID，优先使用**患者或玻片级**数据划分，避免相邻 patch 泄漏。
+
+### 建模提示
+
+- 严禁把样本对数当成病例数；多张 IHC 可能来自同一 H&E；模型必须对 WSI/局部 patch 建立尺度转换。
 
 ### 评估指标
 
-```python
-# 目标配准误差（TRE，Target Registration Error）
-# 单位：微米（μm）
-# 计算方法：对应 landmark 点配准后的欧几里得距离均值
-import numpy as np
-
-def compute_TRE(pred_landmarks, gt_landmarks, pixel_spacing_um):
-    """
-    pred_landmarks: (N, 2) 预测配准后的坐标
-    gt_landmarks:   (N, 2) 真实配准的 landmark 坐标
-    pixel_spacing_um: 像素实际尺寸（μm/pixel）
-    """
-    diff = pred_landmarks - gt_landmarks
-    distances_px = np.sqrt((diff ** 2).sum(axis=1))
-    distances_um = distances_px * pixel_spacing_um
-    return distances_um.mean()
-```
-
-### 数据加载建议
-
-- 推荐使用 `openslide-python` 加载 WSI 文件
-- 配准可采用基于特征点（如 SuperPoint + SuperGlue）或基于深度学习的方法
-- 预处理时注意多染色间的颜色标准化
+官方 landmark 距离/目标配准误差（TRE）与稳健性统计；不应以 Dice 代替无 mask 的配准指标。
 
 ## 相关资源
 
-- [Grand Challenge 官方页](https://acrobat.grand-challenge.org/)
-- [论文（MedIA 2024）](https://www.sciencedirect.com/science/article/pii/S1361841524001828)
-- [arXiv 预印版](https://arxiv.org/abs/2305.18033)
-- [数据集描述论文](https://arxiv.org/abs/2211.13621)
-- [Zenodo 挑战结构数据](https://zenodo.org/records/6361806)
+- [data](https://acrobat.grand-challenge.org/)
+- [paper](https://openreview.net/pdf?id=5TTocO2VI3r)
+- [official](https://acrobat.grand-challenge.org/)
 
 ## 引用
 
-如果您使用了此数据集，请引用：
-
-```bibtex
-@article{acrobat2024,
-  title={The ACROBAT 2022 challenge: Automatic registration of breast cancer tissue},
-  author={Weitz, Philippe and others},
-  journal={Medical Image Analysis},
-  year={2024},
-  publisher={Elsevier}
-}
-```
+正式参考文献请在 [原论文](https://openreview.net/pdf?id=5TTocO2VI3r) 的出版社页面导出 BibTeX，不手写未经核实的作者/期刊字段。
 
 ## 注意事项
 
-1. **数据使用许可**：数据遵循 Creative Commons 许可协议，使用前请查阅官方许可说明。
-2. **数据访问**：数据通过 Grand Challenge 平台申请获取，需注册账号。
-3. **配准复杂性**：不同病例的切片层数、IHC 类型不同，需灵活处理缺失配对的情况。
-4. **扫描仪差异**：所有图像使用 Hamamatsu 扫描，相对统一，但染色强度因批次而异。
+1. **来源可信度**：ACROBAT官方配准挑战赛。
+2. **任务边界**：严禁把样本对数当成病例数；多张 IHC 可能来自同一 H&E；模型必须对 WSI/局部 patch 建立尺度转换。
+3. **数据授权**：使用前查阅官方文件的许可、注册与下载条件；源代码许可证不能替代数据许可证。
+4. **可复现性**：统计以对应发布包、真实文件数、患者去重和官方测试划分为准；本页未对每个下载压缩包逐字节校验。
