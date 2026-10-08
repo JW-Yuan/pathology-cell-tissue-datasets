@@ -1,165 +1,119 @@
 # CATCH 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://doi.org/10.7937/TCIA.2M93-FX66)
-- **任务**：seg、classi
-- **组织/染色**：Skin (Canine) 犬类的，非人类 / H&E
-- **规模**：350 wsi, 12.424 polygon annotations (13 classes)
-- **准确的标注范围**：Skin (Canine) 犬类的，非人类 histopathology dataset. for seg, classi tasks.
-- **补充提醒**：TCIA CATCH发布 DOI；犬类皮肤肿瘤
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CATCH（Pan-tumor CAnine cuTaneous Cancer Histology）是一个大规模的**犬类皮肤肿瘤**组织病理学数据集，提供 350 张全切片图像（WSI）及 12,424 个多边形标注（13 个组织学类别）。数据集由德国埃尔朗根-纽伦堡大学（FAU Erlangen-Nürnberg）计算机科学系模式识别实验室发布，论文发表于 Nature Scientific Data（2022）。
+CATCH（Pan-tumor CAnine cuTaneous Cancer Histology）是**犬**皮肤肿瘤 WSI 数据集，用于组织结构和肿瘤区域分割及分类，不能标记为人类皮肤癌。
 
-> **重要提示**：本数据集为**动物（犬类）病理**，不直接用于人类疾病诊断，但其组织学模式与人类皮肤肿瘤存在相似性，可用于算法迁移学习研究。
+### 相关论文与发布方
 
-## 数据集基本信息
+- [官方/第一方来源](https://doi.org/10.7937/TCIA.2M93-FX66)
+- [原论文](https://www.nature.com/articles/s41597-022-01692-w)
 
-- **器官类型**：皮肤（犬类，Canine）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：350 张 WSI，12,424 个多边形标注（13 类）
-- **放大倍数**：40x — Aperio ScanScope CS2（Leica）
-- **任务类型**：分割（seg）+ 分类（classi）
-- **数据来源**：TCIA（The Cancer Imaging Archive）
 
-## 肿瘤类型（7 类）
+---
 
-| 肿瘤类型 | 缩写 | 说明 |
-|---------|------|------|
-| Mast Cell Tumor | MCT | 肥大细胞瘤（最常见） |
-| Melanoma | MEL | 黑色素瘤 |
-| Plasmacytoma | PLA | 浆细胞瘤 |
-| Soft Tissue Sarcoma | STS | 软组织肉瘤 |
-| Squamous Cell Carcinoma | SCC | 鳞状细胞癌 |
-| Trichoblastoma | TRI | 毛母细胞瘤 |
-| Histiocytoma | HIS | 组织细胞瘤 |
+## 数据集基本信息（汇总）
 
-## 标注格式
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2022 |
+| **器官/组织或物种** | Skin (Canine) 犬类的，非人类 |
+| **染色及模态** | H&E |
+| **具体任务** | seg、classi |
+| **图像单元与尺寸** | wsi |
+| **标注内容** | images + contours (JSON) |
+| **扫描/附加条件** | 40x Aperio ScanScope CS2 (Leica) |
 
-### 多边形标注（Polygon Annotation）
+---
 
-- 标注格式：JSON（多边形顶点坐标 + 类别标签）
-- **13 个组织学类别**：
-  - 7 种肿瘤类型（对应上表）
-  - 6 种非肿瘤组织：表皮（Epidermis）、真皮（Dermis）、皮下脂肪（Subcutis）、炎症（Inflammation）、血管（Blood Vessel）、表皮/真皮附属器（Skin Adnexae）
+## 核心数据量与图像格式
 
-### 标注统计
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 350 wsi, 12.424 polygon annotations (13 classes) |
+| **格式/数据形态** | 多尺度 H&E WSI + ROI/轮廓多边形（JSON 等表示） |
+| **采集与版本** | 350 张犬皮肤 WSI，12,424 个多边形标注，13 个组织/病变类别。 |
 
-| 类别 | 标注数量（约） |
-|------|--------------|
-| 肿瘤区域（7 类合计） | ~6,000 |
-| 非肿瘤组织（6 类合计） | ~6,424 |
-| **合计** | **12,424** |
+---
 
-## 数据特点
+## 任务与标注
 
-### 大规模多肿瘤类型覆盖
-- 覆盖 7 种不同的犬类皮肤肿瘤类型
-- 包含肿瘤间质、炎症浸润等微环境信息
+区域多边形属于组织/肿瘤区域语义，不是逐核实例图；使用时从 contour 构建 ROI 语义 mask。
 
-### 犬-人类跨物种迁移潜力
-- 犬类皮肤肿瘤与人类皮肤肿瘤存在形态学相似性
-- 可作为迁移学习的源域（Source Domain）
+### 类别与标签语义
 
-### 丰富的背景组织标注
-- 不仅标注肿瘤，还标注皮肤各层非肿瘤组织
-- 适合上下文感知的分割模型训练
+- 13 个组织/肿瘤类别：完整名称和 ID 依 TCIA 原始 annotation taxonomy 为准
+- 犬皮肤肿瘤类别与正常皮肤组织分开编码；不直接借用人的肿瘤分级体系
 
-## 使用建议
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-### 数据加载
+---
 
-```python
-import json
-import openslide
-import numpy as np
-from shapely.geometry import Polygon
+## 数据划分与统计口径
 
-# 加载 WSI
-wsi = openslide.OpenSlide('MCT_sample.svs')
+官方数据按照犬皮肤来源样本发布；模型训练/测试需按病例或切片划分，多边形数量不是 WSI 数。
 
-# 加载 JSON 标注
-with open('MCT_sample_annotations.json', 'r') as f:
-    annotations = json.load(f)
+---
 
-# 解析多边形标注
-for annotation in annotations:
-    label = annotation['label']       # 类别名称
-    polygon_pts = annotation['polygon']  # [[x1,y1], [x2,y2], ...]
-    poly = Polygon(polygon_pts)
-    
-    # 转换为掩码
-    x_min, y_min, x_max, y_max = [int(v) for v in poly.bounds]
-    region = wsi.read_region((x_min, y_min), 0, (x_max-x_min, y_max-y_min))
-    region_array = np.array(region.convert('RGB'))
-```
+## 文件组成与读取方式
 
-### 创建像素级掩码
+- TCIA CATCH WSI 下载集合
+- 对应区域注释多边形文件
+- 数据说明及论文的类别列表
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-from PIL import Image, ImageDraw
+from pathlib import Path
 
-def create_mask(wsi_dims, annotations, class_to_id):
-    """从多边形标注创建像素级掩码"""
-    mask = Image.new('L', wsi_dims, 0)
-    draw = ImageDraw.Draw(mask)
-    
-    for ann in annotations:
-        class_id = class_to_id.get(ann['label'], 0)
-        poly_pts = [tuple(pt) for pt in ann['polygon']]
-        draw.polygon(poly_pts, fill=class_id)
-    
-    return np.array(mask)
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 选择统一像素尺寸后把多边形投影到目标 pyramid level；别把标注绝对坐标当作裁剪图局部坐标。
+
+### 建模与数据泄漏风险
+
+- 物种必须明确为犬（canine）；不能把不同犬 WSI 与多扫描版本视为独立来源。
 
 ### 评估指标
 
-```python
-import numpy as np
+组织区域 IoU/Dice、多类语义分割与原论文分类评价。
 
-def compute_jaccard_per_class(pred, gt, num_classes):
-    """计算每类 Jaccard 系数（IoU）"""
-    jaccards = {}
-    class_names = ['MCT', 'MEL', 'PLA', 'STS', 'SCC', 'TRI', 'HIS',
-                   'Epidermis', 'Dermis', 'Subcutis', 'Inflammation', 'BloodVessel', 'Adnexae']
-    for c in range(1, num_classes + 1):
-        pred_c = (pred == c)
-        gt_c = (gt == c)
-        intersection = (pred_c & gt_c).sum()
-        union = (pred_c | gt_c).sum()
-        jaccards[class_names[c-1]] = intersection / (union + 1e-8)
-    return jaccards
-```
+---
 
 ## 相关资源
 
-- [TCIA 数据页面](https://www.cancerimagingarchive.net/collection/catch/)
-- [论文（Nature Scientific Data 2022）](https://www.nature.com/articles/s41597-022-01692-w)
-- [arXiv 版本](https://arxiv.org/abs/2201.11446)
-- [TCIA Wiki](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=101941773)
+- [data](https://www.cancerimagingarchive.net/collection/catch/)
+- [paper](https://www.nature.com/articles/s41597-022-01692-w)
+- [download](https://www.cancerimagingarchive.net/collection/catch/)
+- [official](https://doi.org/10.7937/TCIA.2M93-FX66)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+引用请从 [原论文或出版社页面](https://www.nature.com/articles/s41597-022-01692-w) 导出正式 BibTeX；不使用未核实的作者/卷页。
 
-```bibtex
-@article{wilm2022catch,
-  title={Pan-tumor CAnine cuTaneous Cancer Histology (CATCH) dataset},
-  author={Wilm, Frauke and Fragoso, Marco and Marzahl, Christian and others},
-  journal={Scientific Data},
-  volume={9},
-  pages={588},
-  year={2022},
-  publisher={Nature Publishing Group}
-}
-```
+---
 
 ## 注意事项
 
-1. **物种差异**：数据为犬类病理，不可直接用于人类疾病诊断，迁移学习时需谨慎。
-2. **许可证**：数据遵循 Creative Commons Attribution 4.0 许可证。
-3. **多边形格式**：标注为 JSON 多边形，使用前需转换为像素级掩码。
-4. **与 Multi-Scanner SCC 的关联**：CATCH 同机构发布了 Multi-Scanner SCC 数据集，两者可联合研究扫描仪域偏移问题。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：Multi-Scanner SCC 是 CATCH 中 SCC 子集在多台扫描仪上的再采集。
+4. **核查边界**：TCIA CATCH发布 DOI；犬类皮肤肿瘤
