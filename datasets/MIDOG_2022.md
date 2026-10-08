@@ -1,5 +1,15 @@
 # MIDOG 2022 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://midog2022.grand-challenge.org/midog2022/)
+- **任务**：detection
+- **组织/染色**：multiple (6 for train 10 for test) / H&E
+- **规模**：Train: 405 cases, 9501 mitotic annotation
+- **任务和标注**：MItosis DOmain Generalization 2022: mitotic figure object detection; 405 training cases and 9,501 mitotic annotations.
+- **来源说明**：官方MIDOG挑战赛；任务为有丝分裂检测
+
+
 ## 数据集描述
 
 MIDOG 2022（MItosis DOmain Generalization Challenge 2022）是 MICCAI 2022 举办的有丝分裂图（Mitotic Figure）检测挑战赛数据集，专注于**跨肿瘤类型、跨实验室、跨物种**的有丝分裂图检测域泛化（Domain Generalization）问题。
