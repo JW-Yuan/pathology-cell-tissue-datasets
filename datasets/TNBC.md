@@ -1,5 +1,15 @@
 # TNBC 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://zenodo.org/records/2579118)
+- **任务**：seg
+- **组织/染色**：Breast / H&E
+- **规模**：50 images, 4022 cells (11 patients)
+- **数据集性质**：Triple-negative breast cancer nuclei segmentation: 50 H&E images from 11 patients; same source as Naylor et al.
+- **来源提醒**：原作者TNBC发布；与Naylor同源
+
+
 ## 数据集描述
 
 TNBC 是一个用于**三阴性乳腺癌（Triple Negative Breast Cancer）**组织病理学图像**细胞核分割**的公开数据集，由法国 Institut Curie（居里研究所）的 Peter Naylor、Marick Laé、Fabien Reyal 和 Thomas Walter 发布，相关研究于 2018 年发表在 IEEE Transactions on Medical Imaging（TMI）上。
@@ -174,7 +184,7 @@ def preprocess_image(image, mask):
 
 ```python
 # 按患者划分（避免数据泄漏）
-# 推荐：前 8 位患者训练，后 3 位患者测试（常见划分）
+# 以下仅为自定义示例，不应宣称为官方划分：前 8 位患者训练、后 3 位患者测试
 train_slides = ["Slide_01", "Slide_02", ..., "Slide_08"]
 test_slides  = ["Slide_09", "Slide_10", "Slide_11"]
 ```
