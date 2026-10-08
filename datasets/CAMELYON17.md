@@ -1,191 +1,119 @@
 # CAMELYON17 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://camelyon17.grand-challenge.org/Data/)
-- **任务**：classi、seg
-- **组织/染色**：Lymph node 乳腺癌淋巴结转移 / H&E
-- **规模**：Train: 500 (100 patients, 5 slides each); Test: 500
-- **准确的标注范围**：100 training and 100 test patients (5 lymph-node WSIs each); patient-level pN staging, with only 50 CAMELYON17 training slides lesion-annotated.
-- **补充提醒**：CAMELYON17官方数据页；仅部分切片有病灶精标
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CAMELYON17（Cancer Metastases in Lymph Nodes Challenge 2017）是 CAMELYON16 的升级版挑战赛数据集，将任务从单张 WSI 的转移检测提升到**患者级别**的淋巴结转移状态分类。数据来自荷兰五家医疗机构。
+CAMELYON17 从切片级转移检测提升至患者级病理 N 分期。数据由荷兰 5 个中心提供，每位患者 5 张淋巴结 WSI，目标是由各切片病灶状态合成患者级 pN-stage。
 
-### 与 CAMELYON16 的区别
+### 相关论文与发布方
 
-| 特性 | CAMELYON16 | CAMELYON17 |
-|------|-----------|-----------|
-| 分析粒度 | 切片级（Slide） | 患者级（Patient） |
-| 数据量 | 400 张 WSI | 1000 张 WSI（500 train + 500 test） |
-| 机构数 | 2 | 5 |
-| 核心任务 | 转移区域检测 | pN 分期预测 |
+- [官方/第一方来源](https://camelyon17.grand-challenge.org/Data/)
+- [原论文](https://ieeexplore.ieee.org/document/8447230)
 
-## 数据集基本信息
 
-- **器官类型**：淋巴结（Lymph Node）— 乳腺癌前哨淋巴结转移
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：
-  - 训练集：500 张 WSI（100 例患者，每例 5 张）
-  - 测试集：500 张 WSI（100 例患者，每例 5 张）
-- **分析级别**：患者级分析（Patient-Level Analysis）
-- **任务类型**：分类（classi）+ 分割（seg）
+---
 
-## 数据集划分
+## 数据集基本信息（汇总）
 
-| 子集 | 患者数 | WSI 数/患者 | WSI 总数 |
-|------|--------|------------|---------|
-| 训练集 | 100 | 5 | 500 |
-| 测试集 | 100 | 5 | 500 |
-| **合计** | **200** | — | **1000** |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2017 |
+| **器官/组织或物种** | Lymph node 乳腺癌淋巴结转移 |
+| **染色及模态** | H&E |
+| **具体任务** | classi、seg |
+| **图像单元与尺寸** | WSI |
+| **标注内容** | WSIs + patient pN-stage labels + lesion XML annotations on a limited training subset |
+| **扫描/附加条件** | patient level analysis |
 
-每位患者有 5 张前哨淋巴结 WSI，对应 5 个淋巴结。
+---
 
-## 标注格式
+## 核心数据量与图像格式
 
-### 训练集标注（两级）
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | Train: 500 (100 patients, 5 slides each); Test: 500 |
+| **格式/数据形态** | `.tif` 多级 WSI；部分训练片有 ASAP XML 病灶多边形，其余主要是患者级分期标签 |
+| **采集与版本** | 100 训练患者 + 100 测试患者，各 5 WSI；数据不应描述为 1,000 个独立患者。 |
 
-**1. 切片级标注（Slide-Level）**
+---
 
-| 标签 | 含义 |
-|------|------|
-| negative | 无转移 |
-| itc | 孤立肿瘤细胞（< 0.2mm） |
-| micro | 微转移（0.2–2mm） |
-| macro | 宏观转移（> 2mm） |
+## 任务与标注
 
-**2. 像素级掩码（Pixel-Level，部分切片）**
+公开患者级 pN-stage；仅 5 个中心各 10 张训练 WSI（合计 50）带 lesion-level XML 精细标注。原 CAMELYON16 切片还可被作为 lesion-level 训练补充。
 
-- 仅 macro 和 micro 类型的 WSI 提供像素级分割掩码
-- itc 类型提供点标注
+### 类别与标签语义
 
-### 患者级 pN 分期（核心预测目标）
+- 转移灶等级：阴性、孤立肿瘤细胞、微转移、宏转移的切片级状态
+- 患者级：按官方 pN-stage 类别与五枚淋巴结综合；不是每张 WSI 均有 binary mask
 
-| pN 分期 | 含义 |
-|---------|------|
-| pN0 | 所有淋巴结阴性 |
-| pN0(i+) | 仅含 ITC |
-| pN1mi | 微转移（0.2–2mm） |
-| pN1 | 1–3 个淋巴结宏观转移 |
-| pN2 | 4–9 个淋巴结宏观转移 |
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-## 数据特点
+---
 
-### 多机构数据
-- 来自荷兰 5 家医疗机构，域间差异显著
-- 适合测试跨机构泛化能力
+## 数据划分与统计口径
 
-### 患者级别分析挑战
-- 需要聚合同一患者 5 张 WSI 的信息进行综合判断
-- 模拟真实临床工作流程
+500 train WSI（100 patients）与 500 test WSI（100 patients）。测试标签和精确病灶标注不随所有图像公开发布。
 
-### 分层难度
-- ITC（孤立肿瘤细胞）检测是最大挑战
-- 假阴性（漏诊转移）比假阳性（过诊断）的临床危害更大
+---
 
-## 使用建议
+## 文件组成与读取方式
 
-### 数据组织结构
+- 按中心/患者组织的 TIFF WSI
+- 训练表格中的 patient pN-stage
+- 50 张带专家 contour 的训练 WSI 对应 XML
 
-```
-camelyon17/
-├── training/
-│   ├── centre_0/
-│   │   ├── patient_000_node_0.tif
-│   │   ├── patient_000_node_1.tif
-│   │   ...
-│   │   └── patient_000_node_4.tif
-│   ├── centre_1/
-│   ...
-│   └── stage_labels.csv  # 患者级 pN 分期标签
-└── testing/
-    └── ...
-```
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
 
-### 数据加载
+### 文件核验示例
 
 ```python
-import pandas as pd
-import openslide
-import os
+from pathlib import Path
 
-# 加载患者级别标签
-labels_df = pd.read_csv('stage_labels.csv')
-# 列: patient, stage (pN0, pN0(i+), pN1mi, pN1, pN2)
-
-# 加载单张 WSI
-def load_wsi_tiles(wsi_path, tile_size=256, level=1):
-    wsi = openslide.OpenSlide(wsi_path)
-    w, h = wsi.level_dimensions[level]
-    tiles = []
-    for y in range(0, h - tile_size, tile_size):
-        for x in range(0, w - tile_size, tile_size):
-            tile = wsi.read_region(
-                (x * wsi.level_downsamples[level],
-                 y * wsi.level_downsamples[level]),
-                level, (tile_size, tile_size)
-            )
-            tiles.append(np.array(tile.convert('RGB')))
-    return tiles
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
 
-### 典型处理流程
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
 
-```python
-# CAMELYON17 两阶段流程
-# Stage 1: 切片级转移检测（复用 CAMELYON16 的思路）
-# Stage 2: 患者级 pN 分期（聚合 5 张 WSI 的预测结果）
+---
 
-def predict_patient_stage(slide_predictions):
-    """
-    slide_predictions: list of (slide_label, confidence) for 5 slides
-    Returns: patient pN stage
-    """
-    macro_count = sum(1 for label, _ in slide_predictions if label == 'macro')
-    micro_count = sum(1 for label, _ in slide_predictions if label == 'micro')
-    itc_count = sum(1 for label, _ in slide_predictions if label == 'itc')
-    
-    if macro_count >= 4:
-        return 'pN2'
-    elif macro_count >= 1:
-        return 'pN1'
-    elif micro_count >= 1:
-        return 'pN1mi'
-    elif itc_count >= 1:
-        return 'pN0(i+)'
-    else:
-        return 'pN0'
-```
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 从五张淋巴结切片的模型输出汇总患者级类别；病灶 XML 经 ASAP 转换到对应像素层级。
+
+### 建模与数据泄漏风险
+
+- 不应声称全部 1,000 WSI 有公开精细 mask；患者是划分和评测的最小单位。
+
+### 评估指标
+
+患者 pN-stage 分类准确率或挑战赛官方评分，辅助 lesion-level FROC。
+
+---
 
 ## 相关资源
 
-- [Grand Challenge 官方页](https://camelyon17.grand-challenge.org/)
-- [论文（IEEE TMI 2018）](https://ieeexplore.ieee.org/document/8447230)
-- [百度网盘下载](https://pan.baidu.com/s/1mIzSewImtEisclPtTHGSyw)
-- [AWS 公开数据集](https://registry.opendata.aws/camelyon/)
+- [data](https://camelyon17.grand-challenge.org/)
+- [paper](https://ieeexplore.ieee.org/document/8447230)
+- [download](https://pan.baidu.com/s/1mIzSewImtEisclPtTHGSyw)
+- [official](https://camelyon17.grand-challenge.org/Data/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+引用请从 [原论文或出版社页面](https://ieeexplore.ieee.org/document/8447230) 导出正式 BibTeX；不使用未核实的作者/卷页。
 
-```bibtex
-@article{bandi2018detection,
-  title={From detection of individual metastases to classification of lymph node status at the patient level: The CAMELYON17 challenge},
-  author={Bandi, Peter and Geessink, Oscar and Manson, Quirine and others},
-  journal={IEEE Transactions on Medical Imaging},
-  volume={38},
-  number={2},
-  pages={550--560},
-  year={2018},
-  publisher={IEEE}
-}
-```
+---
 
 ## 注意事项
 
-1. **多机构差异**：5 个医疗机构的图像在颜色、对比度方面差异明显，建议进行颜色归一化。
-2. **患者级评估**：最终评估以患者 pN 分期为准，需将 5 张 WSI 的结果进行聚合。
-3. **ITC 处理**：ITC 仅提供点标注而非像素掩码，处理方式与 macro/micro 不同。
-4. **训练集标注完整性**：并非所有训练 WSI 都有像素级掩码，部分仅有切片级标签。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：与 CAMELYON16 的 training lesion ground truth 存在复用关系。
+4. **核查边界**：CAMELYON17官方数据页；仅部分切片有病灶精标
