@@ -1,172 +1,119 @@
 # CryoNuSeg 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://github.com/masih4/CryoNuSeg)
-- **任务**：seg
-- **组织/染色**：multiple (10: adrenal gland, larynx, lymph nodes, mediastinum, pancreas, pleura, skin, testes, thymus, and thyroid gland) / H&E
-- **规模**：8000 nuclei from 30 patches (from 30 wsi)
-- **正确的标注范围**：multiple (10: adrenal gland, larynx, lymph nodes, mediastinum, pancreas, pleura, skin, testes, thymus, and thyroid gland) histopathology dataset. for seg tasks.
-- **来源说明**：论文作者仓库；冷冻切片实例分割
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CryoNuSeg 是一个专为**冷冻切片（Cryosection）H&E 染色图像中细胞核实例分割**设计的基准数据集，来自 TCGA，涵盖 10 种不同器官的组织，提供像素级二值分割标注。
+CryoNuSeg 是冷冻 H&E 切片的细胞核实例分割基准，从 TCGA 冷冻样本获得多个组织器官的 512×512 patches，旨在评估非固定石蜡切片条件下的核分割泛化。
 
-### 研究背景
+### 相关论文与发布方
 
-冷冻切片在术中快速病理诊断中至关重要，但其图像质量通常低于常规石蜡包埋（FFPE）切片（含冰晶伪影、组织形变等）。CryoNuSeg 是专门针对冷冻切片细胞核分割的数据集。
+- [官方/第一方来源](https://github.com/masih4/CryoNuSeg)
+- [原论文](https://www.sciencedirect.com/science/article/pii/S0010482521001438)
+- [代码/项目仓库](https://github.com/masih4/CryoNuSeg)
 
-## 数据集基本信息
+---
 
-- **器官类型**：多器官（10 种）：肾上腺（Adrenal gland）、喉（Larynx）、淋巴结（Lymph nodes）、纵隔（Mediastinum）、胰腺（Pancreas）、胸膜（Pleura）、皮肤（Skin）、睾丸（Testes）、胸腺（Thymus）、甲状腺（Thyroid gland）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：30 张 patch（来自 30 张 WSI），含约 8,000 个细胞核
-- **图像分辨率**：512 × 512 像素
-- **放大倍数**：40x（来自 TCGA）
-- **任务类型**：分割（Binary Nuclei Segmentation）
+## 数据集基本信息（汇总）
 
-## 数据集规模
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2021 |
+| **器官/组织或物种** | multiple (10: adrenal gland, larynx, lymph nodes, mediastinum, pancreas, pleura, skin, testes, thymus, and thyroid gland) |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | patch (512x512) |
+| **标注内容** | images + segmentation masks + binary labels |
+| **扫描/附加条件** | 40x (from TCGA) |
 
-| 统计项 | 数量 |
-|--------|------|
-| 器官种类 | 10 种 |
-| WSI 数量 | 30 |
-| Patch 数量 | 30（每个 WSI 一张）|
-| 细胞核总数 | 约 8,000 |
-| 图像分辨率 | 512 × 512 px |
+---
 
-## 标注格式
+## 核心数据量与图像格式
 
-### 像素级二值掩码 + 二值分类标签
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 8000 nuclei from 30 patches (from 30 wsi) |
+| **格式/数据形态** | 30 张 RGB 512×512、核实例 pixel masks（公开仓库提供 ImageJ 标注流程与生成方法） |
+| **采集与版本** | 10 个器官，各 3 张 WSI 各抽取一块；注释核数量有文献报告 7,596，而有的汇总约写 8,000，不能精确混用。 |
 
-```python
-import numpy as np
-from PIL import Image
+---
 
-# 加载图像
-img = np.array(Image.open('cryo_001.png').convert('RGB'))  # (512, 512, 3)
+## 任务与标注
 
-# 加载二值掩码（细胞核 vs 背景）
-binary_mask = np.array(Image.open('cryo_001_mask.png').convert('L'))
-# 255 或 1: 细胞核区域
-# 0: 背景
+手工勾画每个核的像素级轮廓（instance），对比常规 FFPE H&E 具有不同的冷冻伪影。
 
-# 标准化掩码值
-binary_mask = (binary_mask > 0).astype(np.uint8)
-```
+### 类别与标签语义
 
-### 附加标签信息
+- Nucleus / Background：单类核实例，不提供核表型多类别分类真值
 
-- 除二值掩码外，还提供每张图像的**器官标签**（10 类）
-- 可用于器官感知的分割模型训练
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-## 10 种器官
+---
 
-| 器官 | 英文 | 病理特点 |
-|------|------|---------|
-| 肾上腺 | Adrenal gland | 皮质细胞大，富含脂质空泡 |
-| 喉 | Larynx | 鳞状上皮、黏液腺体 |
-| 淋巴结 | Lymph nodes | 密集淋巴细胞 |
-| 纵隔 | Mediastinum | 脂肪、胸腺残余组织 |
-| 胰腺 | Pancreas | 腺泡细胞、胰岛细胞 |
-| 胸膜 | Pleura | 间皮细胞、纤维组织 |
-| 皮肤 | Skin | 表皮、真皮多层结构 |
-| 睾丸 | Testes | 精原细胞、支持细胞 |
-| 胸腺 | Thymus | 胸腺细胞密集 |
-| 甲状腺 | Thyroid gland | 滤泡结构，胶体丰富 |
+## 数据划分与统计口径
 
-## 数据特点
+30 张来自 TCGA 的图像，论文组织以 10 organ×3 patch 给出；跨器官评测时应按器官分组而非随机 patch。
 
-### 冷冻切片特有挑战
-- **冻结伪影**：冰晶形成造成组织撕裂，影响分割边界精度
-- **组织收缩**：冷冻过程可能导致组织形变
-- **厚度不均**：冷冻切片厚度控制不如石蜡切片精确
+---
 
-### 跨器官多样性
-- 10 种器官覆盖不同组织学背景，适合测试模型泛化能力
-- 每种器官仅 3 张图像（30 张 / 10 种器官），非常稀缺
+## 文件组成与读取方式
 
-### 与 FFPE 的区别
-| 特性 | CryoNuSeg（冷冻） | FFPE（石蜡）|
-|------|-----------------|------------|
-| 图像质量 | 较低（含伪影）| 较高 |
-| 处理速度 | 快（术中）| 慢（1-2 天）|
-| 典型应用 | 术中快速诊断 | 常规病理诊断 |
+- H&E 512×512 图像
+- 每个核的 ImageJ 标注/实例 mask
+- 作者 GitHub 提供 mask 生成辅助代码
 
-## 使用建议
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
 
-### 数据加载
+### 文件核验示例
 
 ```python
-import os
-import numpy as np
-from PIL import Image
+from pathlib import Path
 
-ORGANS = ['adrenal_gland', 'larynx', 'lymph_nodes', 'mediastinum', 
-          'pancreas', 'pleura', 'skin', 'testes', 'thymus', 'thyroid_gland']
-
-def load_cryonuseg(root_dir):
-    dataset = []
-    for organ in ORGANS:
-        img_dir = os.path.join(root_dir, organ, 'images')
-        mask_dir = os.path.join(root_dir, organ, 'masks')
-        for fname in os.listdir(img_dir):
-            if fname.endswith('.png'):
-                img = np.array(Image.open(os.path.join(img_dir, fname)).convert('RGB'))
-                mask_path = os.path.join(mask_dir, fname)
-                mask = (np.array(Image.open(mask_path).convert('L')) > 0).astype(np.uint8)
-                dataset.append({
-                    'image': img,
-                    'mask': mask,
-                    'organ': organ
-                })
-    return dataset
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 读取实例掩膜时先确认同一 ID 是否唯一，不可因为所有核都属一种语义就丢弃实例区别。
+
+### 建模与数据泄漏风险
+
+- 冷冻切片非 FFPE，数据规模不足以可靠随机分割很多训练/验证样本。
 
 ### 评估指标
 
-```python
-# 二值分割指标（细胞核 vs 背景）
-def compute_metrics(pred_mask, gt_mask):
-    tp = ((pred_mask == 1) & (gt_mask == 1)).sum()
-    fp = ((pred_mask == 1) & (gt_mask == 0)).sum()
-    fn = ((pred_mask == 0) & (gt_mask == 1)).sum()
-    
-    dice = 2 * tp / (2 * tp + fp + fn + 1e-8)
-    iou = tp / (tp + fp + fn + 1e-8)
-    precision = tp / (tp + fp + 1e-8)
-    recall = tp / (tp + fn + 1e-8)
-    
-    return {'Dice': dice, 'IoU': iou, 'Precision': precision, 'Recall': recall}
-```
+AJI、Dice、PQ 及跨器官泛化指标。
+
+---
 
 ## 相关资源
 
-- [Kaggle 数据集页面](https://www.kaggle.com/datasets/ipateam/segmentation-of-nuclei-in-cryosectioned-he-images)
-- [GitHub 代码（CryoNuSeg）](https://github.com/masih4/CryoNuSeg)
-- [论文（Computers in Biology and Medicine 2021）](https://www.sciencedirect.com/science/article/pii/S0010482521001438)
+- [data](https://www.kaggle.com/datasets/ipateam/segmentation-of-nuclei-in-cryosectioned-he-images)
+- [github](https://github.com/masih4/CryoNuSeg)
+- [paper](https://www.sciencedirect.com/science/article/pii/S0010482521001438)
+- [download](https://www.kaggle.com/datasets/ipateam/segmentation-of-nuclei-in-cryosectioned-he-images)
+- [official](https://github.com/masih4/CryoNuSeg)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+正式引文请从 [原论文](https://www.sciencedirect.com/science/article/pii/S0010482521001438) 获取并导出 BibTeX，不猜测完整作者。
 
-```bibtex
-@article{cryonuseg2021,
-  title={CryoNuSeg: A dataset for nuclei instance segmentation of cryosectioned H&E-stained histological images},
-  author={Mahbod, Amirreza and Schaefer, Gerald and Dorffner, Georg and others},
-  journal={Computers in Biology and Medicine},
-  volume={132},
-  pages={104349},
-  year={2021},
-  publisher={Elsevier}
-}
-```
+---
 
 ## 注意事项
 
-1. **小规模**：仅 30 张图像（每器官约 3 张），不适合大规模训练，主要用于测试和跨域评估。
-2. **冷冻伪影**：模型需对冷冻伪影具备一定的鲁棒性，预训练时可考虑数据增强。
-3. **仅二值标注**：不提供细胞核类别标注，仅适用于细胞核二值分割任务。
-4. **跨器官评估**：10 种器官的覆盖使其成为测试跨器官泛化能力的理想数据集。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：TCGA 来源需按病例 ID 排除与其他 TCGA 派生集的潜在交叉。
+4. **核查边界**：论文作者仓库；冷冻切片实例分割
