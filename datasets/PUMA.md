@@ -1,214 +1,100 @@
 # PUMA 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- **第一方来源**：[官方/作者发布页](https://zenodo.org/records/15050523)
-- **主要任务**：seg
-- **数据与标注**：images + nuclei and tissue annotations + context image
-- **适用范围**：Melanoma H&E nuclei instance segmentation/classification and tissue segmentation; Zenodo v5 released 2025.
-- **版本/来源提醒**：Zenodo v5 (2025) 训练集包含 206 ROI；正式 GigaScience 2025 论文介绍的更完整研究集包含 310 ROI，两者不可混用。
-
+> 参考 PanNuke 详情页的章节结构，严格区分官方已发布信息、当前收录的版本与尚不能核实的部分。资料核查：2026-10-08。
 
 ## 数据集描述
 
-PUMA (Pathology Understanding through Multi-scale Analysis) 是一个用于黑色素瘤组织病理学分析的数据集。该数据集包含原发性和转移性黑色素瘤的ROI（感兴趣区域）图像，提供了详细的细胞核和组织级别的注释。
+黑色素瘤 H&E 组织学多尺度数据，围绕细胞核实例/类别和组织区域同时提供人工标注。核心问题是黑色素瘤细胞与其他间质或免疫细胞的形态混淆，以及肿瘤浸润淋巴细胞的位置关系。
 
-## 数据集基本信息
+### 相关论文与官方来源
 
-- **器官类型**：黑色素瘤 (Melanoma)
-- **染色方式**：H&E (Hematoxylin and Eosin)
-- **数据集大小**：206 个 ROI
-  - 原发性：103 个 ROI
-  - 转移性：103 个 ROI
-- **图像分辨率**：
-  - Patch 图像：1024×1024 像素
-  - Context 图像：5120×5120 像素
-- **放大倍数**：40x
-- **扫描仪**：Nanozoomer XR C12000–21/–22
+- [原作者/挑战官方发布页面](https://zenodo.org/records/15050523)
+- [原论文或挑战论文](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giaf011/8024182)
 
-## 文件结构
+## 数据集基本信息（汇总）
 
+| 项目 | 核实内容 |
+|---|---|
+| **发布/赛事年份** | 2025 |
+| **器官/样本** | Melanoma |
+| **染色/模态** | H&E |
+| **适用任务** | seg |
+| **图像形态** | patch(1024x1024) context(5120x5120) |
+| **原始数据与监督** | images + nuclei and tissue annotations + context image |
+| **扫描/其他** | 40x - Nanozoomer XR C12000–21/–22 |
+
+## 核心数据量与图像格式
+
+| 项目 | 核实内容 |
+|---|---|
+| **数量（注明统计单位）** | Zenodo training v5: 206 ROIs (primary: 103, metastatic: 103), 97,429 nuclei (10 classes: tumor 58.93%, lymphocyte 22.21%, histiocyte 7.36%, stroma 3.96%, epithelium 2.27%, apoptotic 1.90%, vascular endothelium 1.75%, melanophage 0.71%, plasma cell 0.53%, neutrophil 0.38%) |
+| **图像/文件表示** | 01_training_dataset_tif_ROIs.zip：1024×1024 ROI 的 TIFF 图像；01_training_dataset_tif_context_ROIs.zip：5120×5120 context TIFF；01_training_dataset_geojson_nuclei.zip：核的 GeoJSON 多边形/类别；01_training_dataset_geojson_tissue.zip：组织区域 GeoJSON |
+| **采集与版本说明** | 论文采样 40×（约 0.23 μm/px），训练公开数据约 97,429 个核实例；各发布版本的 ROI 数与许可曾变化。 |
+
+## 任务与标注
+
+核和组织分别采用多边形 GeoJSON 注释；不要将多边形实例当作单纯语义像素 mask，需栅格化并保留实例 ID。
+
+## 标注类别与语义
+
+| 项目 | 核实内容 |
+|---|---|
+| **核（10 类）** | Tumor、Stroma、Vascular endothelium、Histiocyte、Melanophage、Lymphocyte、Plasma cell、Neutrophil、Apoptotic cell、Epithelium |
+| **组织** | Tumor、Stroma、Epidermis、Necrosis、Blood vessel；背景另计 |
+
+> 类别名称与整数 ID 的映射必须以下载数据中的 label map 或发布方代码为准；未在本页列出的类不能推定存在。
+
+## 数据划分与评估协议
+
+Zenodo v5 公开训练部分为 206 个 ROI（103 primary、103 metastatic）；完整论文/挑战总体 310 ROI，额外测试集不等于可公开获取的训练标注。
+
+## 文件结构与读取方法
+
+- 01_training_dataset_tif_ROIs.zip：1024×1024 ROI 的 TIFF 图像
+- 01_training_dataset_tif_context_ROIs.zip：5120×5120 context TIFF
+- 01_training_dataset_geojson_nuclei.zip：核的 GeoJSON 多边形/类别
+- 01_training_dataset_geojson_tissue.zip：组织区域 GeoJSON
+
+这些是有来源依据的**文件组成**，不是未经下载验证的精确文件树。不同 release 和镜像可能调整压缩包名或子目录；先检查实际压缩包/路径：
+
+```python
+from pathlib import Path
+root = Path('DATASET_ROOT')  # 替换为已下载并解压的数据目录
+for p in sorted(root.rglob('*')):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
-PUMA/
-├── 01_training_dataset_geojson_nuclei/
-│   └── 【若干.geojson格式文件】
-│      ▶ 命名规则：{tif文件名}_nuclei.geojson（与tif文件一一对应）
-├── 01_training_dataset_geojson_tissue/
-│   └── 【若干.geojson格式文件】
-│      ▶ 命名规则：{tif文件名}_tissue.geojson（与tif文件一一对应）
-└── 01_training_dataset_tif_ROIs/
-   └── 【若干.tif格式图片文件】（如xxx.tif、yyy.tif等）
-      ▶ 作为基准文件，是geojson标注文件的命名来源
-```
 
-## 标注情况
+## 使用建议（简要）
 
-### 标注格式
+### 加载与预处理
 
-数据集提供了两种级别的标注：
+- 论文采样 40×（约 0.23 μm/px），训练公开数据约 97,429 个核实例；各发布版本的 ROI 数与许可曾变化。
+- 核实样本与标注的一一对应关系，并保留原始标签文件的版本号与来源信息。
+- 如果提供了病例/玻片 ID，优先使用**患者或玻片级**数据划分，避免相邻 patch 泄漏。
 
-1. **细胞核级别标注** (Nuclei Annotations)
-   - 包含10个类别的细胞核标注
-   - 格式：多边形或点标注
+### 建模提示
 
-2. **组织级别标注** (Tissue Annotations)
-   - 包含6个类别的组织区域标注（包括背景）
-   - 格式：多边形区域标注
-
-### 细胞核标注类别
-
-数据集包含以下10种细胞核类型：
-
-1. **Tumor** - 肿瘤细胞核
-2. **Stroma** - 间质细胞核
-3. **Vascular endothelium** - 血管内皮细胞核
-4. **Histiocyte** - 组织细胞核
-5. **Melanophage** - 黑色素吞噬细胞核
-6. **Lymphocyte** - 淋巴细胞核
-7. **Plasma cell** - 浆细胞核
-8. **Neutrophil** - 中性粒细胞核
-9. **Apoptotic cell** - 凋亡细胞核
-10. **Epithelium** - 上皮细胞核
-
-### 组织标注类别
-
-数据集包含以下6种组织类型（包括背景）：
-
-1. **Tumor** - 肿瘤组织
-2. **Stroma** - 间质组织
-3. **Epidermis** - 表皮组织
-4. **Necrosis** - 坏死组织
-5. **Blood vessel** - 血管组织
-6. **Background** - 背景区域
-
-### 标注工具
-
-标注工作使用专业的病理学标注工具完成，所有标注均经过**病理学专家**审核。
-
-### 标注统计
-
-- **总ROI数量**：206 个（原发性：103 个，转移性：103 个）
-- **总细胞核实例数**：97,429 个
-- **标注完成度**：100%（所有ROI均已完成标注）
-
-### 细胞核类别统计
-
-| 细胞核类型 | 数量 | 比例 |
-|----------|------|------|
-| **tumor** (肿瘤细胞) | 57,419 | 58.93% |
-| **lymphocyte** (淋巴细胞) | 21,643 | 22.21% |
-| **histiocyte** (组织细胞) | 7,168 | 7.36% |
-| **stroma** (基质细胞) | 3,856 | 3.96% |
-| **epithelium** (上皮细胞) | 2,211 | 2.27% |
-| **apoptotic cell** (凋亡细胞) | 1,850 | 1.90% |
-| **vascular endothelium** (血管内皮细胞) | 1,701 | 1.75% |
-| **melanophage** (吞噬色素细胞) | 695 | 0.71% |
-| **plasma cell** (浆细胞) | 520 | 0.53% |
-| **neutrophil** (嗜中性粒细胞) | 366 | 0.38% |
-| **总计** | **97,429** | **100.00%** |
-
-**注**：共扫描了 206 个 GeoJSON 文件。
-
-## 数据特点
-
-### 多尺度设计
-
-数据集采用多尺度设计，提供两种不同分辨率的图像：
-
-- **Patch 图像** (1024×1024)：用于细胞核级别的详细分析
-- **Context 图像** (5120×5120)：用于组织级别的全局分析
-
-### 临床相关性
-
-数据集包含原发性和转移性黑色素瘤样本，有助于研究：
-
-- 黑色素瘤的形态学特征
-- 原发性和转移性病变的差异
-- 肿瘤微环境分析
-- 免疫细胞浸润模式
-
-## 可视化结果
-
-### 数据集样本分布
-
-![样本分布](img/sample-distribution.png)
-
-展示原发性和转移性样本的数量分布情况。
-
-### 标注示例
-
-#### 细胞核标注示例
-
-![细胞核标注](img/nuclei-annotation-example.png)
-
-展示典型的细胞核级别标注结果，包括：
-- 不同类别的细胞核标注
-- 多类别细胞核的分布
-- 标注质量评估
-
-#### 组织标注示例
-
-![组织标注](img/tissue-annotation-example.png)
-
-展示典型的组织级别标注结果，包括：
-- 不同组织类型的区域划分
-- 肿瘤与正常组织的边界
-- 多尺度标注的对应关系
-
-### 数据增强示例
-
-![数据增强](img/augmentation-example.png)
-
-展示数据增强后的样本效果，包括：
-- 旋转增强
-- 翻转增强
-- 颜色归一化
-- 对比度调整
-
-## 使用建议
-
-### 数据预处理
-
-1. **图像归一化**：建议对图像进行标准化处理
-2. **多尺度处理**：可以同时使用 patch 和 context 图像
-3. **类别平衡**：注意原发性和转移性样本的平衡
-
-### 模型选择
-
-1. **细胞核分割**：推荐使用 U-Net、Mask R-CNN 等模型
-2. **组织分割**：推荐使用 DeepLab、SegFormer 等模型
-3. **多任务学习**：可以同时进行细胞核和组织级别的分割
+- 同一 ROI 还配有 context ROI，必须同源匹配；切勿将 test 集数值并入公开训练集统计。
 
 ### 评估指标
 
-- **细胞核分割**：使用 Dice 系数、IoU、F1-score
-- **组织分割**：使用像素准确率、平均IoU、Dice 系数
-- **分类任务**：使用准确率、精确率、召回率、F1-score
+核实例 PQ/mPQ 与分类 F1；组织分割 mIoU、Dice；具体排名应使用官方挑战评价协议。
 
 ## 相关资源
 
-- [数据集下载](https://zenodo.org/records/15050523)
-- [论文链接](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giaf011/8024182)
-- [数据集大小]：约 15 GB
+- [data](https://zenodo.org/records/15050523)
+- [paper](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giaf011/8024182)
+- [download](https://zenodo.org/records/15050523)
+- [official](https://zenodo.org/records/15050523)
 
 ## 引用
 
-如果您使用了此数据集，请引用：
-
-```bibtex
-@article{schuiveling2025novel,
-  title={A novel dataset for nuclei and tissue segmentation in melanoma with baseline nuclei segmentation and tissue segmentation benchmarks},
-  author={Schuiveling, Mark and Liu, Hong and Eek, Daniel and Breimer, Gerben E and Suijkerbuijk, Karijn P M and Blokx, Willeke A M and Veta, Mitko},
-  journal={GigaScience},
-  volume={14},
-  year={2025},
-  doi={10.1093/gigascience/giaf011}
-}
-```
+正式参考文献请在 [原论文](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giaf011/8024182) 的出版社页面导出 BibTeX，不手写未经核实的作者/期刊字段。
 
 ## 注意事项
 
-1. **数据使用许可**：请遵守数据集的使用许可协议
-2. **隐私保护**：数据集已进行去标识化处理
-3. **标注质量**：所有标注均经过专家审核，但建议在使用前进行质量检查
-4. **数据版本**：请使用最新版本的数据集
+1. **来源可信度**：Zenodo v5 (2025) training package reports 206 annotated ROIs; the 2025 GigaScience article describes a broader 310-ROI dataset. Do not conflate the full study with this training release.。
+2. **任务边界**：同一 ROI 还配有 context ROI，必须同源匹配；切勿将 test 集数值并入公开训练集统计。
+3. **数据授权**：使用前查阅官方文件的许可、注册与下载条件；源代码许可证不能替代数据许可证。
+4. **可复现性**：统计以对应发布包、真实文件数、患者去重和官方测试划分为准；本页未对每个下载压缩包逐字节校验。
