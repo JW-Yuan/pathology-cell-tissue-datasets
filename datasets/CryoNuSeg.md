@@ -32,9 +32,9 @@ CryoNuSeg 是冷冻 H&E 切片的细胞核实例分割基准，从 TCGA 冷冻�
 
 | 特征 | 描述 |
 |---|---|
-| **规模与计数单位** | 8000 nuclei from 30 patches (from 30 wsi) |
+| **规模与计数单位** | 30 H&E cryosection patches, 512x512 from 10 organs (3 images/organ); ~7,596 nuclei as reported in later comparative study |
 | **格式/数据形态** | 30 张 RGB 512×512、核实例 pixel masks（公开仓库提供 ImageJ 标注流程与生成方法） |
-| **采集与版本** | 10 个器官，各 3 张 WSI 各抽取一块；注释核数量有文献报告 7,596，而有的汇总约写 8,000，不能精确混用。 |
+| **采集与版本** | 10 个器官，各 3 张 WSI 各抽取一块；后续汇总研究统计约 7,596 个核，其他记录约写 8,000；此处采用 7,596 的比较研究口径，具体仍按实际下载包计数。 |
 
 ---
 
