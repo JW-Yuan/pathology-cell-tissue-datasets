@@ -1,66 +1,119 @@
 # MoNuSeg 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://monuseg.grand-challenge.org/Data/)
-- **任务**：seg
-- **组织/染色**：multiple (7) / H&E
-- **规模**：Train: 30, Test: 14
-- **任务和标注**：multiple (7) histopathology dataset. for seg tasks.
-- **来源说明**：MoNuSeg官方数据页
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-**MoNuSeg**（**Mo**lti-organ **Nu**clei **Seg**mentation）来自论文 *A Dataset and a Technique for Generalized Nuclear Segmentation for Computational Pathology*（**IEEE TMI，2017**），面向**计算病理学中的细胞核分割**。数据为 H&E 染色的病理图像 patch，提供**实例级细胞核轮廓**标注；每张图对应**特定组织来源**，但标注对象在语义上**仅考虑肿瘤细胞核**——即所有被标出的细胞核均按**癌细胞**处理，**不区分**淋巴细胞、间质细胞等其他细胞类型。
+MoNuSeg 2018 是多器官 H&E 图像核实例分割挑战，训练中包含 7 个器官的高倍图，测试包含额外器官场景，面向跨癌种泛化。
 
-**数据来源**：训练/测试图像主要来自 **TCGA** 等公开病理队列中的多器官 H&E 切片（**以 IEEE TMI 论文与 Grand Challenge 说明为准**）。
+### 相关论文与发布方
 
-## 论文与数据链接
-
-| 类型 | 链接 |
-|------|------|
-| 论文（IEEE TMI） | [IEEE Xplore](https://ieeexplore.ieee.org/document/8880654) |
-| 官方 / Grand Challenge | [MoNuSeg Data](https://monuseg.grand-challenge.org/Data/) |
-| 代码仓库（示例） | [GitHub: ruchikaverma-iitg/MoNuSeg](https://github.com/ruchikaverma-iitg/MoNuSeg) |
-| 本说明涉及的网盘副本（示例） | [Google Drive 打包](https://drive.google.com/file/d/1xYyQ31CHFRnvTCTuuHdconlJCMk2SK7Z/view) |
-
-> 若你使用网盘或其它镜像，请以**官方页面**说明为准；网盘内容可能与官方发布存在文件数量或版本差异。
-
-## 任务与标注语义
-
-- **任务形态**：**单类别实例分割**——所有核视为**同一语义类别**（癌细胞核），**无多类别区分**（不做亚型或细胞类型分类）。
-- **适用场景**：训练/评估**核实例分割**或**检测 + mask** 管线；若需区分肿瘤核与炎症核等，需**换用带多类别细胞标注的公开数据**或**自行重标注**。
-
-## 图像文件（TIF）
-
-- **格式**：`.tif` / `.tiff`，RGB 三通道。
-- **规范尺寸**：经筛选后，**可用图像为 30 张**，空间尺寸为 **1000×1000×3**（高 × 宽 × 通道）。
-- **异常样本（建议排除）**：在部分下载来源中，共 **4 张切片**对应的 **7 个 TIF 文件**出现异常：起初可能为 1000×1000×3，随后**分辨率/元数据异常**（与正常样本不一致）。处理流程上应**直接剔除这 7 个 TIF**，仅保留上述 **30 张**有效图像。
-- **说明**：是否官方发布包中**本来就不含**这 7 张、抑或为镜像损坏，需对照**原始发布说明与校验**；若与官方清单不一致，以官方为准。
-
-## 标注文件（XML）
-
-- **结构**：标注以 **`<Region>`**（或等价结构）为单元；**几何类型**为 **polygon（多边形）**。
-- **用途**：需将每个 region 的多边形转为 **binary mask**（二值掩膜），再用于实例分割（例如每个实例一张 mask，或合并为实例 ID 图）。
-- **问题文件（不建议使用）**：部分 XML 出现 **Z 维度**等与深度/层叠相关的字段，且**缺少**与具体 TIF 切片的**明确对应关系**，易导致与 2D 图像对齐失败；此类文件建议**整份不采用**。
-
-## 处理建议（工程实践）
-
-1. **多边形 → 二值 mask**：从每个 region 提取顶点序列，使用 **Detectron2** 等工具中自带的 **polygon 转二值掩膜**（或 `pycocotools`/光栅化）即可生成与图像同尺寸的 binary mask。
-2. **类别**：仅**一类前景**（细胞核），无需类别分支即可做**单类实例分割**。
-3. **与图像对齐**：先固定 **30 张有效 TIF** 列表，再只解析与之**一一对应且无二义性**的 XML；跳过含异常 Z 维或无法匹配切片的标注。
-
-## 常见元数据字段（参考）
-
-| 项目 | 说明 |
-|------|------|
-| 器官 | 多器官（官方常为 7 类器官来源；具体以论文与官方说明为准） |
-| 染色 | H&E |
-| 任务 | 分割（细胞核实例） |
-| 图像类型 | Patch（如 1000×1000） |
-| 放大倍数 | 常见说明为 **40×**（与公开全切片队列常见设置一致，以论文为准） |
+- [官方/第一方来源](https://monuseg.grand-challenge.org/Data/)
+- [原论文](https://ieeexplore.ieee.org/document/8880654)
+- [源码/组织者仓库](https://github.com/ruchikaverma-iitg/MoNuSeg)
 
 ---
 
-*本页说明来自对公开资料与常见处理流程的整理；具体文件命名、划分与官方评测以 MoNuSeg 官网及论文为准。*
+## 数据集基本信息（汇总）
+
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2018 |
+| **器官/组织或物种** | multiple (7) |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | Patch (1000x1000) |
+| **标注内容** | images (Train: 22.000 nuclei, Test: 7000) + masks |
+| **扫描/附加条件** | 40x (from TCGA) |
+
+---
+
+## 核心数据量与图像格式
+
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | Train: 30, Test: 14 |
+| **格式/数据形态** | 1000×1000 H&E RGB patches + 专家逐核多边形/实例分割真值 |
+| **采集与版本** | 训练 30 张 21,623 个核，测试 14 张 7,223 个核；总 44 张、约 28,846 个核。 |
+
+---
+
+## 任务与标注
+
+每个核的轮廓/实例标注，原始赛道没有多表型核分类标签；缺失标注/忽略样本遵循官方说明。
+
+### 类别与标签语义
+
+- Nucleus（单类核实例）
+- Background（背景）
+
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
+
+---
+
+## 数据划分与统计口径
+
+训练 30（Breast/Liver/Kidney/Prostate/Bladder/Colon/Stomach），测试 14（还含 Lung、Brain 等与训练不完全重叠的器官）。
+
+---
+
+## 文件组成与读取方式
+
+- `*.tif` 1000×1000 H&E images
+- 与图像对应的 instance segmentation contour annotation（XML / mask，视发布包）
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
+
+```python
+from pathlib import Path
+
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
+```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 从 XML 勾画核轮廓得到实例 GT；测试标签可用性按挑战阶段核实。
+
+### 建模与数据泄漏风险
+
+- 核类型分类不可凭背景值推断；和 Kumar 2017 的同源图像关系要显式处理。
+
+### 评估指标
+
+AJI（challenge 核心）、Dice、instance PQ 等。
+
+---
+
+## 相关资源
+
+- [data](https://monuseg.grand-challenge.org/Data/)
+- [github](https://github.com/ruchikaverma-iitg/MoNuSeg)
+- [paper](https://ieeexplore.ieee.org/document/8880654)
+- [download](https://monuseg.grand-challenge.org/Data/)
+- [official](https://monuseg.grand-challenge.org/Data/)
+
+---
+
+## 引用
+
+请从 [出版社/原论文](https://ieeexplore.ieee.org/document/8880654) 导出 BibTeX；不编写未经证实的作者或卷号。
+
+---
+
+## 注意事项
+
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：Kumar 2017 的原始图像/训练集与后续 MoNuSeg 存在样本重用。
+4. **核查边界**：MoNuSeg官方数据页
