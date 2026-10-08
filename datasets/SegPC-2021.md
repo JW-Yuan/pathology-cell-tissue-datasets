@@ -1,5 +1,15 @@
 # SegPC-2021 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://segpc-2021.grand-challenge.org/)
+- **任务**：seg
+- **器官/染色**：Bone marrow (plasma cells) / Jenner-Giemsa
+- **规模**：775 images, Train: 298, Valid: 200, Test: 277
+- **经核实的范围**：Bone-marrow smear plasma cell nucleus and cytoplasm segmentation for multiple myeloma, Jenner-Giemsa staining.
+- **重要提醒**：官方骨髓浆细胞分割挑战赛
+
+
 ## 数据集描述
 
 SegPC-2021（Segmentation of Plasma Cells 2021）是一个专用于**骨髓涂片图像中浆细胞分割**的挑战赛数据集，专注于多发性骨髓瘤（Multiple Myeloma）的浆细胞分割任务，包含细胞核（Nucleus）和细胞质（Cytoplasm）两个结构的独立分割标注。
