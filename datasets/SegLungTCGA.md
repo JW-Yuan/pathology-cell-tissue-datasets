@@ -1,154 +1,126 @@
 # SegLungTCGA 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://github.com/animgoeth/SegLungTCGA)
-- **任务**：seg
-- **器官/染色**：Lung / H&E
-- **规模**：454 images + file mapping info
-- **经核实的范围**：TCGA lung adenocarcinoma histology segmented into 87x87 μm tissue patches; GitHub provides former/current TCGA file ID mapping.
-- **重要提醒**：原作者数据；87×87单位为μm
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-SegLungTCGA 是一个来自 TCGA 的**肺癌 WSI 分割**数据集，提供从 WSI 中分割出的肺组织图像块及文件映射信息，用于肺癌组织学分析和分割研究。
+SegLungTCGA 是来自 TCGA 肺腺癌 WSI 的组织语义颜色分块数据，用于建模各组织区域构成及其与临床因素的关联。
 
-### 数据来源
+### 相关论文与发布方
 
-图像从 **TCGA（The Cancer Genome Atlas）**肺腺癌（LUAD）和肺鳞状细胞癌（LUSC）数据集中筛选和预处理而来，由 GitHub 仓库 `animgoeth/SegLungTCGA` 维护。
+- [官方/第一方来源](https://github.com/animgoeth/SegLungTCGA)
+- [原论文](https://bmccancer.biomedcentral.com/articles/10.1186/s12885-022-10081-w#article-info)
 
-## 数据集基本信息
 
-- **器官类型**：肺（Lung）— 肺癌（LUAD/LUSC）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：454 张图像 + 文件映射信息（mapping info）
-- **图像类型**：从 WSI 中分割出的 87×87 μm（物理视野） patch 集合
-- **数据来源**：TCGA（LUAD + LUSC）
-- **任务类型**：分割（Lung Tissue Segmentation）
+---
 
-## 数据集规模
+## 数据集基本信息（汇总）
 
-| 统计项 | 数量 |
-|--------|------|
-| 图像/样本总数 | 454 |
-| 图像类型 | 87×87 μm（物理视野） patches |
-| 肺癌亚型 | LUAD + LUSC |
-| 文件映射 | 提供 TCGA 文件 ID 映射 |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2021 |
+| **器官/组织或物种** | Lung |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | WSI-derived colored tissue-region patches (87x87 μm physical field) |
+| **标注内容** | images |
+| **扫描/附加条件** | (from TCGA) |
 
-## 数据特点
+---
 
-### TCGA 来源
-- 图像来自 TCGA 公开数据集
-- 附带文件映射信息，可溯源至具体 TCGA 患者和 WSI
+## 核心数据量与图像格式
 
-### 小 Patch 格式
-- 87×87 μm（物理视野） 的小尺寸 patch，计算需求低
-- 适合快速原型验证和小样本研究
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 454 images + file mapping info |
+| **格式/数据形态** | WSI 派生的 **87×87 µm 物理尺寸**区域及对应类别颜色编码；不是固定 87×87 个图像像素 |
+| **采集与版本** | 仓库发布拆分 ZIP 压缩卷 `.001`…`.005` 和 `tcga_patient_file_mapping.csv`；旧 TCGA 文件 ID 与新 GDC ID 经 CSV 对应。 |
 
-### 肺癌两大亚型
-- 涵盖肺腺癌（LUAD）和肺鳞状细胞癌（LUSC）两种最常见的非小细胞肺癌亚型
-- 两种亚型的组织学形态差异明显，可用于分型研究
+---
 
-## 肺癌组织学特征
+## 任务与标注
 
-| 亚型 | 简称 | 主要组织学特征 |
-|------|------|--------------|
-| 肺腺癌 | LUAD | 腺体结构（腺泡、乳头状、微乳头状）、黏液产生 |
-| 肺鳞状细胞癌 | LUSC | 角化珠、细胞间桥、鳞状分化 |
+不同颜色表示组织区域类型；颜色标签转换为离散分类时必须核查官方 palette；并非每个细胞核的实例轮廓。
 
-## 使用建议
+### 类别与标签语义
 
-### 数据加载
+- orange — tumor
+- green — stroma
+- yellow — mixed
+- purple — vessel
+- grey — necrosis
+- navy — lung
+- light blue — immune
+- light pink — bronchi
+- dark grey — background
 
-```python
-import os
-import numpy as np
-from PIL import Image
-import pandas as pd
-import glob
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-def load_seglungtcga(root_dir):
-    """加载 SegLungTCGA 数据集"""
-    # 加载文件映射信息
-    mapping_file = os.path.join(root_dir, 'file_mapping.csv')
-    if os.path.exists(mapping_file):
-        mapping = pd.read_csv(mapping_file)
-    
-    # 加载所有 patch
-    img_paths = sorted(glob.glob(os.path.join(root_dir, 'patches', '*.png')))
-    
-    dataset = []
-    for img_path in img_paths:
-        img = np.array(Image.open(img_path).convert('RGB'))  # (87, 87, 3)
-        dataset.append({
-            'image': img,
-            'path': img_path
-        })
-    
-    return dataset
+---
 
-# 肺癌亚型标签（通过 TCGA 映射获取）
-LUNG_TYPES = {
-    'LUAD': 0,  # 肺腺癌
-    'LUSC': 1   # 肺鳞状细胞癌
-}
-```
+## 数据划分与统计口径
 
-### 分类任务示例（LUAD vs LUSC）
+索引记录 454 个 images/source files（单位与文件 ID 对照要按原发布清点），源于 TCGA lung adenocarcinoma；患者级 split 不是数据包天然固定的机器学习划分。
+
+---
+
+## 文件组成与读取方式
+
+- `SegLungTCGA.zip.001`…`.005`：多卷压缩文件
+- `tcga_patient_file_mapping.csv`：patient、旧 file ID 与当前 GDC file ID 对照
+- 按颜色区分组织的 WSI 派生图像
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import torch
-import torchvision.transforms as transforms
-from torchvision import models
+from pathlib import Path
 
-# 数据预处理（适应小尺寸 87x87 patch）
-transform = transforms.Compose([
-    transforms.Resize(224),  # 调整为标准分类网络输入大小
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                         std=[0.229, 0.224, 0.225])
-])
-
-# 使用预训练 ResNet 进行二分类（LUAD vs LUSC）
-model = models.resnet50(pretrained=True)
-model.fc = torch.nn.Linear(2048, 2)
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 合并/解压多卷 ZIP，读取映射 CSV 恢复 TCGA 病例，再把官方颜色图转换为 tissue label。
+
+### 建模与数据泄漏风险
+
+- 千万不要写成 87×87 像素 patch；病人 TCGA ID 与图像来源必须匹配。
 
 ### 评估指标
 
-```python
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
+组织类型语义 IoU/Dice；与临床变量关联时使用患者级统计。
 
-def evaluate_lung_classification(y_true, y_pred, y_scores):
-    return {
-        'Accuracy': accuracy_score(y_true, y_pred),
-        'F1': f1_score(y_true, y_pred, average='binary'),
-        'AUC': roc_auc_score(y_true, y_scores[:, 1])
-    }
-```
+---
 
 ## 相关资源
 
-- [GitHub 代码与数据](https://github.com/animgoeth/SegLungTCGA)
-- [论文（BMC Cancer 2022）](https://bmccancer.biomedcentral.com/articles/10.1186/s12885-022-10081-w)
+- [data](https://github.com/animgoeth/SegLungTCGA)
+- [paper](https://bmccancer.biomedcentral.com/articles/10.1186/s12885-022-10081-w#article-info)
+- [download](https://github.com/animgoeth/SegLungTCGA)
+- [official](https://github.com/animgoeth/SegLungTCGA)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+正确 BibTeX 请从 [论文记录](https://bmccancer.biomedcentral.com/articles/10.1186/s12885-022-10081-w#article-info) 导出；不编造作者与卷期页。
 
-```bibtex
-@article{seglungtcga2022,
-  title={Segmentation and classification of lung cancer histology in digitized whole-slide images},
-  journal={BMC Cancer},
-  year={2022},
-  url={https://bmccancer.biomedcentral.com/articles/10.1186/s12885-022-10081-w}
-}
-```
+---
 
 ## 注意事项
 
-1. **TCGA 使用协议**：数据来源于 TCGA，使用时遵守 TCGA 数据使用协议（dbGaP）。
-2. **小尺寸限制**：87×87 μm（物理视野） 的 patch 尺寸非常小，直接用于大多数模型时需进行 resize 处理。
-3. **文件映射**：提供的文件映射信息可帮助将 patch 关联回原始 TCGA WSI，便于获取更多患者信息。
-4. **数据规模**：454 张图像规模较小，适合快速验证或迁移学习的目标域。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：与其他 TCGA 研究可能病例相交，需按 TCGA barcode 检查。
+4. **核查边界**：原作者数据；87×87单位为μm
