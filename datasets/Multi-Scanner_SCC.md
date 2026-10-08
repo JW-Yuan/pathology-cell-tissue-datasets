@@ -1,5 +1,15 @@
 # Multi-Scanner SCC 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://zenodo.org/records/7418555)
+- **任务**：registration、seg
+- **组织/染色**：Skin (Canine) / H&E
+- **规模**：44 samples á 5 scanners (220 wsi)
+- **任务和标注**：44 canine cutaneous SCC samples scanned using five devices (220 scans), derived from CATCH SCC subset; cross-scanner segmentation/registration.
+- **来源说明**：原作者Zenodo多扫描仪SCC数据
+
+
 ## 数据集描述
 
 Multi-Scanner SCC（Multi-Scanner Squamous Cell Carcinoma）是一个专用于研究**多扫描仪域偏移（Domain Shift）**的犬类皮肤鳞状细胞癌组织病理学数据集，同一批组织标本通过 5 台不同扫描仪扫描，用于 WSI 配准与分割的跨扫描仪泛化研究。
