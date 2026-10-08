@@ -1,212 +1,118 @@
 # GlaS 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://warwick.ac.uk/fac/cross_fac/tia/data/glascontest/)
-- **任务**：classi、seg
-- **组织/染色**：Colorectal (Gland) / H&E
-- **规模**：165
-- **正确的标注范围**：MICCAI 2015 GlaS colorectal gland segmentation; image-level benign/malignant histology labels also provided.
-- **来源说明**：Warwick GlaS 官方数据页；腺体分割
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-GlaS（Gland Segmentation in Colon Histology Images Challenge）是 MICCAI 2015 挑战赛数据集，专用于**结直肠组织病理学图像中腺体实例分割**，是腺体分割领域最经典的基准数据集之一。
+GlaS（MICCAI 2015 Gland Segmentation Challenge）是结直肠 H&E 显微图的腺体实例/组织区域分割数据集，包含良性和恶性组织。
 
-### 临床意义
+### 相关论文与发布方
 
-腺体形态（大小、形状、腺腔结构）是判断结肠癌恶性程度（Grading）的重要依据。自动化腺体分割可辅助 Gleason 评分/恶性分级的量化分析。
+- [官方/第一方来源](https://warwick.ac.uk/fac/cross_fac/tia/data/glascontest/)
+- [原论文](https://arxiv.org/pdf/1603.00275v2.pdf)
 
-## 数据集基本信息
 
-- **器官类型**：结直肠（Colorectal）— 腺体（Gland）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：165 张图像（train 85 + test 80）
-- **图像分辨率**：几百像素（尺寸不一，约 500~1000 px）
-- **放大倍数**：20x
-- **扫描仪**：Zeiss MIRAX MIDI
-- **任务类型**：分类（classi）+ 分割（seg）
+---
 
-## 数据集划分
+## 数据集基本信息（汇总）
 
-| 子集 | 良性（Benign） | 恶性（Malignant） | 合计 |
-|------|--------------|-------------------|------|
-| 训练集 | 37 | 48 | 85 |
-| 测试集 A | 60（含良恶） | — | 60 |
-| 测试集 B | 20（含良恶） | — | 20 |
-| **合计** | — | — | **165** |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2015 |
+| **器官/组织或物种** | Colorectal (Gland) |
+| **染色及模态** | H&E |
+| **具体任务** | classi、seg |
+| **图像单元与尺寸** | Patch (diff sizes - few hundred px) |
+| **标注内容** | Train: 85 (37 benign, 48 malignant); Test: 80 (37 benign, 43 malignant) |
+| **扫描/附加条件** | 20x - Zeiss MIRAX MIDI |
 
-> 测试集分为 Test A（简单）和 Test B（困难），两者需分别报告结果。
+---
 
-## 标注格式
+## 核心数据量与图像格式
 
-### 实例分割掩码
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 165 |
+| **格式/数据形态** | RGB 组织 H&E patches + gland boundary/segmentation ground truth |
+| **采集与版本** | 训练 85、测试 80，共 165 张；不同组织中腺体形状、大小及病理破坏程度变化显著。 |
 
-```python
-import numpy as np
-from PIL import Image
+---
 
-# 加载图像
-img = np.array(Image.open('train_1.bmp').convert('RGB'))
+## 任务与标注
 
-# 加载标注（实例掩码，像素值为腺体实例 ID）
-annotation = np.array(Image.open('train_1_anno.bmp'))
-# 0: 背景
-# 非零: 腺体实例 ID（每个腺体唯一）
+标注对象是 gland（腺体），不是每一个核。图像级 benign/malignant 信息用于挑战子组分析，不能直接变为核级分类 GT。
 
-# 提取所有腺体实例
-gland_ids = np.unique(annotation)
-gland_ids = gland_ids[gland_ids != 0]
+### 类别与标签语义
 
-print(f"图像包含 {len(gland_ids)} 个腺体")
-for gid in gland_ids:
-    gland_mask = (annotation == gid)
-    area = gland_mask.sum()
-    print(f"腺体 {gid}: 面积 {area} 像素")
-```
+- Gland/Non-gland（腺体区域）
+- 图像/组织类别：Benign、Malignant
 
-### 图像级分类标签
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-- 每张图像同时具有**良性/恶性（Benign/Malignant）**的图像级标签
-- 可用于训练或评估图像级恶性分类器
+---
 
-## 腺体形态学
+## 数据划分与统计口径
 
-| 形态特征 | 良性 | 恶性 |
-|---------|------|------|
-| 腺体结构 | 规则，轮廓圆滑 | 不规则，扭曲变形 |
-| 腺腔 | 清晰可见 | 模糊或消失 |
-| 边界 | 清晰 | 不清晰，浸润性 |
-| 腺体大小 | 均一 | 大小不一 |
+训练 85（37 benign、48 malignant），测试 80（37 benign、43 malignant）。
 
-## 数据特点
+---
 
-### MICCAI 2015 权威基准
-- 首次大规模腺体分割挑战赛，奠定了腺体分割领域的基准地位
-- 大量后续工作（GAN-based、Transformer-based）在此基准上报告结果
+## 文件组成与读取方式
 
-### Test A 与 Test B 难度差异
-- **Test A**：相对简单，腺体边界清晰
-- **Test B**：更困难，含更多恶性、形态复杂的腺体
-- 要求分别报告两个测试集的结果
+- 组织显微图像（大小随样本变化）
+- 与原图像对应的 gland segmentation GT
 
-### 小尺寸图像
-- 几百像素的小图像，适合直接端到端训练
-- 不同图像尺寸不一，数据加载时需统一处理
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
 
-## 使用建议
-
-### 数据加载
+### 文件核验示例
 
 ```python
-import os
-import numpy as np
-from PIL import Image
+from pathlib import Path
 
-def load_glas_dataset(root_dir, split='train'):
-    """加载 GlaS 数据集"""
-    img_dir = os.path.join(root_dir, split)
-    samples = []
-    
-    for fname in sorted(os.listdir(img_dir)):
-        if fname.endswith('.bmp') and 'anno' not in fname:
-            img_path = os.path.join(img_dir, fname)
-            anno_path = img_path.replace('.bmp', '_anno.bmp')
-            
-            if os.path.exists(anno_path):
-                img = np.array(Image.open(img_path).convert('RGB'))
-                anno = np.array(Image.open(anno_path))
-                
-                # 良性/恶性标签（从文件名解析）
-                label = 'benign' if 'benign' in fname.lower() else 'malignant'
-                
-                samples.append({
-                    'image': img,
-                    'instance_map': anno,
-                    'label': label
-                })
-    return samples
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 核查像素级 gland 标注；分割前尽量保持原始扫描比例。
+
+### 建模与数据泄漏风险
+
+- 若与 CRAG 联合训练，谨慎检查原始病例重合；GlaS 不提供逐核多类分割 GT。
 
 ### 评估指标
 
-```python
-# GlaS 官方评估指标（对象级）
-# 1. F1 分数（Object-level F1）
-# 2. Ojaccard（Object-level Jaccard）
+Object-level Dice、F1、Hausdorff distance（按 MICCAI GlaS 赛题定义）。
 
-def compute_object_f1_and_jaccard(pred_inst, gt_inst):
-    """
-    对象级 F1 和 Jaccard 指数
-    - 参见 GlaS 挑战赛官方评估代码
-    - IoU > 0.5 的实例对视为 TP
-    """
-    pred_ids = np.unique(pred_inst)[1:]  # 去背景
-    gt_ids = np.unique(gt_inst)[1:]
-    
-    TP, FP, FN = 0, 0, 0
-    jaccard_sum = 0
-    matched = set()
-    
-    for pred_id in pred_ids:
-        pred_mask = (pred_inst == pred_id)
-        best_iou = 0
-        best_gt = None
-        
-        for gt_id in gt_ids:
-            if gt_id in matched:
-                continue
-            gt_mask = (gt_inst == gt_id)
-            intersection = (pred_mask & gt_mask).sum()
-            union = (pred_mask | gt_mask).sum()
-            iou = intersection / (union + 1e-8)
-            if iou > best_iou:
-                best_iou = iou
-                best_gt = gt_id
-        
-        if best_iou >= 0.5:
-            TP += 1
-            jaccard_sum += best_iou
-            matched.add(best_gt)
-        else:
-            FP += 1
-    
-    FN = len(gt_ids) - len(matched)
-    
-    precision = TP / (TP + FP + 1e-8)
-    recall = TP / (TP + FN + 1e-8)
-    F1 = 2 * precision * recall / (precision + recall + 1e-8)
-    Ojaccard = jaccard_sum / (TP + FP + FN + 1e-8)
-    
-    return {'F1': F1, 'Ojaccard': Ojaccard}
-```
+---
 
 ## 相关资源
 
-- [数据集下载（Warwick TIA）](https://warwick.ac.uk/fac/cross_fac/tia/data/glascontest/)
-- [论文（arXiv 2016）](https://arxiv.org/pdf/1603.00275v2.pdf)
-- [Kaggle 数据集](https://www.kaggle.com/datasets/sani84/glasmiccai2015-gland-segmentation)
+- [data](https://warwick.ac.uk/fac/cross_fac/tia/data/glascontest/)
+- [paper](https://arxiv.org/pdf/1603.00275v2.pdf)
+- [download](https://www.kaggle.com/datasets/sani84/glasmiccai2015-gland-segmentation)
+- [official](https://warwick.ac.uk/fac/cross_fac/tia/data/glascontest/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+正式引文请从 [原论文](https://arxiv.org/pdf/1603.00275v2.pdf) 获取并导出 BibTeX，不猜测完整作者。
 
-```bibtex
-@article{sirinukunwattana2017gland,
-  title={Gland segmentation in colon histology images: The glas challenge contest},
-  author={Sirinukunwattana, Korsuk and Pluim, Josien PW and Chen, Hao and others},
-  journal={Medical Image Analysis},
-  volume={35},
-  pages={489--502},
-  year={2017},
-  publisher={Elsevier}
-}
-```
+---
 
 ## 注意事项
 
-1. **分别报告 Test A/B**：结果需在 Test A 和 Test B 上分别报告，不可合并。
-2. **图像尺寸不一**：不同图像尺寸差异大，训练时需 resize 或使用全卷积网络。
-3. **.bmp 格式**：图像为 BMP 格式，加载时注意颜色通道顺序。
-4. **Ojaccard 与 Dice 的区别**：Ojaccard 是对象级指标，衡量每个腺体实例的分割质量，与像素级 Dice 含义不同。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：Lizard 来源图像中含 GlaS 数据片段。
+4. **核查边界**：Warwick GlaS 官方数据页；腺体分割
