@@ -1,5 +1,15 @@
 # CPM-15 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [第一方/当前候选来源](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
+- **任务**：seg
+- **组织/染色**：Multiple (two cancer tissue types) / H&E
+- **规模**：15 (2905 nuclei)
+- **标注用途**：CPM 2015 histology nuclei instance segmentation benchmark; official source of currently linked Google Drive mirror not yet confirmed.
+- **来源注意**：现有公开下载文件夹；未核实是否挑战主办方维护
+
+
 ## 数据集描述
 
 CPM-15（Cell Position Map Dataset with 15 images）是一个用于**细胞核实例分割与分类**的小规模基准数据集，包含 15 张来自多种器官的组织病理学图像，共 2,905 个已标注的细胞核实例。
