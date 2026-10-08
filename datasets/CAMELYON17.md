@@ -1,5 +1,15 @@
 # CAMELYON17 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://camelyon17.grand-challenge.org/Data/)
+- **任务**：classi、seg
+- **组织/染色**：Lymph node 乳腺癌淋巴结转移 / H&E
+- **规模**：Train: 500 (100 patients, 5 slides each); Test: 500
+- **准确的标注范围**：100 training and 100 test patients (5 lymph-node WSIs each); patient-level pN staging, with only 50 CAMELYON17 training slides lesion-annotated.
+- **补充提醒**：CAMELYON17官方数据页；仅部分切片有病灶精标
+
+
 ## 数据集描述
 
 CAMELYON17（Cancer Metastases in Lymph Nodes Challenge 2017）是 CAMELYON16 的升级版挑战赛数据集，将任务从单张 WSI 的转移检测提升到**患者级别**的淋巴结转移状态分类。数据来自荷兰五家医疗机构。
