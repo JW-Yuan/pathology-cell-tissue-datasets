@@ -1,5 +1,15 @@
 # PanNuke 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://warwick.ac.uk/fac/cross_fac/tia/data/pannuke/)
+- **任务**：seg、classi
+- **器官**：multiple (19)
+- **规模**：7,901 patches (256x256), 189,744 nuclei, 5 annotated nucleus classes, 19 tissue types, 3 folds
+- **核实后的任务描述**：Pan-cancer nuclear instance segmentation and five-class nucleus classification; official data distributed in three folds.
+- **来源注意**：PanNuke官方三折发布页
+
+
 ## 数据集描述
 
 **PanNuke** 是计算病理学中**大规模、高引用**的公开数据集之一，面向**细胞核实例分割**与**细胞核分类**。图像来自大量 **H&E 染色的全切片（WSI）**，覆盖 **19 种**组织/肿瘤类型，强调**泛癌种（pan-cancer）**场景下的模型泛化。
