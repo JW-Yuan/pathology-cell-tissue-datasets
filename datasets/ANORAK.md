@@ -8,7 +8,7 @@
 
 ### 相关论文与官方来源
 
-- [原作者/挑战官方发布页面](https://www.nature.com/articles/s43018-023-00694-w)
+- [相关 Nature Cancer 论文（并非本地自标注标签发布页）](https://www.nature.com/articles/s43018-023-00694-w)
 - [原论文或挑战论文](https://www.nature.com/articles/s43018-023-00694-w)
 
 ## 数据集基本信息（汇总）
