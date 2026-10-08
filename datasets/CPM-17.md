@@ -8,7 +8,7 @@ MICCAI 2017 Computational Pathology/Digital Pathology Challenge 的核实例分�
 
 ### 相关论文与发布方
 
-- [官方/第一方来源](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
+- [当前 Google Drive 下载入口（发布者归属待核实，不能称官方）](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
 - [原论文](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6454006/)
 
 
