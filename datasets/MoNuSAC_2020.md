@@ -1,5 +1,15 @@
 # MoNuSAC 2020 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://monusac-2020.grand-challenge.org/)
+- **任务**：seg、classi
+- **组织/染色**：multiple (Lung, Prostate, Kidney, Breast) / H&E
+- **规模**：31.411 nuclei from 209 images
+- **任务和标注**：Multi-organ nuclei instance segmentation and classification with pixel-level masks for lung, prostate, kidney and breast.
+- **来源说明**：MoNuSAC官方挑战赛
+
+
 ## 数据集描述
 
 MoNuSAC 2020（Multi-organ Nuclei Segmentation and Classification Challenge）是一个针对**多器官细胞核分割与分类**任务的大规模组织病理学数据集。  
@@ -230,14 +240,7 @@ for inst_id, inst in enumerate(instances, start=1):
 
 如果您在研究中使用了 MoNuSAC 2020 数据集，请引用官方论文（以下为示意 BibTeX，具体信息请以论文主页为准）：
 
-```bibtex
-@article{monusac2020,
-  title   = {MoNuSAC 2020: Multi-organ Nuclei Segmentation and Classification Challenge},
-  author  = {Author, A. and Author, B. and Others},
-  journal = {IEEE Transactions on Medical Imaging},
-  year    = {2021}
-}
-```
+相关正式文献信息请参考：[MoNuSAC 官方挑战赛](https://monusac-2020.grand-challenge.org/) 与 [IEEE 原文](https://ieeexplore.ieee.org/document/9446924)。旧版占位作者 BibTeX 已删除，正式引用应由论文原文导出。
 
 ## 注意事项
 
