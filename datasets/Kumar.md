@@ -1,5 +1,15 @@
 # Kumar 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://monuseg.grand-challenge.org/Data/)
+- **任务**：seg
+- **组织/染色**：Multiple (7 organs) / H&E
+- **规模**：Train: 16 (13.372 nuclei), test same organ (4.130 nuclei): 8, test diff organ (4.121 nuclei): 6
+- **正确的标注范围**：30 histopathology images from seven organs for nuclei instance segmentation; no official nucleus-type labels.
+- **来源说明**：原作者Kumar文献由MoNuSeg官方页引用；数据链接仍需按版本匹配
+
+
 ## 数据集描述
 
 Kumar 数据集（也称为 MoNuSeg 的前身或 Kumar et al. 数据集）是一个多器官 H&E 组织病理学图像中**细胞核实例分割**的基准数据集，由 Kumar 等在 IEEE TMI（2017）发表。该数据集首次提出了跨器官细胞核分割的评估框架。
