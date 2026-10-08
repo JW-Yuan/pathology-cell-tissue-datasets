@@ -1,5 +1,15 @@
 # ADP 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://www.dsp.utoronto.ca/projects/ADP/)
+- **研究任务**：multi-label (3) classification (hierarchy)
+- **组织/染色**：multiple / multiple (most H&E)
+- **规模**：Train: 14,134; Valid: 1,767; Test: 1,767 patches from 100 WSIs
+- **标注与使用范围**：Atlas of Digital Pathology: 1088x1088 H&E/other-stain image patches annotated with hierarchical multi-label tissue types.
+- **原始来源说明**：多标签组织病理分类官方主页
+
+
 ## 数据集描述
 
 ADP（Atlas of Digital Pathology）是一个通用的多器官组织学组织类型（Histological Tissue Type, HTT）标注数据集，发表于 CVPR 2019。数据集旨在为基于深度学习的数字病理学研究提供多器官、多组织类型的分层标注基准。
