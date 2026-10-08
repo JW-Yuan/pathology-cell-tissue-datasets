@@ -1,5 +1,15 @@
 # MoNuSeg 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://monuseg.grand-challenge.org/Data/)
+- **任务**：seg
+- **组织/染色**：multiple (7) / H&E
+- **规模**：Train: 30, Test: 14
+- **任务和标注**：multiple (7) histopathology dataset. for seg tasks.
+- **来源说明**：MoNuSeg官方数据页
+
+
 ## 数据集描述
 
 **MoNuSeg**（**Mo**lti-organ **Nu**clei **Seg**mentation）来自论文 *A Dataset and a Technique for Generalized Nuclear Segmentation for Computational Pathology*（**IEEE TMI，2017**），面向**计算病理学中的细胞核分割**。数据为 H&E 染色的病理图像 patch，提供**实例级细胞核轮廓**标注；每张图对应**特定组织来源**，但标注对象在语义上**仅考虑肿瘤细胞核**——即所有被标出的细胞核均按**癌细胞**处理，**不区分**淋巴细胞、间质细胞等其他细胞类型。
