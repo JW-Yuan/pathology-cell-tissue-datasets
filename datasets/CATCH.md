@@ -1,5 +1,15 @@
 # CATCH 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://doi.org/10.7937/TCIA.2M93-FX66)
+- **任务**：seg、classi
+- **组织/染色**：Skin (Canine) 犬类的，非人类 / H&E
+- **规模**：350 wsi, 12.424 polygon annotations (13 classes)
+- **准确的标注范围**：Skin (Canine) 犬类的，非人类 histopathology dataset. for seg, classi tasks.
+- **补充提醒**：TCIA CATCH发布 DOI；犬类皮肤肿瘤
+
+
 ## 数据集描述
 
 CATCH（Pan-tumor CAnine cuTaneous Cancer Histology）是一个大规模的**犬类皮肤肿瘤**组织病理学数据集，提供 350 张全切片图像（WSI）及 12,424 个多边形标注（13 个组织学类别）。数据集由德国埃尔朗根-纽伦堡大学（FAU Erlangen-Nürnberg）计算机科学系模式识别实验室发布，论文发表于 Nature Scientific Data（2022）。
