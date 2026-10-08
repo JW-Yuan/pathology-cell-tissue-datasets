@@ -1,5 +1,15 @@
 # RINGS 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://data.mendeley.com/datasets/h8bdwrtnr5/1)
+- **任务**：seg
+- **器官/染色**：prostate / H&E
+- **规模**：train: 1000 , test: 500 with 18'851 glands
+- **经核实的范围**：RINGS is prostate gland segmentation (18,851 annotated glands), NOT nuclear instance segmentation.
+- **重要提醒**：作者发布的前列腺腺体分割数据
+
+
 ## 数据集描述
 
 RINGS（Reliable Instance-level Nuclear Ground-truth for Segmentation）是一个专用于**前列腺癌 H&E 图像中腺体实例分割**的大规模数据集，提供像素级腺体分割掩码。数据集由 AIIMS（全印度医学科学研究所）发布，论文发表于 Artificial Intelligence in Medicine（2021）。
@@ -159,14 +169,12 @@ def object_level_f1(pred_inst, gt_inst, iou_threshold=0.5):
 如果您使用了此数据集，请引用：
 
 ```bibtex
-@article{rings2021,
-  title={RINGS: A reliable instance-level nuclear ground-truth segmentation dataset for prostate gland histology},
-  author={Arif, Muhammad and others},
+@article{salvi2021hybrid,
+  title={A hybrid deep learning approach for gland segmentation in prostate histopathological images},
+  author={Salvi, Massimo and Bosco, Martino and Molinaro, Luca and Gambella, Alessandro and Papotti, Mauro Giulio and Acharya, Udyavara Rajendra and Molinari, Filippo},
   journal={Artificial Intelligence in Medicine},
-  volume={116},
-  pages={102073},
   year={2021},
-  publisher={Elsevier}
+  doi={10.1016/j.artmed.2021.102076}
 }
 ```
 
