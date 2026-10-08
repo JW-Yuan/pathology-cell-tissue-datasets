@@ -1,154 +1,119 @@
 # CAMELYON16 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://camelyon16.grand-challenge.org/Data/)
-- **任务**：classi、seg
-- **组织/染色**：Lymph node / H&E
-- **规模**：Train: 270 (160 Normal, 110 with metastases); Test: 130
-- **准确的标注范围**：400 lymph-node WSIs for breast-cancer metastasis detection/slide classification; lesion annotations available on positive slides.
-- **补充提醒**：CAMELYON16官方数据页
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CAMELYON16（Cancer Metastases in Lymph Nodes Challenge 2016）是首届大规模淋巴结乳腺癌转移检测挑战赛数据集，旨在评估数字病理切片中乳腺癌淋巴结转移自动检测算法的性能。由荷兰 Radboud 大学医学中心（RUMC）和乌得勒支大学医学中心（UMCU）联合提供数据。
+CAMELYON16 聚焦乳腺癌哨兵淋巴结转移灶检测：输入 H&E 淋巴结全切片（WSI），既可做切片级是否转移判定，也可基于阳性切片中的专家描绘 ROI 评估病灶定位。
 
-### 核心目标
+### 相关论文与发布方
 
-- **肿瘤检测（Detection）**：在淋巴结 WSI 中定位并标注转移病灶区域
-- **WSI 级分类（Slide-Level Classification）**：判断 WSI 是否含有转移病灶（正常 vs. 转移）
+- [官方/第一方来源](https://camelyon16.grand-challenge.org/Data/)
+- [原论文](https://jamanetwork.com/journals/jama/article-abstract/2665774)
 
-## 数据集基本信息
 
-- **器官类型**：淋巴结（Lymph Node）— 乳腺癌前哨淋巴结
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：
-  - 训练集：270 张 WSI（160 正常 + 110 含转移）
-  - 测试集：130 张 WSI
-- **分析级别**：切片级分析（Slide-Level Analysis）
-- **任务类型**：分类（classi）+ 分割（seg）
+---
 
-## 数据集划分
+## 数据集基本信息（汇总）
 
-| 子集 | 正常 WSI | 含转移 WSI | 合计 |
-|------|---------|------------|------|
-| 训练集 | 160 | 110 | 270 |
-| 测试集 | — | — | 130 |
-| **合计** | — | — | **400** |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2016 |
+| **器官/组织或物种** | Lymph node |
+| **染色及模态** | H&E |
+| **具体任务** | classi、seg |
+| **图像单元与尺寸** | WSI |
+| **标注内容** | images + binary masks |
+| **扫描/附加条件** | slide level analysis |
 
-## 标注格式
+---
 
-### 像素级二值掩码（仅针对含转移 WSI）
+## 核心数据量与图像格式
 
-- 转移区域提供**像素级标注掩码**（.tif 格式），标注由病理学家手工完成
-- 正常 WSI 无像素级标注（整张切片为阴性）
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | Train: 270 (160 Normal, 110 with metastases); Test: 130 |
+| **格式/数据形态** | 多尺度 TIFF WSI；阳性训练切片可用 XML 轮廓和二值 WSI 掩膜 |
+| **采集与版本** | 来自 Radboud UMC 与 UMC Utrecht 两个中心；总 400 WSI。 |
 
-### 转移类型
+---
 
-| 转移类型 | 说明 | 临床意义 |
-|---------|------|---------|
-| Macro-metastasis（宏观转移） | 转移灶面积 > 2mm | 需要辅助治疗 |
-| Micro-metastasis（微转移） | 转移灶面积 0.2–2mm | 临床意义争议中 |
-| Isolated Tumor Cells (ITC) | 单个或小簇癌细胞 < 0.2mm | 通常不计入 N stage |
+## 任务与标注
 
-## 数据特点
+阳性训练样本的 XML 多边形和 WSI binary masks 表示乳腺癌转移灶而非核实例。正常 WSI 没有阳性病灶；注意官方 README 列出的少数不完全标注切片。
 
-### 大规模 WSI 数据集
-- 400 张 WSI，是当时最大规模的病理切片公开数据集之一
-- 来自两家医院的数据，具有一定的域间差异
+### 类别与标签语义
 
-### 挑战难点
-- 微转移和 ITC（孤立肿瘤细胞）检测难度大，极易漏诊
-- WSI 分辨率极高（约 1–10 万 × 1–10 万像素），计算资源需求大
-- 需平衡计算效率与检测精度
+- 正常/转移：切片级 binary label
+- ROI：转移瘤（tumor/metastasis）与非肿瘤组织（背景）；不提供细胞核类别标签
 
-### 临床重要性
-- 淋巴结转移状态是乳腺癌分期和治疗决策的关键因素
-- 自动化检测可减少病理医生工作量，提高微小转移的检出率
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-## 使用建议
+---
 
-### 数据加载
+## 数据划分与统计口径
 
-```python
-import openslide
-import numpy as np
-from PIL import Image
+训练集 270 WSI（两个中心 170+100；合计 160 normal、110 tumor），测试 130 WSI。测试标注由挑战赛方管理；使用公开 GT 应核实下载包。
 
-# 加载 WSI
-wsi = openslide.OpenSlide('tumor_001.tif')
+---
 
-# 获取 WSI 缩略图用于可视化
-thumbnail = wsi.get_thumbnail((1000, 1000))
+## 文件组成与读取方式
 
-# 加载转移区域掩码
-mask_wsi = openslide.OpenSlide('tumor_001_mask.tif')
+- WSI 多分辨率 `.tif`
+- 阳性片专家病灶 `.xml` 轮廓
+- 可选已转换的二值 mask
 
-# 读取高分辨率区域
-level = 0
-tile = wsi.read_region((x, y), level, (256, 256))
-mask_tile = mask_wsi.read_region((x, y), level, (256, 256))
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
 
-tile_array = np.array(tile.convert('RGB'))
-mask_array = np.array(mask_tile.convert('L'))
-binary_mask = (mask_array > 0).astype(np.uint8)
-```
-
-### 基于滑动窗口的 Patch 分类流程
+### 文件核验示例
 
 ```python
-# 典型的 CAMELYON16 处理流程
-def extract_tissue_patches(wsi_path, patch_size=256, stride=128):
-    """从 WSI 中提取含有组织的 patch"""
-    wsi = openslide.OpenSlide(wsi_path)
-    # 1. 在低分辨率获取组织掩码（Otsu 阈值分割）
-    thumbnail = np.array(wsi.get_thumbnail((2000, 2000)).convert('L'))
-    tissue_mask = thumbnail < 200  # 简单阈值，实际需要优化
-    # 2. 在组织区域内滑动提取 patch
-    # ... (具体实现参考官方 baseline)
-    return patches, coordinates
+from pathlib import Path
+
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 使用 OpenSlide/ASAP 读取 WSI；将 XML 坐标换算至金字塔目标倍率，再生成二值转移区域掩膜。
+
+### 建模与数据泄漏风险
+
+- 切片级标签不能被误作逐像素已覆盖标注；同一中心/患者的近邻切片不宜分散于训练/测试。
 
 ### 评估指标
 
-```python
-# FROC（Free-Response ROC）曲线 - 主要评估指标
-# 计算在不同假阳性率下的灵敏度
-# 官方评估代码：github.com/computationalpathologygroup/CAMELYON16
+病灶 FROC、切片级 AUC 与挑战赛官方指标；像素 Dice 仅对有真值的病灶区域有效。
 
-# AUC（ROC 曲线下面积）
-from sklearn.metrics import roc_auc_score
-auc = roc_auc_score(y_true, y_scores)
-```
+---
 
 ## 相关资源
 
-- [Grand Challenge 官方页](https://camelyon16.grand-challenge.org/)
-- [论文（JAMA 2017）](https://jamanetwork.com/journals/jama/article-abstract/2665774)
-- [百度网盘下载](https://pan.baidu.com/s/1UW_HLXXjjw5hUvBIUYPgbA)
-- [AWS 公开数据集](https://registry.opendata.aws/camelyon/)
+- [data](https://camelyon16.grand-challenge.org/)
+- [paper](https://jamanetwork.com/journals/jama/article-abstract/2665774)
+- [download](https://pan.baidu.com/s/1UW_HLXXjjw5hUvBIUYPgbA)
+- [official](https://camelyon16.grand-challenge.org/Data/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+引用请从 [原论文或出版社页面](https://jamanetwork.com/journals/jama/article-abstract/2665774) 导出正式 BibTeX；不使用未核实的作者/卷页。
 
-```bibtex
-@article{bejnordi2017diagnostic,
-  title={Diagnostic assessment of deep learning algorithms for detection of lymph node metastases in women with breast cancer},
-  author={Bejnordi, Babak Ehteshami and Veta, Mitko and van Diest, Paul Johannes and others},
-  journal={JAMA},
-  volume={318},
-  number={22},
-  pages={2199--2210},
-  year={2017},
-  publisher={American Medical Association}
-}
-```
+---
 
 ## 注意事项
 
-1. **文件格式**：WSI 为 `.tif` 格式，需使用 `openslide` 或 `tifffile` 读取。
-2. **存储需求**：单张 WSI 可达数 GB，完整数据集存储需求较大。
-3. **FROC 评估**：官方评估使用 FROC 曲线，需要位置级别的预测，而非仅切片级分类。
-4. **CAMELYON17 升级版**：如需患者级别分析，可使用 CAMELYON17（500 张 WSI，100 例患者）。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：CAMELYON17 病灶阶段重用 CAMELYON16 标注数据。
+4. **核查边界**：CAMELYON16官方数据页
