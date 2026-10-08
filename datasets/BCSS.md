@@ -1,5 +1,15 @@
 # BCSS 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://github.com/PathologyDataScience/BCSS)
+- **研究任务**：seg
+- **组织/染色**：Breast / H&E
+- **规模**：151 TCGA WSIs; approximately 20,000 annotated tissue regions (not 20,000 independently released patches)
+- **标注与使用范围**：Breast Cancer Semantic Segmentation: region-level tissue annotations and PNG semantic masks tied to TCGA WSI.
+- **原始来源说明**：原作者BCSS发布仓库
+
+
 ## 数据集描述
 
 BCSS（Breast Cancer Semantic Segmentation）是一个大规模乳腺癌组织学图像语义分割数据集，包含来自 TCGA（The Cancer Genome Atlas）的 151 张 WSI 中超过 20,000 个区域的组织区域分割标注。
@@ -12,7 +22,7 @@ BCSS（Breast Cancer Semantic Segmentation）是一个大规模乳腺癌组织�
 
 - **器官类型**：乳腺 (Breast)
 - **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：151 张 WSI；超过 20,000 个 patch 标注
+- **数据集大小**：151 张 WSI；超过 约 20,000 个标注区域 标注
 - **图像分辨率**：Patch 大小可变
 - **数据来源**：TCGA（The Cancer Genome Atlas）
 - **任务类型**：语义分割（Semantic Segmentation）
