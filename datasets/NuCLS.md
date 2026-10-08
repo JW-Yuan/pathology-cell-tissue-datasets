@@ -1,5 +1,15 @@
 # NuCLS 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://github.com/PathologyDataScience/NuCLS)
+- **任务**：detection、classi、seg
+- **组织/染色**：Breast / H&E
+- **规模**：220.000 nuclei from 3.944 roi from 125 patients
+- **任务和标注**：Breast-cancer nuclei detection, classification and segmentation; geometric supervision varies among single-rater and multi-rater releases.
+- **来源说明**：NuCLS原作者发布仓库
+
+
 ## 数据集描述
 
 NuCLS（Nucleus Classification, Localization and Segmentation）是一个大规模乳腺癌组织病理学数据集，提供精细的细胞核**检测、分类和分割**标注，数据来源于 TCGA 的 BCSS 图像（图像与 BCSS 数据集部分重叠）。
