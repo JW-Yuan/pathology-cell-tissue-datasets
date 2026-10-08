@@ -1,5 +1,15 @@
 # CryoNuSeg 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://github.com/masih4/CryoNuSeg)
+- **任务**：seg
+- **组织/染色**：multiple (10: adrenal gland, larynx, lymph nodes, mediastinum, pancreas, pleura, skin, testes, thymus, and thyroid gland) / H&E
+- **规模**：8000 nuclei from 30 patches (from 30 wsi)
+- **正确的标注范围**：multiple (10: adrenal gland, larynx, lymph nodes, mediastinum, pancreas, pleura, skin, testes, thymus, and thyroid gland) histopathology dataset. for seg tasks.
+- **来源说明**：论文作者仓库；冷冻切片实例分割
+
+
 ## 数据集描述
 
 CryoNuSeg 是一个专为**冷冻切片（Cryosection）H&E 染色图像中细胞核实例分割**设计的基准数据集，来自 TCGA，涵盖 10 种不同器官的组织，提供像素级二值分割标注。
