@@ -1,164 +1,118 @@
 # CPM-17 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [第一方/当前候选来源](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
-- **任务**：seg
-- **组织/染色**：Multiple (four cancer tissue types) / H&E
-- **规模**：Train: 32, test: 32 (7570 nuclei)
-- **标注用途**：CPM 2017 histology nuclei instance segmentation benchmark (32 training and 32 test images); challenge year differs from later paper year.
-- **来源注意**：CPM-17 为 2017 挑战赛；所列 Google Drive 下载文件夹尚未核实为挑战主办方维护。
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CPM-17（Cell Position Map Dataset with 17）是一个用于**细胞核实例分割与分类**的基准数据集，包含 64 张来自多种器官（以脑组织为主）的组织病理学图像，共 7,570 个细胞核实例。论文发表于 2019 年（PMC6454006）。
+MICCAI 2017 Computational Pathology/Digital Pathology Challenge 的核实例分割任务，包含四种癌症组织：NSCLC、HNSCC、GBM、LGG；不能只把全部图像归入 Brain。
 
-### 数据来源
+### 相关论文与发布方
 
-图像来源于 **TCGA（The Cancer Genome Atlas）**，涵盖**脑组织**及多种器官，包含 20x 和 40x 放大倍数的 H&E 染色切片。
+- [官方/第一方来源](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
+- [原论文](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6454006/)
 
-## 数据集基本信息
 
-- **器官类型**：脑（Brain，以及多种其他器官）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：
-  - 训练集：32 张图像
-  - 测试集：32 张图像
-  - 共含 7,570 个细胞核实例
-- **图像分辨率**：500×500 至 600×600 像素
-- **放大倍数**：20x 和 40x（TCGA 扫描）
-- **任务类型**：分割（seg）+ 分类（classi）
+---
 
-## 数据集规模
+## 数据集基本信息（汇总）
 
-| 子集 | 图像数 | 细胞核数（约） |
-|------|--------|--------------|
-| 训练集 | 32 | ~4,000 |
-| 测试集 | 32 | ~3,570 |
-| **合计** | **64** | **7,570** |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2017 |
+| **器官/组织或物种** | Multiple (four cancer tissue types) |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | patch (500x500 to 600x600) |
+| **标注内容** | images + nuclei seg + label |
+| **扫描/附加条件** | 20x, 40x (TCGA) |
 
-## 标注格式
+---
 
-### MATLAB `.mat` 文件
+## 核心数据量与图像格式
 
-```python
-import scipy.io as sio
-import numpy as np
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | Train: 32, test: 32 (7570 nuclei) |
+| **格式/数据形态** | H&E tissue tiles，大小约 500×500 至 600×600，像素级核实例轮廓 |
+| **采集与版本** | 2017 为**挑战赛年份**；相关总结论文于 2019 年发表。挑战还设置了独立的 WSI 分类子赛道，不能把其标签并入核分割。 |
 
-mat = sio.loadmat('image_001.mat')
+---
 
-# 常见字段：
-# - inst_map:      (H, W) 实例 ID 掩码，0 为背景
-# - type_map:      (H, W) 类别掩码（整数，对应细胞核类型）
-# - inst_centroid: (N, 2) 每个实例的中心坐标 (x, y)
-# - inst_type:     (N, 1) 每个实例的类别标签
+## 任务与标注
 
-# 获取实例数量
-instance_ids = np.unique(mat['inst_map'])
-instance_ids = instance_ids[instance_ids > 0]
-num_instances = len(instance_ids)
-print(f"图像中共有 {num_instances} 个细胞核实例")
-```
+核定位与实例边界标注；原核分割子集不代表提供可训练的核表型类别。
 
-### 文件目录结构（参考格式）
+### 类别与标签语义
 
-```
-cpm17/
-├── train/
-│   ├── Images/    # (*.png) 训练图像
-│   └── Labels/    # (*.mat) 实例 + 类别标注
-└── test/
-    ├── Images/    # (*.png) 测试图像
-    └── Labels/    # (*.mat) 实例 + 类别标注
-```
+- Nucleus（核实例）/Background（背景）
+- 组织来源：NSCLC、HNSCC、GBM、LGG（不是四个核类型）
 
-## 数据特点
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-### 与 CPM-15 的关系
-- CPM-17 是 CPM-15 的扩展版本（更多图像，更多细胞核）
-- 两者来源相同，标注体系一致，通常一起报告性能
+---
 
-### 中等规模
-- 64 张图像、7,570 个细胞核，规模适中
-- 适合作为测试/验证集进行跨数据集评估
+## 数据划分与统计口径
 
-### 多器官覆盖
-- 虽以脑组织为主，但也包含其他器官图像
-- 多放大倍数（20x/40x）增加了数据多样性
+核分割子赛道 32 张训练和 32 张测试；早期论文/不同整理包可能只统计 32 张有标签的图。
 
-## 使用建议
+---
 
-### 数据加载
+## 文件组成与读取方式
+
+- 核分割高倍视野图像
+- 像素级逐核轮廓/mask 标签
+- 独立 WSI 分类子挑战不属于本条目标注数据
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import scipy.io as sio
-import numpy as np
-from PIL import Image
-import glob
+from pathlib import Path
 
-def load_dataset(split='train', root_dir='cpm17/'):
-    img_paths = sorted(glob.glob(f'{root_dir}/{split}/Images/*.png'))
-    label_paths = sorted(glob.glob(f'{root_dir}/{split}/Labels/*.mat'))
-    
-    samples = []
-    for img_p, lbl_p in zip(img_paths, label_paths):
-        img = np.array(Image.open(img_p).convert('RGB'))
-        mat = sio.loadmat(lbl_p)
-        inst_map = mat['inst_map']
-        samples.append({'image': img, 'inst_map': inst_map})
-    
-    return samples
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 分离核分割与另一个 WSI 分类子赛道；用官方提供的样本号核对 split。
+
+### 建模与数据泄漏风险
+
+- 原始云盘文件归属和各版本下载文件的真实测试 GT 目前待核，不推断完整文件树。
 
 ### 评估指标
 
-```python
-# CPM-17 常用评估指标（与 Kumar 数据集一致）
-# 1. Dice（二值分割掩码 Dice）
-# 2. AJI（Aggregated Jaccard Index）
+核级 AJI、Dice/PQ；优先遵循 CPM-17 核分割子赛道的官方指标。
 
-def binary_dice(pred, gt):
-    """二值 Dice 系数"""
-    pred_b = (pred > 0).astype(np.bool_)
-    gt_b = (gt > 0).astype(np.bool_)
-    intersection = (pred_b & gt_b).sum()
-    return 2 * intersection / (pred_b.sum() + gt_b.sum() + 1e-8)
-
-def compute_aji(pred_inst, gt_inst):
-    """
-    Aggregated Jaccard Index (AJI)
-    衡量预测与真实实例的整体 Jaccard 相似度
-    参考 Kumar et al. IEEE TMI 2017 中的定义
-    """
-    # 详见 Kumar 数据集官方评估代码
-    pass
-```
+---
 
 ## 相关资源
 
-- [Google Drive 数据下载](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
-- [论文（PMC）](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6454006/)
+- [data](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
+- [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6454006/)
+- [official](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+正式引文请从 [原论文](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6454006/) 获取并导出 BibTeX，不猜测完整作者。
 
-```bibtex
-@article{vu2019methods,
-  title={Methods for segmentation and classification of digital microscopy tissue images},
-  author={Vu, Quoc Dang and Graham, Simon and Kurc, Tahsin and others},
-  journal={Frontiers in Bioengineering and Biotechnology},
-  volume={7},
-  pages={53},
-  year={2019},
-  publisher={Frontiers}
-}
-```
+---
 
 ## 注意事项
 
-1. **分辨率范围**：500×500 至 600×600 px，尺寸接近但不完全一致，数据加载时需统一或灵活处理。
-2. **20x/40x 混合**：不同放大倍数的图像细胞核外观有差异，训练时可考虑分别处理。
-3. **小规模**：32 张训练图像较少，通常用于跨数据集泛化测试，不建议单独用于大规模训练。
-4. **AJI 指标**：请使用标准 AJI 实现（如 Kumar 数据集代码），不同实现可能导致结果不可比。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：挑战训练来源 TCGA，不应未经匹配就视为与其他 TCGA 衍生集完全独立。
+4. **核查边界**：CPM 2017 challenge year (not later publication year); current linked Google Drive mirror has not been verified as organizer-owned.
