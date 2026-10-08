@@ -8,7 +8,7 @@ Kumar 等 2017 发表的跨组织细胞核实例分割数据与技术，采自 T
 
 ### 相关论文与发布方
 
-- [官方/第一方来源](https://monuseg.grand-challenge.org/Data/)
+- [关联 MoNuSeg 挑战官方页面（不是 Kumar 2017 原始镜像认证）](https://monuseg.grand-challenge.org/Data/)
 - [原论文](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7872382)
 
 
