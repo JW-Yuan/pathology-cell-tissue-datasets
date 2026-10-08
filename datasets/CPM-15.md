@@ -1,128 +1,116 @@
 # CPM-15 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [第一方/当前候选来源](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
-- **任务**：seg
-- **组织/染色**：Multiple (two cancer tissue types) / H&E
-- **规模**：15 (2905 nuclei)
-- **标注用途**：CPM 2015 histology nuclei instance segmentation benchmark; official source of currently linked Google Drive mirror not yet confirmed.
-- **来源注意**：现有公开下载文件夹；未核实是否挑战主办方维护
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-CPM-15（Cell Position Map Dataset with 15 images）是一个用于**细胞核实例分割与分类**的小规模基准数据集，包含 15 张来自多种器官的组织病理学图像，共 2,905 个已标注的细胞核实例。
+MICCAI 2015 Digital Pathology/Computational Pathology Challenge 使用的核分割小型基准，15 张组织图像含 2,905 个核，覆盖两种癌症组织，通常用来做密集核实例轮廓测试。
 
-### 数据来源
+### 相关论文与发布方
 
-图像来源于**TCGA（The Cancer Genome Atlas）**，涵盖**脑组织**为主的多器官组织切片，由研究者手工标注细胞核轮廓和类别。
+- [官方/第一方来源](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
+- 正式论文/年份详情以第一方数据主页为准
 
-## 数据集基本信息
 
-- **器官类型**：脑（Brain，以及部分其他器官）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：15 张图像，2,905 个细胞核实例
-- **图像分辨率**：400×400 至 600×1000 像素（尺寸不一）
-- **放大倍数**：20x 和 40x（TCGA 扫描）
-- **任务类型**：分割（seg）+ 分类（classi）
+---
 
-## 数据集规模
+## 数据集基本信息（汇总）
 
-| 统计项 | 数量 |
-|--------|------|
-| 图像总数 | 15 |
-| 细胞核实例数 | 2,905 |
-| 图像分辨率范围 | 400×400 ~ 600×1000 px |
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2015（挑战赛年份） |
+| **器官/组织或物种** | Multiple (two cancer tissue types) |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | patch (400x400, 600x1000) |
+| **标注内容** | images + nuclei seg + label |
+| **扫描/附加条件** | 20x, 40x (TCGA) |
 
-## 标注格式
+---
 
-### MATLAB `.mat` 文件（推测格式，与 CPM-17 一致）
+## 核心数据量与图像格式
+
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 15 (2905 nuclei) |
+| **格式/数据形态** | H&E 显微 patch 与像素级逐核实例标注；图像尺寸混合 400×400 与 600×1000 |
+| **采集与版本** | 挑战年份 2015；现有云盘链接发布者身份未核对，不能把它当做已确认的主办方官网。 |
+
+---
+
+## 任务与标注
+
+核实例 mask 的每个前景实例具有独立轮廓；本来源不保证有可复现的核表型类别 GT。
+
+### 类别与标签语义
+
+- 核前景与背景：实例分割
+- 不提供经过证实的多种核细胞型分类标签
+
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
+
+---
+
+## 数据划分与统计口径
+
+整个 CPM-15 仅 15 张图，常用作测试集；原始挑战划分与其他研究自建的 train/test 方案应区别。
+
+---
+
+## 文件组成与读取方式
+
+- 尺寸不一的组织 H&E 图像
+- 核实例二值/实例轮廓标注（具体 tif/mat/PNG 命名依下载包）
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import scipy.io as sio
-import numpy as np
+from pathlib import Path
 
-mat = sio.loadmat('image_001.mat')
-# 字段（参考 CPM-17 格式）：
-# - inst_map:   (H, W) 实例 ID 掩码
-# - type_map:   (H, W) 类别掩码
-# - inst_centroid: (N, 2) 细胞核中心坐标
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
 
-## 数据特点
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
 
-### 小规模高质量基准
-- 15 张图像提供了精细的实例级标注
-- 尽管规模小，但覆盖了多种细胞核形态
+---
 
-### TCGA 来源
-- 高分辨率，细节丰富
-- 来源明确，可溯源至具体患者/组织
+## 使用建议（简要）
 
-### 常与 CPM-17 联合使用
-- CPM-15 和 CPM-17 常作为互补基准，在细胞核分割论文中一起报告结果
+### 加载与预处理
 
-## 使用建议
+- 确认 patch 尺寸和实例 ID 编码；不能从纯二值前景连通域可靠恢复全部粘连核。
 
-### 数据加载
+### 建模与数据泄漏风险
 
-```python
-import scipy.io as sio
-import numpy as np
-from PIL import Image
-import os
-
-def load_cpm_sample(img_path, label_path):
-    """加载 CPM 数据集样本"""
-    img = np.array(Image.open(img_path).convert('RGB'))
-    
-    # 加载 .mat 标注
-    mat = sio.loadmat(label_path)
-    inst_map = mat.get('inst_map', mat.get('inst_seg', None))
-    
-    return img, inst_map
-
-# 数据目录结构
-# cpm15/
-# ├── train/
-# │   ├── images/   (*.png)
-# │   └── labels/   (*.mat)
-# └── test/
-#     ├── images/   (*.png)
-#     └── labels/   (*.mat)
-```
+- organ 不应固定写 Brain；两种癌种对应标签需以原论文核实，不应虚构完整病人或划分表。
 
 ### 评估指标
 
-```python
-# 常用细胞核分割评估指标
-# 1. Dice（二值分割）
-# 2. AJI（Aggregated Jaccard Index）
-# 3. PQ（Panoptic Quality）
+核实例 Dice、AJI、PQ。
 
-def dice_coef(pred, gt):
-    intersection = (pred & gt).sum()
-    return 2 * intersection / (pred.sum() + gt.sum() + 1e-8)
-
-def aji_score(pred_instances, gt_instances):
-    """聚合 Jaccard 指数，综合考虑实例匹配质量"""
-    # 参见 Kumar 数据集的标准评估代码
-    pass
-```
+---
 
 ## 相关资源
 
-- [Google Drive 数据下载](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
-- [与 CPM-17 相关论文（PMC）](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6454006/)
+- [data](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
+- [official](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请在引用相关方法论文（如使用 CPM-15 的算法论文）时同时说明数据来源。目前暂无专门的 CPM-15 原始论文，通常随算法论文一起发布。
+正式引文须从作者/挑战赛页面确认，暂不虚构 BibTeX。
+
+---
 
 ## 注意事项
 
-1. **规模限制**：仅 15 张图像，不适合独立训练，通常用于测试集或跨数据集评估。
-2. **分辨率不一致**：图像尺寸不统一（400×400 ~ 600×1000），需在数据加载时处理。
-3. **放大倍数混合**：包含 20x 和 40x 图像，使用时需注意。
-4. **与 CPM-17 区别**：CPM-15 图像数更少（15 vs. 64），细胞核数也更少（2,905 vs. 7,570）。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：属于 CPM-2015 单独挑战集，与 CPM-2017 不是同一分割。
+4. **核查边界**：现有公开下载文件夹；未核实是否挑战主办方维护
