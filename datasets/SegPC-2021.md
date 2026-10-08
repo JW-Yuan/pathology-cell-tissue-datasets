@@ -1,181 +1,120 @@
 # SegPC-2021 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://segpc-2021.grand-challenge.org/)
-- **任务**：seg
-- **器官/染色**：Bone marrow (plasma cells) / Jenner-Giemsa
-- **规模**：775 images, Train: 298, Valid: 200, Test: 277
-- **经核实的范围**：Bone-marrow smear plasma cell nucleus and cytoplasm segmentation for multiple myeloma, Jenner-Giemsa staining.
-- **重要提醒**：官方骨髓浆细胞分割挑战赛
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-SegPC-2021（Segmentation of Plasma Cells 2021）是一个专用于**骨髓涂片图像中浆细胞分割**的挑战赛数据集，专注于多发性骨髓瘤（Multiple Myeloma）的浆细胞分割任务，包含细胞核（Nucleus）和细胞质（Cytoplasm）两个结构的独立分割标注。
+SegPC-2021 是多发性骨髓瘤患者骨髓涂片浆细胞的核与细胞质区域分割挑战。它属于细胞病理学/骨髓穿刺涂片，不是 H&E 组织切片数据。
 
-### 临床背景
+### 相关论文与发布方
 
-多发性骨髓瘤是浆细胞（Plasma Cell）的恶性肿瘤，准确的浆细胞分割对于肿瘤负荷评估和疾病监测具有重要意义。
+- [官方/第一方来源](https://segpc-2021.grand-challenge.org/)
+- 原始论文与官方比赛信息以官方页面为准
+- [作者/赛事源码](https://github.com/dsciitism/SegPC-2021)
 
-## 数据集基本信息
+---
 
-- **器官类型**：血液（Blood）— 骨髓浆细胞
-- **染色方式**：Jenner-Giemsa 染色（不同于 H&E）
-- **数据集大小**：775 张图像（Train: 298, Valid: 200, Test: 277）
-- **图像分辨率**：2040×1536 或 1920×2560 像素
-- **任务类型**：分割（两结构：细胞核 + 细胞质）
+## 数据集基本信息（汇总）
 
-## 数据集划分
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2021 |
+| **器官/组织或物种** | Bone marrow (plasma cells) |
+| **染色及模态** | Jenner-Giemsa |
+| **具体任务** | seg |
+| **图像单元与尺寸** | 2040x1536/1920x2560 |
+| **标注内容** | images + nucleus and cytoplasma |
+| **扫描/附加条件** | 按来源确认 |
 
-| 子集 | 数量 | 说明 |
-|------|------|------|
-| 训练集 | 298 | 含核 + 胞质掩码 |
-| 验证集 | 200 | 含核 + 胞质掩码 |
-| 测试集 | 277 | 评估用 |
-| **合计** | **775** | — |
+---
 
-## Jenner-Giemsa 染色特点
+## 核心数据量与图像格式
 
-| 结构 | 颜色（Jenner-Giemsa）| 说明 |
-|------|---------------------|------|
-| 细胞核 | 深紫色/蓝紫色 | 浆细胞核通常偏心分布 |
-| 细胞质 | 蓝色（深浅不一）| 浆细胞质富含免疫球蛋白，深蓝 |
-| 背景/RBC | 淡粉色/无色 | 红细胞（RBC）背景 |
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | 775 images, Train: 298, Valid: 200, Test: 277 |
+| **格式/数据形态** | Jenner–Giemsa 染色 BMP 显微图，常见分辨率 2040×1536 或 1920×2560；训练提供核/胞质真值 |
+| **采集与版本** | 775 张图：Train 298、Validation 200、Test 277；测试真值不公开。 |
 
-## 标注格式
+---
 
-### 双结构分割掩码
+## 任务与标注
 
-```python
-import numpy as np
-from PIL import Image
+三种像素级语义区域：细胞核、浆细胞胞质和背景；并非其他核表型的多分类数据集。
 
-# 加载骨髓涂片图像（大尺寸）
-img = np.array(Image.open('bm_001.jpg').convert('RGB'))
-# 尺寸: (2040, 1536, 3) 或 (1920, 2560, 3)
+### 类别与标签语义
 
-# 加载细胞核掩码（Nucleus mask）
-nucleus_mask = np.array(Image.open('bm_001_nucleus.png').convert('L'))
-# 0: 背景, 非零: 浆细胞核区域
+- Nucleus：浆细胞细胞核
+- Cytoplasm：浆细胞胞质
+- Background：非浆细胞前景
 
-# 加载细胞质掩码（Cytoplasm mask，包含整个细胞区域）
-cyto_mask = np.array(Image.open('bm_001_cytoplasm.png').convert('L'))
-# 0: 背景, 非零: 整个浆细胞（核 + 胞质）
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-# 纯胞质区域 = 细胞质掩码 - 细胞核掩码
-pure_cytoplasm = ((cyto_mask > 0) & (nucleus_mask == 0)).astype(np.uint8)
-```
+---
 
-### 文件结构
+## 数据划分与统计口径
 
-```
-segpc2021/
-├── x/              # 原始骨髓涂片图像
-├── y/              # 分割掩码
-│   ├── nucleus/    # 细胞核掩码 (PNG)
-│   └── cytoplasm/  # 细胞质掩码 (PNG)
-└── train.csv       # 训练集文件列表
-```
+Train 298 与 Validation 200 附标签；Test 277 的参考标注挑战管理，不可声称公开可下载 mask。
 
-## 数据特点
+---
 
-### 双结构分割
-- 同时标注细胞核（Nucleus）和细胞质（Cytoplasm），提供完整的浆细胞形态信息
-- 是骨髓细胞分析中最细粒度的结构分割任务之一
+## 文件组成与读取方式
 
-### Jenner-Giemsa 染色
-- 非 H&E 染色，颜色分布与组织病理图像完全不同
-- 适合研究跨染色方式的分割方法泛化能力
+- 高分辨率 `.bmp` 图片
+- 训练/验证的 nuclei/cytoplasm segmentation masks
+- 测试图像与评测提交信息
 
-### 大分辨率图像
-- 约 200 万像素的高分辨率图像，细胞结构清晰可见
-- 每张图像通常含多个浆细胞
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
 
-## 使用建议
-
-### 数据加载与 Patch 提取
+### 文件核验示例
 
 ```python
-import numpy as np
-from PIL import Image
+from pathlib import Path
 
-def extract_cell_crops(img, cyto_mask, nucleus_mask, pad=20):
-    """从大图中裁剪每个浆细胞的感兴趣区域"""
-    from scipy import ndimage as ndi
-    
-    # 找到各细胞实例（假设掩码为实例掩码）
-    labeled, num_cells = ndi.label(cyto_mask > 0)
-    
-    crops = []
-    for cell_id in range(1, num_cells + 1):
-        cell_region = (labeled == cell_id)
-        
-        # 获取边界框
-        rows = np.any(cell_region, axis=1)
-        cols = np.any(cell_region, axis=0)
-        rmin, rmax = np.where(rows)[0][[0, -1]]
-        cmin, cmax = np.where(cols)[0][[0, -1]]
-        
-        # 添加 padding
-        rmin = max(0, rmin - pad)
-        rmax = min(img.shape[0], rmax + pad)
-        cmin = max(0, cmin - pad)
-        cmax = min(img.shape[1], cmax + pad)
-        
-        crops.append({
-            'image': img[rmin:rmax, cmin:cmax],
-            'nucleus': nucleus_mask[rmin:rmax, cmin:cmax],
-            'cytoplasm': cyto_mask[rmin:rmax, cmin:cmax],
-            'cell_id': cell_id
-        })
-    
-    return crops
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
+
+---
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 两种相机分辨率不同，要确保 mask 同步缩放；使用颜色增强时不能破坏 Jenner–Giemsa 关键形态。
+
+### 建模与数据泄漏风险
+
+- organ=Bone marrow，target=Plasma cell；不得写成 Blood H&E nuclei segmentation。
 
 ### 评估指标
 
-```python
-# SegPC-2021 官方评估：对每个细胞的分割质量单独评估
-def evaluate_cell_segmentation(pred_nucleus, pred_cytoplasm, gt_nucleus, gt_cytoplasm):
-    """评估单个细胞的分割质量"""
-    # 细胞核 Dice
-    nucleus_dice = 2 * (pred_nucleus * gt_nucleus).sum() / \
-                   (pred_nucleus.sum() + gt_nucleus.sum() + 1e-8)
-    
-    # 细胞质 Dice（整个细胞区域）
-    cyto_dice = 2 * (pred_cytoplasm * gt_cytoplasm).sum() / \
-                (pred_cytoplasm.sum() + gt_cytoplasm.sum() + 1e-8)
-    
-    return {
-        'Nucleus_Dice': nucleus_dice,
-        'Cytoplasm_Dice': cyto_dice,
-        'Mean_Dice': (nucleus_dice + cyto_dice) / 2
-    }
-```
+nucleus/cytoplasm pixel Dice、IoU 与官方多类语义评测。
+
+---
 
 ## 相关资源
 
-- [Grand Challenge 官方页](https://segpc-2021.grand-challenge.org/)
-- [GitHub 代码](https://github.com/dsciitism/SegPC-2021)
-- [Kaggle 数据集](https://www.kaggle.com/datasets/sbilab/segpc2021dataset/data)
+- [data](https://segpc-2021.grand-challenge.org/)
+- [github](https://github.com/dsciitism/SegPC-2021)
+- [download](https://www.kaggle.com/datasets/sbilab/segpc2021dataset/data)
+- [official](https://segpc-2021.grand-challenge.org/)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+尚无足以填入完整 BibTeX 的可靠出版元数据，引用须以官方赛题论文记录为准。
 
-```bibtex
-@article{segpc2021,
-  title={SegPC-2021: Segmentation of multiple myeloma plasma cell in microscopic images},
-  author={Gupta, Anubha and others},
-  journal={IEEE ISBI 2021 Grand Challenge},
-  year={2021}
-}
-```
+---
 
 ## 注意事项
 
-1. **非 H&E 染色**：Jenner-Giemsa 染色与 H&E 截然不同，专用于血液学/骨髓图像分析。
-2. **双结构标注**：细胞核和细胞质是两个独立的标注层，需分别处理。
-3. **图像尺寸不统一**：存在两种分辨率（2040×1536 和 1920×2560），需在 dataloader 中处理。
-4. **Kaggle 下载便捷**：建议通过 Kaggle 平台下载，无需注册 Grand Challenge 账号。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：部分病例或图像在研究论文中有镜像版本，检查是否重复。
+4. **核查边界**：官方骨髓浆细胞分割挑战赛
