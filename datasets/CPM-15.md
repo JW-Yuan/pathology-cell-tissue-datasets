@@ -18,7 +18,7 @@ MICCAI 2015 Digital Pathology/Computational Pathology Challenge 使用的核分�
 
 | 项目 | 核实信息 |
 |---|---|
-| **发布/挑战赛年份** | 2015（挑战赛年份） |
+| **发布/挑战赛年份** | 2015 |
 | **器官/组织或物种** | Multiple (two cancer tissue types) |
 | **染色及模态** | H&E |
 | **具体任务** | seg |
