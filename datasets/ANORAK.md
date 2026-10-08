@@ -1,8 +1,19 @@
 # ANORAK 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- **第一方来源**：[官方/作者发布页](https://www.nature.com/articles/s43018-023-00694-w)
+- **主要任务**：seg、classi
+- **数据与标注**：images from literature/public sources (jpg/png) + self-annotated cell_anno (LabelMe JSON: polygon + label per instance)
+- **适用范围**：92 lung H&E image tiles with 130,150 independently self-annotated cell polygons (7 local categories); these annotations are NOT the Nature Cancer ANORAK release.
+- **版本/来源提醒**：官方论文对应原始ANORAK；仓库的细胞JSON是自标注版本，不能混同
+
+
 ## 数据集描述
 
 本条目中的 **H&E 图像**来自**已发表文献或公开来源**（按各原始论文或数据使用协议引用与使用）；**细胞级标注并非来自上述文献的既有标签**，而是由**本项目自行标注**（多边形轮廓 + 类别名）。因此：**图像出处**与**标注协议**应分开理解——下文「标注文件」仅描述 **LabelMe 风格 JSON** 中的自标注结构。
+
+本条目的 **92 张图和自标注细胞 JSON 尚未核实可与 ANORAK 原论文的 Zenodo 数据逐一对应**；不应用原论文的许可、标签质量或病例来源直接代替本项目的自标注来源审计。
 
 命名上 **ANORAK** 与公开文献中**肺腺癌病理 AI 模型**同名；若你对比 *Nature Cancer* 等论文，请注意其**公开数据包、任务定义（如生长模式）**与本目录 **`cell_anno/`** 的**细胞多边形**可能不是同一套资源。
 
