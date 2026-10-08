@@ -32,9 +32,9 @@ NeurIPS 2022 细胞分割挑战覆盖不同实验室、不同显微模态的细�
 
 | 特征 | 描述 |
 |---|---|
-| **规模与计数单位** | 1,000 annotated microscopy images + 1,725 unlabelled images (challenge/publication release; verify subset split) |
+| **规模与计数单位** | 1,000 labeled microscopy images + 1,712 unlabeled images + 13 unlabeled WSI (some accounts combine latter as 1,725) |
 | **格式/数据形态** | 多模态显微图（明场、相差、DIC、荧光等）与实例分割标签，图像尺寸随采集来源变化 |
-| **采集与版本** | 官方赛事提供约 1,000 张带标签训练图像、无标签高分辨率图像和验证/测试集。不同论文对无标签 WSI 是否单独计数不一，不能混加。 |
+| **采集与版本** | 官方赛事提供约 1,000 张带标签训练图像、1,712 张无标签图与 13 张无标签 WSI。不同论文对是否合计成 1,725 条不同，不能混加。 |
 
 ---
 
