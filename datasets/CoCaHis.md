@@ -1,5 +1,15 @@
 # CoCaHis 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [第一方/当前候选来源](https://cocahis.irb.hr/)
+- **任务**：seg
+- **组织/染色**：Liver (metastatic colorectal cancer) / H&E
+- **规模**：82 (19 patients)
+- **标注用途**：Frozen-section histopathology images from colorectal cancer liver metastases; multiple experts' tissue-region annotations.
+- **来源注意**：原作者网站；结肠癌肝转移灶
+
+
 ## 数据集描述
 
 CoCaHis（Colon Cancer Histopathological Dataset）是一个用于结肠癌术中计算机辅助诊断的组织病理学数据集，包含 82 张结肠癌冷冻切片 H&E 染色图像及多标注者像素级分割掩码。
