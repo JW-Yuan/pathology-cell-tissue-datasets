@@ -1,5 +1,15 @@
 # Lizard 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://warwick.ac.uk/fac/cross_fac/tia/data/lizard/)
+- **任务**：seg、classi
+- **组织/染色**：Colon / H&E
+- **规模**：431,913 nuclei (6 classes: epithelial 48.71%, lymphocyte 21.36%, connective 22.54%, plasma 5.76%, neutrophil 0.95%, eosinophil 0.69%), 238 .mat files
+- **任务和标注**：Colonic nuclei instance segmentation and six-class nucleus classification; source images/annotations overlap with CoNIC.
+- **来源说明**：Warwick Lizard官方发布页
+
+
 ## 数据集描述
 
 Lizard 是一个面向**结肠**组织病理学的大规模数据集，提供**细胞核实例分割**与 **6 类细胞核分类**标注。
