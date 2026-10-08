@@ -1,133 +1,96 @@
 # Adipocyte 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://github.com/ieee8023/countception)
-- **研究任务**：cell detection
-- **组织/染色**：Adipose tissue (human subcutaneous) / H&E
-- **规模**：200 patches
-- **标注与使用范围**：Human subcutaneous adipose tissue image patches for adipocyte counting; source project is Count-ception.
-- **原始来源说明**：原作者公开数据与代码
-
+> 参考 PanNuke 详情页的章节结构，严格区分官方已发布信息、当前收录的版本与尚不能核实的部分。资料核查：2026-10-08。
 
 ## 数据集描述
 
-Adipocyte 是来自人类皮下脂肪组织的细胞检测数据集，由 GTEx（基因型与组织表达）联盟提供，用于验证 Count-Ception（全卷积计数网络）等细胞计数与检测方法。
+Count-ception 研究中的脂肪细胞计数样例数据，来自人体皮下脂肪组织，任务重点是数量回归/密度估计；不能把 `Skin` 当作主要器官学类别。
 
-### 数据来源
+### 相关论文与官方来源
 
-图像来自 **GTEx（Genotype Tissue Expression Consortium）** 项目，采集人类皮下脂肪组织 H&E 染色切片图像，感兴趣区域（ROI）由专家手工框选。
+- [原作者/挑战官方发布页面](https://github.com/ieee8023/countception)
+- [原论文或挑战论文](https://arxiv.org/abs/1703.08710)
 
-## 数据集基本信息
+## 数据集基本信息（汇总）
 
-- **器官类型**：人体皮下脂肪组织，Skin/Adipose）
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：200 个 ROI（感兴趣区域图像块）
-- **图像分辨率**：120×150 像素（patch 大小）
-- **放大倍数**：40x
-- **数据来源**：GTEx Consortium
+| 项目 | 核实内容 |
+|---|---|
+| **发布/赛事年份** | 2017 |
+| **器官/样本** | Adipose tissue (human subcutaneous) |
+| **染色/模态** | H&E |
+| **适用任务** | cell detection |
+| **图像形态** | patch (120x150) |
+| **原始数据与监督** | images+mask |
+| **扫描/其他** | 40x |
 
-## 任务类型
+## 核心数据量与图像格式
 
-- **细胞检测（Cell Detection）**：给定图像，预测每个脂肪细胞（adipocyte）的中心位置及细胞数量
+| 项目 | 核实内容 |
+|---|---|
+| **数量（注明统计单位）** | 200 patches |
+| **图像/文件表示** | 细胞图像小块（见作者仓库的数据下载说明）；计数标签/细胞位置监督（Count-ception 使用冗余计数监督） |
+| **采集与版本说明** | 论文 Count-ception: Counting by Fully Convolutional Redundant Counting（2017）提出由冗余窗口计数生成全卷积计数预测。 |
 
-## 标注格式
+## 任务与标注
 
-- **点标注（Point Annotation）**：每个细胞标注一个中心点坐标
-- 标注格式通常为 `.csv` 或 `.mat` 文件，记录每幅图像中所有细胞的 (x, y) 坐标
+与核语义 mask 不同，计数数据的标签是密度、位置或总数监督；当前索引中的 `images+mask` 不能直接推断有逐细胞轮廓真值。
 
-### 标注统计
+## 标注类别与语义
 
-| 统计项 | 数值 |
-|--------|------|
-| 图像总数 | 200 张 ROI |
-| 图像尺寸 | 120 × 150 px |
-| 平均每图细胞数 | 约 17–20 个 |
-| 标注类型 | 中心点坐标 |
+| 项目 | 核实内容 |
+|---|---|
+| **计数目标** | Adipocyte（脂肪细胞）；没有官方多类别核类型语义分割标签 |
 
-## 数据特点
+> 类别名称与整数 ID 的映射必须以下载数据中的 label map 或发布方代码为准；未在本页列出的类不能推定存在。
 
-### 脂肪细胞形态特征
-- 脂肪细胞（Adipocyte）体积大、呈圆形或多边形，由薄膜围绕脂滴构成
-- 细胞内部呈现大空泡（脂滴）区域，细胞核被推向边缘
-- H&E 染色下，脂滴不着色（空白），细胞核呈蓝紫色
+## 数据划分与评估协议
 
-### 技术挑战
-- 相邻细胞边界不清晰，存在粘连（touching cells）
-- 细胞大小相对均一，但形状不规则
-- 细胞密度较高，重叠或遮挡少见
+索引所称 200 patches 为源项目中的计数样例数量；源码不同实验的预处理图尺寸可能不同，须以实际标注文件核对。
 
-## 使用建议
+## 文件结构与读取方法
 
-### 数据加载
+- 细胞图像小块（见作者仓库的数据下载说明）
+- 计数标签/细胞位置监督（Count-ception 使用冗余计数监督）
 
-```python
-import os
-from PIL import Image
-import numpy as np
-
-# 加载图像
-img = Image.open('adipocyte_images/image_001.png')
-img_array = np.array(img)  # (120, 150, 3)
-
-# 加载标注（假设为 CSV 格式）
-import pandas as pd
-annotations = pd.read_csv('adipocyte_annotations/image_001.csv')
-# 列格式: x, y (中心点坐标)
-```
-
-### Count-Ception 方法示例
+这些是有来源依据的**文件组成**，不是未经下载验证的精确文件树。不同 release 和镜像可能调整压缩包名或子目录；先检查实际压缩包/路径：
 
 ```python
-# Count-Ception 使用扩张密度图（redundant counting map）进行细胞计数
-# 参考原始论文实现：https://github.com/ieee8023/countception
-
-# 核心思想：每个细胞中心在 L×L 的感受野内都产生贡献，
-# 通过全卷积网络预测每个像素的局部计数期望，
-# 再通过均值聚合得到全图细胞总数
-
-def create_count_map(centers, image_size, L=32):
-    """
-    centers: list of (x, y) center coordinates
-    L: counting frame size
-    """
-    count_map = np.zeros(image_size[:2], dtype=np.float32)
-    for (x, y) in centers:
-        for dx in range(-L//2, L//2):
-            for dy in range(-L//2, L//2):
-                px, py = int(x + dx), int(y + dy)
-                if 0 <= px < image_size[1] and 0 <= py < image_size[0]:
-                    count_map[py, px] += 1
-    return count_map / (L * L)
+from pathlib import Path
+root = Path('DATASET_ROOT')  # 替换为已下载并解压的数据目录
+for p in sorted(root.rglob('*')):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
+
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 论文 Count-ception: Counting by Fully Convolutional Redundant Counting（2017）提出由冗余窗口计数生成全卷积计数预测。
+- 核实样本与标注的一一对应关系，并保留原始标签文件的版本号与来源信息。
+- 如果提供了病例/玻片 ID，优先使用**患者或玻片级**数据划分，避免相邻 patch 泄漏。
+
+### 建模提示
+
+- 不要直接作为细胞核实例分割数据集；需要真实 mask 时必须核查原包是否包含与像素对齐的实例轮廓。
 
 ### 评估指标
 
-- **MAE（Mean Absolute Error）**：平均绝对误差，统计预测细胞数与真实细胞数之差
-- **RMSE（Root Mean Square Error）**：均方根误差
-- **Detection F1**：基于距离阈值的检测精度
+MAE、RMSE、计数偏差；若仅点监督不适用实例 Dice/PQ。
 
 ## 相关资源
 
-- [GitHub - Count-Ception 数据与代码](https://github.com/ieee8023/countception)
-- [论文（arXiv 2017）](https://arxiv.org/abs/1703.08710)
+- [data](https://github.com/ieee8023/countception)
+- [paper](https://arxiv.org/abs/1703.08710)
+- [official](https://github.com/ieee8023/countception)
 
 ## 引用
 
-如果您使用了此数据集，请引用：
-
-```bibtex
-@article{cohen2017count,
-  title={Count-ception: Counting by fully convolutional redundant counting},
-  author={Cohen, Joseph Paul and Boucher, Genevieve and Glastonbury, Craig A and Lo, Henry Z and Bengio, Yoshua},
-  booktitle={Proceedings of the IEEE international conference on computer vision workshops},
-  year={2017}
-}
-```
+正式参考文献请在 [原论文](https://arxiv.org/abs/1703.08710) 的出版社页面导出 BibTeX，不手写未经核实的作者/期刊字段。
 
 ## 注意事项
 
-1. **数据获取**：数据通过 GitHub 仓库 `ieee8023/countception` 获取，请遵守 GTEx 数据使用协议。
-2. **图像尺寸小**：120×150 px 的 patch 尺寸较小，模型感受野设计需注意。
-3. **数据量有限**：仅 200 张图像，适合作为基准测试，不适合大规模训练。
-4. **标注密度**：点标注方式不提供细胞边界信息，仅适用于检测与计数任务。
+1. **来源可信度**：原作者公开数据与代码。
+2. **任务边界**：不要直接作为细胞核实例分割数据集；需要真实 mask 时必须核查原包是否包含与像素对齐的实例轮廓。
+3. **数据授权**：使用前查阅官方文件的许可、注册与下载条件；源代码许可证不能替代数据许可证。
+4. **可复现性**：统计以对应发布包、真实文件数、患者去重和官方测试划分为准；本页未对每个下载压缩包逐字节校验。
