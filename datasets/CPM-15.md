@@ -8,7 +8,7 @@ MICCAI 2015 Digital Pathology/Computational Pathology Challenge 使用的核分�
 
 ### 相关论文与发布方
 
-- [官方/第一方来源](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
+- [当前 Google Drive 下载入口（发布者归属待核实，不能称官方）](https://drive.google.com/drive/folders/11ko-GcDsPpA9GBHuCtl_jNzWQl6qY_-I)
 - 正式论文/年份详情以第一方数据主页为准
 
 
