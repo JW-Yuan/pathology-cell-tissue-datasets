@@ -6,7 +6,7 @@
 - **主要任务**：seg
 - **数据与标注**：images + nuclei and tissue annotations + context image
 - **适用范围**：Melanoma H&E nuclei instance segmentation/classification and tissue segmentation; Zenodo v5 released 2025.
-- **版本/来源提醒**：Zenodo官方v5，2025发布；注意年份
+- **版本/来源提醒**：Zenodo v5 (2025) 训练集包含 206 ROI；正式 GigaScience 2025 论文介绍的更完整研究集包含 310 ROI，两者不可混用。
 
 
 ## 数据集描述
