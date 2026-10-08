@@ -5,7 +5,7 @@
 
 | # | 数据集 | 第一方来源链接 | 来源核查 | 特别说明 |
 |---:|---|---|---|---|
-| 1 | PUMA | [官方来源/候选源](https://zenodo.org/records/15050523) | 第一方发布/项目 | Zenodo官方v5，2025发布；注意年份 |
+| 1 | PUMA | [官方来源/候选源](https://zenodo.org/records/15050523) | 第一方发布/项目 | Zenodo v5 (2025) 训练包 206 ROI；2025 GigaScience 正式论文报告完整研究数据 310 ROI；两者不是同一个统计口径。 |
 | 2 | ACDC-LungHP | [官方来源/候选源](https://acdc-lunghp.grand-challenge.org/DATA/) | 第一方发布/项目 | 官方挑战赛；分类/分割阶段应分开描述 |
 | 3 | ACROBAT 2022 | [官方来源/候选源](https://acrobat.grand-challenge.org/) | 第一方发布/项目 | ACROBAT官方配准挑战赛 |
 | 4 | ANORAK | [官方来源/候选源](https://www.nature.com/articles/s43018-023-00694-w) | 官方论文（数据对应关系待核） | 官方论文对应原始ANORAK；仓库的细胞JSON是自标注版本，不能混同 |
