@@ -1,5 +1,15 @@
 # AGGC 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://aggc22.grand-challenge.org/AGGC22/)
+- **研究任务**：seg、gleason grading
+- **组织/染色**：prostate / H&E
+- **规模**：Subset 1: train 105, test 45; Subset2: train 37, test 16; Subset3: train 144, test 67
+- **标注与使用范围**：Prostate cancer dataset for segmentation and Gleason grading tasks.
+- **原始来源说明**：官方挑战赛；部分页面访问可能受限
+
+
 ## 数据集描述
 
 AGGC（Automated Gleason Grading Challenge）2022 是一个前列腺癌自动 Gleason 分级挑战赛数据集，旨在推动计算病理学中前列腺癌自动化分析算法的发展。数据来自新加坡国立大学医院（NUH）。
