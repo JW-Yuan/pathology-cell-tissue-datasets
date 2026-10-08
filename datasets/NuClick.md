@@ -1,5 +1,15 @@
 # NuClick 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://github.com/navidstuv/NuClick)
+- **任务**：seg
+- **组织/染色**：Multiple tissues (IHC lymphocyte dataset) / IHC
+- **规模**：Train: 671, Valid: 200
+- **任务和标注**：Interactive lymphocyte segmentation of immunohistochemistry-stained tissue images; Lymphocyte is cell type, not organ.
+- **来源说明**：NuClick原作者实现及数据说明
+
+
 ## 数据集描述
 
 NuClick 是一个包含**IHC（免疫组化）图像中淋巴细胞分割**标注的数据集，作为 NuClick 交互式分割框架（2020）的配套发布数据，由英国华警大学 TIA 中心提供。
