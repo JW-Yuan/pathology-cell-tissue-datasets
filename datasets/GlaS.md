@@ -1,5 +1,15 @@
 # GlaS 数据集详情
 
+## 2026-10-08 官方来源核查
+
+- [官方/第一方来源](https://warwick.ac.uk/fac/cross_fac/tia/data/glascontest/)
+- **任务**：classi、seg
+- **组织/染色**：Colorectal (Gland) / H&E
+- **规模**：165
+- **正确的标注范围**：MICCAI 2015 GlaS colorectal gland segmentation; image-level benign/malignant histology labels also provided.
+- **来源说明**：Warwick GlaS 官方数据页；腺体分割
+
+
 ## 数据集描述
 
 GlaS（Gland Segmentation in Colon Histology Images Challenge）是 MICCAI 2015 挑战赛数据集，专用于**结直肠组织病理学图像中腺体实例分割**，是腺体分割领域最经典的基准数据集之一。
