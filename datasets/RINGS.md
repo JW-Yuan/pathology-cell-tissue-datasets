@@ -1,186 +1,119 @@
 # RINGS 数据集详情
 
-## 2026-10-08 官方来源核查
-
-- [官方/第一方来源](https://data.mendeley.com/datasets/h8bdwrtnr5/1)
-- **任务**：seg
-- **器官/染色**：prostate / H&E
-- **规模**：train: 1000 , test: 500 with 18'851 glands
-- **经核实的范围**：RINGS is prostate gland segmentation (18,851 annotated glands), NOT nuclear instance segmentation.
-- **重要提醒**：作者发布的前列腺腺体分割数据
-
+> 参考 PanNuke 详情页组织，官方资料核对日期：2026-10-08。本页只确认写出有据可查的数据及其版本；无法独立核实的文件树、标签映射或划分不作虚构。
 
 ## 数据集描述
 
-RINGS（Reliable Instance-level Nuclear Ground-truth for Segmentation）是一个专用于**前列腺癌 H&E 图像中腺体实例分割**的大规模数据集，提供像素级腺体分割掩码。数据集由 AIIMS（全印度医学科学研究所）发布，论文发表于 Artificial Intelligence in Medicine（2021）。
+RINGS（Rapid IdentificatioN of Glandular Structures）是前列腺腺体自动分割数据和相关算法，强调癌变引起的腺体形态退变，旨在获得腺体轮廓，而不是核分割。
 
-## 数据集基本信息
+### 相关论文与发布方
 
-- **器官类型**：前列腺（Prostate）— 前列腺腺癌
-- **染色方式**：H&E（苏木精-伊红）
-- **数据集大小**：
-  - 训练集：1000 张 patch，含 18,851 个腺体
-  - 测试集：500 张 patch
-- **图像分辨率**：1500 × 1500 像素
-- **放大倍数**：40x
-- **任务类型**：分割（Gland Instance Segmentation）
+- [官方/第一方来源](https://data.mendeley.com/datasets/h8bdwrtnr5/1)
+- [原论文](https://doi.org/10.1016/j.artmed.2021.102076)
 
-## 数据集规模
 
-| 子集 | Patch 数 | 腺体数 | 说明 |
-|------|---------|--------|------|
-| 训练集 | 1000 | 约 12,567 | 含标注 |
-| 测试集 | 500 | 约 6,284 | 含标注 |
-| **合计** | **1500** | **18,851** | — |
+---
 
-## 标注格式
+## 数据集基本信息（汇总）
 
-### 像素级腺体实例掩码
+| 项目 | 核实信息 |
+|---|---|
+| **发布/挑战赛年份** | 2021 |
+| **器官/组织或物种** | prostate |
+| **染色及模态** | H&E |
+| **具体任务** | seg |
+| **图像单元与尺寸** | patch (1500x1500) |
+| **标注内容** | images+mask |
+| **扫描/附加条件** | 40x |
 
-```python
-import numpy as np
-from PIL import Image
+---
 
-# 加载前列腺 patch 图像
-img = np.array(Image.open('prostate_patch_001.png').convert('RGB'))  # (1500, 1500, 3)
+## 核心数据量与图像格式
 
-# 加载腺体实例掩码
-mask = np.array(Image.open('prostate_patch_001_mask.png'))
-# 0: 背景/间质
-# 非零: 腺体实例 ID
+| 特征 | 描述 |
+|---|---|
+| **规模与计数单位** | train: 1000 , test: 500 with 18'851 glands |
+| **格式/数据形态** | 前列腺 H&E 组织图像块及人工 gland 区域/轮廓 GT |
+| **采集与版本** | 当前主索引记录约 1000 train + 500 test 图像、共 18,851 glands；这属于此前整理口径，需要再按官方实际下载表核查分布。Mendeley Data 原作者记录可明确核实 gland segmentation 任务。 |
 
-# 获取腺体数量
-gland_ids = np.unique(mask)
-gland_ids = gland_ids[gland_ids != 0]
-print(f"图像中腺体数量: {len(gland_ids)}")
+---
 
-# 提取单个腺体
-for gid in gland_ids:
-    single_gland = (mask == gid).astype(np.uint8)
-    area = single_gland.sum()
-    print(f"腺体 {gid}: 面积 {area} 像素")
-```
+## 任务与标注
 
-## 前列腺腺体 Gleason 特征
+每一标注对象为**腺体**，原论文方法融合间质区域的分割结果来定位腺体；不含逐核类型 class_map。
 
-| Gleason 等级 | 腺体形态特征 | RINGS 中的表现 |
-|-------------|------------|--------------|
-| Gleason 3 | 单独腺体，轮廓清晰 | 腺体完整，边界规则 |
-| Gleason 4 | 融合腺体，筛状结构 | 腺体融合，形态复杂 |
-| Gleason 5 | 无腺体结构 | 极少量腺体或缺失 |
+### 类别与标签语义
 
-## 数据特点
+- Gland（前列腺腺体轮廓）
+- Non-gland / surrounding stroma（非腺体组织）
 
-### 大规模前列腺腺体数据集
-- 18,851 个腺体标注，是前列腺腺体分割领域最大的公开数据集之一
-- 覆盖多种 Gleason 等级，病例多样
+> 类别顺序、背景编码与实例 ID 仅在来源明确时列出；不得借用其他数据集的类别编号。
 
-### 大尺寸 Patch
-- 1500×1500 px 的 patch，每张图像包含较多腺体（约 12 个）
-- 适合研究腺体间上下文关系
+---
 
-### 40x 高分辨率
-- 高倍镜下腺体形态细节清晰，适合精细化分割研究
+## 数据划分与统计口径
 
-## 使用建议
+若采用之前整理的 1000/500 划分，需声明具体样本列表和文献协议；公开页面的摘要没有逐条确认这一划分，因此不能把它说成已验证的官方 train/test 数量。
 
-### 数据加载
+---
+
+## 文件组成与读取方式
+
+- 前列腺腺体组织 H&E 组织图像
+- 原作者人工 delineated gland masks
+- Mendeley 记录 h8bdwrtnr5/1 的下载文件和出处信息
+
+> 此处描述发布包实际提供的文件类型与目录线索；未下载核对的完整文件树不作为“官方目录”展示。
+
+### 文件核验示例
 
 ```python
-import os
-import numpy as np
-from PIL import Image
-import glob
+from pathlib import Path
 
-def load_rings_dataset(root_dir, split='train'):
-    """加载 RINGS 数据集"""
-    img_paths = sorted(glob.glob(os.path.join(root_dir, split, 'images', '*.png')))
-    
-    dataset = []
-    for img_path in img_paths:
-        fname = os.path.basename(img_path)
-        mask_path = os.path.join(root_dir, split, 'masks', fname)
-        
-        img = np.array(Image.open(img_path).convert('RGB'))
-        if os.path.exists(mask_path):
-            mask = np.array(Image.open(mask_path))  # 实例 ID 掩码
-            binary = (mask > 0).astype(np.uint8)    # 二值前景掩码
-        else:
-            mask, binary = None, None
-        
-        dataset.append({
-            'image': img,
-            'instance_mask': mask,
-            'binary_mask': binary
-        })
-    
-    return dataset
+root = Path("DATASET_ROOT")  # 下载并解压后替换成实际路径
+for p in sorted(root.rglob("*")):
+    if p.is_file():
+        print(p.relative_to(root), p.suffix)
 ```
 
-### 评估指标（对象级）
+对目录和标注文件进行核验后，再建立患者/图像/标注文件之间的映射，记录数量、尺寸及未知标签。
 
-```python
-# 腺体分割对象级评估（参考 GlaS/CRAG 评估方式）
-import numpy as np
+---
 
-def object_level_f1(pred_inst, gt_inst, iou_threshold=0.5):
-    """对象级 F1 分数"""
-    pred_ids = np.unique(pred_inst)[1:]
-    gt_ids = np.unique(gt_inst)[1:]
-    
-    tp, matched = 0, set()
-    
-    for pred_id in pred_ids:
-        pred_mask = (pred_inst == pred_id)
-        best_iou, best_gt = 0, None
-        
-        for gt_id in gt_ids:
-            if gt_id in matched:
-                continue
-            gt_mask = (gt_inst == gt_id)
-            inter = (pred_mask & gt_mask).sum()
-            union = (pred_mask | gt_mask).sum()
-            iou = inter / (union + 1e-8)
-            if iou > best_iou:
-                best_iou, best_gt = iou, gt_id
-        
-        if best_iou >= iou_threshold:
-            tp += 1
-            matched.add(best_gt)
-    
-    fp = len(pred_ids) - tp
-    fn = len(gt_ids) - tp
-    
-    precision = tp / (tp + fp + 1e-8)
-    recall = tp / (tp + fn + 1e-8)
-    f1 = 2 * precision * recall / (precision + recall + 1e-8)
-    
-    return f1
-```
+## 使用建议（简要）
+
+### 加载与预处理
+
+- 将腺体标签按像素或实例标识展开，确认腺体与相邻间质之间的边界定义。
+
+### 建模与数据泄漏风险
+
+- 不应标为 nucleus instance segmentation；“18,851”代表 glands，不是 nuclei。
+
+### 评估指标
+
+Gland segmentation Dice、sensitivity/IoU；论文报告约 90.16% 的 Dice（是方法表现，不是数据集性质）。
+
+---
 
 ## 相关资源
 
-- [Mendeley Data 下载](https://data.mendeley.com/datasets/h8bdwrtnr5/1)
-- [论文（Artificial Intelligence in Medicine 2021）](https://www.sciencedirect.com/science/article/pii/S0933365721000695)
-- [直接下载链接](https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/h8bdwrtnr5-1.zip)
+- [data](https://data.mendeley.com/datasets/h8bdwrtnr5/1)
+- [paper](https://doi.org/10.1016/j.artmed.2021.102076)
+- [download](https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/h8bdwrtnr5-1.zip)
+- [official](https://data.mendeley.com/datasets/h8bdwrtnr5/1)
+
+---
 
 ## 引用
 
-如果您使用了此数据集，请引用：
+正确 BibTeX 请从 [论文记录](https://doi.org/10.1016/j.artmed.2021.102076) 导出；不编造作者与卷期页。
 
-```bibtex
-@article{salvi2021hybrid,
-  title={A hybrid deep learning approach for gland segmentation in prostate histopathological images},
-  author={Salvi, Massimo and Bosco, Martino and Molinaro, Luca and Gambella, Alessandro and Papotti, Mauro Giulio and Acharya, Udyavara Rajendra and Molinari, Filippo},
-  journal={Artificial Intelligence in Medicine},
-  year={2021},
-  doi={10.1016/j.artmed.2021.102076}
-}
-```
+---
 
 ## 注意事项
 
-1. **大尺寸图像**：1500×1500 px 的图像较大，训练时建议切分为较小的 patch（如 512×512）。
-2. **前列腺专属**：仅包含前列腺腺体，不含其他器官，是前列腺腺体分割的专用基准。
-3. **Gleason 分级关联**：腺体形态与 Gleason 分级高度相关，可进一步研究分割结果与 Gleason 评分的关联。
-4. **数据开放下载**：通过 Mendeley Data 公开下载，无需特殊申请。
+1. **版本与统计口径**：同一个项目不同 release、论文和挑战赛的样本数可能不同；不能混合 WSI、patch、ROI、患者及细胞实例数量。
+2. **许可与下载**：数据许可、注册条件及测试集真值可用性以发布方为准；第三方镜像及源码 License 不能替代数据授权。
+3. **与其他数据集重叠**：属于前列腺腺体层级，与 GlaS/CRAG 的结肠腺体图像不是同一来源。
+4. **核查边界**：作者发布的前列腺腺体分割数据
